@@ -50,14 +50,14 @@ class TreeModel(object):
 
     def _create_probs(self):
         """Creates the probabilities of every nodes in the tree structure."""
-        self.final_states_prob = np.zeros(self.num_final_states)
-        self.node_prob = np.zeros(self.num_decision_nodes)
+        self.final_states_prob = np.zeros(self.num_final_states) #init the prob of final states as 0
+        self.node_prob = np.zeros(self.num_decision_nodes) # init the prob of each nodes as 0
         self.final_states_prob[0] = 1.0
         sum_probs = 1.0
         next_prob = 1.0
 
-        for n in range(1, self.num_final_states):
-            next_prob = next_prob * self.prob_scale**(1.0 / n)
+        for n in range(1, self.num_final_states): # for all the final states, there is no up or down now, and thus we give them prob 1 (if no scale down is stated)
+            next_prob = next_prob * self.prob_scale**(1.0 / n) # if the scale of prob is stated, we scale down the prob as requested
             self.final_states_prob[n] = next_prob
         self.final_states_prob /= np.sum(self.final_states_prob)
 

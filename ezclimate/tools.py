@@ -13,7 +13,7 @@ def find_path(file_name, directory="data", file_type=".csv"):
         file direcrtory
         file type
     find path for a file
-    if not find, create a new one.
+    if directory is not find, create a new one.
     """
     import os
     cwd = os.getcwd()
