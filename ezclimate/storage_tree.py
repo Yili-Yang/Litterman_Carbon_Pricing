@@ -21,6 +21,35 @@ class BaseStorageTree(object):
 	tree : dict
 		dictionary where keys are `periods` and values are nodes in period
 
+	Remarks
+	---------- 
+    This is a abstract class for storing the trees which depends on the decision time and the time period.
+    a example for this is:
+        >>> bst = BigStorageTree(5.0, [0, 15, 45, 85, 100])
+        >>> bst.tree
+        {0.0: array([ 0.]),
+         5.0: array([ 0.,  0.]),
+         10.0: array([ 0.,  0.]),
+         15.0: array([ 0.,  0.]),
+         20.0: array([ 0.,  0.,  0.,  0.]),
+         25.0: array([ 0.,  0.,  0.,  0.]),
+         30.0: array([ 0.,  0.,  0.,  0.]),
+         35.0: array([ 0.,  0.,  0.,  0.]),
+         40.0: array([ 0.,  0.,  0.,  0.]),
+         45.0: array([ 0.,  0.,  0.,  0.]),
+         50.0: array([ 0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.]),
+         55.0: array([ 0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.]),
+         60.0: array([ 0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.]),
+         65.0: array([ 0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.]),
+         70.0: array([ 0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.]),
+         75.0: array([ 0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.]),
+         80.0: array([ 0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.]),
+         85.0: array([ 0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.]),
+         90.0: array([ 0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.]),
+         95.0: array([ 0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.]),
+         100.0: array([ 0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.])}
+        it only split when hitting the "can make dicision time" (elements in the information_times attr)
+        
 	"""
 	__metaclass__ = ABCMeta
 
@@ -28,7 +57,7 @@ class BaseStorageTree(object):
 		self.decision_times = decision_times
 		if isinstance(decision_times, list):
 			self.decision_times = np.array(decision_times)
-		self.information_times = self.decision_times[:-2]
+		self.information_times = self.decision_times[:-2] # exclude the final period which we will have the full infomation
 		self.periods = None
 		self.tree = None
 
@@ -178,7 +207,7 @@ class BaseStorageTree(object):
 		+------------+------------+-----------+
 		|    Year    |    Node 	  |  header   |
 		+============+============+===========+
-		| start_year |     0	  |   val0    |
+		| start_year |     0	      |   val0    |
 		+------------+------------+-----------+
 		|     ..     |	   .. 	  |    ..     |
 		+------------+------------+-----------+
@@ -372,9 +401,9 @@ class BigStorageTree(BaseStorageTree):
 		Examples
 		--------
 		>>> bst = BigStorageTree(5.0, [0, 15, 45, 85, 185, 285, 385])
-		>>> sst.get_next_period_array(0)
+		>>>bst.get_next_period_array(0)
 		array([0., 0.])
-		>>> sst.get_next_period_array(10)
+		>>> bst.get_next_period_array(10)
 		array([ 0.,  0., 0., 0.])
 
 		Raises
