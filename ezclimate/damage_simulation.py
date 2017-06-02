@@ -9,6 +9,7 @@ except:
     import copyreg as copy_reg
 import types
 
+
 copy_reg.pickle(types.MethodType, _pickle_method, _unpickle_method)
 
 class DamageSimulation(object):
