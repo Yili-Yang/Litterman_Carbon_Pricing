@@ -25,13 +25,13 @@ class DLWCost(Cost):
 		tree structure used
 	emit_at_0 : float
 		initial GHG emission level
-	g : float
+	g : float --> const of k = gx^a
 		intital scale of the cost function
-	a : float
+	a : float --> alpha
 		curvature of the cost function
-	join_price : float
+	join_price : float -->tau star
 		price at which the cost curve is extended
-	max_price : float
+	max_price : float --> tau hat
 		price at which carbon dioxide can be removed from atmosphere in unlimited scale
 	tech_const : float 
 		determines the degree of exogenous technological improvement over time. A number 
@@ -79,7 +79,7 @@ class DLWCost(Cost):
 		self.max_price = max_price
 		self.tech_const = tech_const
 		self.tech_scale = tech_scale
-		self.cbs_level = (join_price / (g * a))**(1.0 / (a - 1.0))
+		self.cbs_level = (join_price / (g * a))**(1.0 / (a - 1.0)) # tau^star in the paper
 		self.cbs_deriv = self.cbs_level / (join_price * (a - 1.0))
 		self.cbs_b = self.cbs_deriv * (max_price - join_price) / self.cbs_level
 		self.cbs_k = self.cbs_level * (max_price - join_price)**self.cbs_b
@@ -106,8 +106,8 @@ class DLWCost(Cost):
 		"""		
 		years = self.tree.decision_times[period]
 		tech_term = (1.0 - ((self.tech_const + self.tech_scale*ave_mitigation) / 100.0))**years
-		cbs = self.g * (mitigation**self.a) 
-		bool_arr = (mitigation < self.cbs_level).astype(int)
+		cbs = self.g * (mitigation**self.a) #cost is a power function of mitigation percentage
+		bool_arr = (mitigation < self.cbs_level).astype(int) # check if backstop tech is used 
 		if np.all(bool_arr):
 			c = (cbs * tech_term) / self.cons_per_ton 
 		else:
