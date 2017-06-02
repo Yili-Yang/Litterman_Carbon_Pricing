@@ -18,14 +18,14 @@ class EZUtility(object):
 	damage : `Damage` object
 		class that provides damage methods
 	cost : `Cost` object
-		class that procides cost methods
+		class that provides cost methods
 	period_len : float
 		subinterval length
-	eis : float, optional
+	eis : float, optional   ---> sigma = 1/(1-rho)
 		elasticity of intertemporal substitution
-	ra : float, optional
+	ra : float, optional    ---> gamma = 1 - alpha
 		risk-aversion
-	time_pref : float, optional
+	time_pref : float, optional  ---> (1-beta)/beta
 		pure rate of time preference
 	
 
