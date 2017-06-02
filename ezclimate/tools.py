@@ -7,12 +7,22 @@ import csv
 ###########
 
 def find_path(file_name, directory="data", file_type=".csv"):
-	import os
-	cwd = os.getcwd()
-	if not os.path.exists(directory):
-		os.makedirs(directory)
-	d = os.path.join(cwd, os.path.join(directory,file_name+file_type))
-	return d
+    """
+    input:
+        file name
+        file direcrtory
+        file type
+    find path for a file
+    if not find, create a new one.
+    """
+    import os
+    cwd = os.getcwd()
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    d = os.path.join(cwd, os.path.join(directory,file_name+file_type))
+    return d
+
+
 
 def create_file(file_name):
 	import os
@@ -27,8 +37,8 @@ def file_exists(file_name):
 	return os.path.isfile(d)
 
 def load_csv(file_name, delimiter=';', comment=None):
-	d = find_path(file_name)
-	pass
+    d = find_path(file_name)
+    pass
 
 def write_columns_csv(lst, file_name, header=[], index=None, start_char=None, delimiter=';', open_as='wb'):
 	d = find_path(file_name)
