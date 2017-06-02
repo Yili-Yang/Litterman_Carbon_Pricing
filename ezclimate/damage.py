@@ -78,6 +78,10 @@ class DLWDamage(Damage):
 	damage_coefs : ndarray
 		interpolation coefficients used to calculate damages
 
+	emit_pct: float
+		= 1.0 - (self.ghg_levels-self.bau.ghg_start) / bau_emission
+		the percentage of the emission which is already been done until now
+
 	"""
 
 	def __init__(self, tree, bau, cons_growth, ghg_levels, subinterval_len):
@@ -117,28 +121,28 @@ class DLWDamage(Damage):
 					d_class += 1
 				n -= 1
 			sum_class[d_class] += 1
-			new_state[d_class, sum_class[d_class]-1] = old_state
+			new_state[d_class, sum_class[d_class]-1] = old_state # slicing the np array with the right length and merge the old states in to a new one (states given period is the order of a situation.)
 		
 		sum_nodes = np.append(0, sum_class.cumsum())
-		prob_sum = np.array([self.tree.final_states_prob[sum_nodes[i]:sum_nodes[i+1]].sum() for i in range(len(sum_nodes)-1)])
+		prob_sum = np.array([self.tree.final_states_prob[sum_nodes[i]:sum_nodes[i+1]].sum() for i in range(len(sum_nodes)-1)]) #sum_class is storing how many situations are in one right now and add their prob. together.
 		for period in range(nperiods):
 			for k in range(self.dnum):
 				d_sum = np.zeros(nperiods)
 				old_state = 0
-				for d_class in range(nperiods):
+				for d_class in range(nperiods): # for each period
 					d_sum[d_class] = (self.tree.final_states_prob[old_state:old_state+sum_class[d_class]] \
-						 			 * self.d_rcomb[k, old_state:old_state+sum_class[d_class], period]).sum()	
-					old_state += sum_class[d_class]
-					self.tree.final_states_prob[new_state[d_class, 0:sum_class[d_class]]] = temp_prob[0]
+						 			 * self.d_rcomb[k, old_state:old_state+sum_class[d_class], period]).sum()	# it is Prob. * damage, damage is got through slicing the input damage array, summing up damage of the old states.
+					old_state += sum_class[d_class] # moving the starting old state to the next one (first in the next new class)
+					self.tree.final_states_prob[new_state[d_class, 0:sum_class[d_class]]] = temp_prob[0] #update final_states_prob with the summed prob.
 				for d_class in range(nperiods):	
-					self.d_rcomb[k, new_state[d_class, 0:sum_class[d_class]], period] = d_sum[d_class] / prob_sum[d_class]
+					self.d_rcomb[k, new_state[d_class, 0:sum_class[d_class]], period] = d_sum[d_class] / prob_sum[d_class] # for each period, adjust damge with the Prob. ???? why not mutilply prob?
 
-		self.tree.node_prob[-len(self.tree.final_states_prob):] = self.tree.final_states_prob
+		self.tree.node_prob[-len(self.tree.final_states_prob):] = self.tree.final_states_prob #update the prob in the nodes
 		for p in range(1,nperiods-1):
 			nodes = self.tree.get_nodes_in_period(p)
 			for node in range(nodes[0], nodes[1]+1):
 				worst_end_state, best_end_state = self.tree.reachable_end_states(node, period=p)
-				self.tree.node_prob[node] = self.tree.final_states_prob[worst_end_state:best_end_state+1].sum()
+				self.tree.node_prob[node] = self.tree.final_states_prob[worst_end_state:best_end_state+1].sum() #update the final nodes's prob using the new final_states_prob (always end with storing in the nodes)
 
 	def _damage_interpolation(self):
 		"""Create the interpolation coeffiecients used in `damage_function`."""
