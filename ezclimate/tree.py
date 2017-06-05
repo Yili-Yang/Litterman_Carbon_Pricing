@@ -24,8 +24,8 @@ class TreeModel(object):
         
     Remarks
     ----------
-    1.  nodes here is int, means the order the the possible situation that the agent is current at which is dependent of path.
-        state here is the order of situation with a specific period .
+    1.  nodes: int, path-dependent. It orders the possible situations throughout the whole time span.
+        state: the order of situation with a specific period.
         Since the nodes are path dependent, we can find the only parent given a child node.
     2.  All the tree code is bionomial.
     """
@@ -58,20 +58,20 @@ class TreeModel(object):
         """Creates the probabilities of every nodes in the tree structure."""
         self.final_states_prob = np.zeros(self.num_final_states) #init the prob of final states as 0
         self.node_prob = np.zeros(self.num_decision_nodes) # init the prob of each nodes as 0
-        self.final_states_prob[0] = 1.0
+        self.final_states_prob[0] = 1.0 #init the prob of the first final state as 1 (along the 'u' path)
         sum_probs = 1.0
         next_prob = 1.0
 
-        for n in range(1, self.num_final_states): # for all the final states, there is no up or down now, and thus we give them prob 1 (if no scale down is stated)
+        for n in range(1, self.num_final_states): # for all the final states, all certainty is resolved, thus we give them prob 1 (if no scale down is stated)
             next_prob = next_prob * self.prob_scale**(1.0 / n) # if the scale of prob is stated, we scale down the prob as requested
             self.final_states_prob[n] = next_prob 
         self.final_states_prob /= np.sum(self.final_states_prob) # normalize the prob and let the sum to be one
 
         self.node_prob[self.num_final_states-1:] = self.final_states_prob # store the final states prob to node_prob
-        for period in range(self.num_periods-2, -1, -1): # for the end of the tree, add up the prob of the child node to get the prob of the parent nodes.
+        for period in range(self.num_periods-2, -1, -1): #add up the prob of the child nodes backwards to get the prob of the parent nodes.
             for state in range(0, 2**period):
-                pos = self.get_node(period, state)
-                self.node_prob[pos] = self.node_prob[2*pos + 1] + self.node_prob[2*pos + 2]
+                pos = self.get_node(period, state) #find the node from state
+                self.node_prob[pos] = self.node_prob[2*pos + 1] + self.node_prob[2*pos + 2] # add up child nodes probs
 
     def get_num_nodes_period(self, period):
         """Returns the number of nodes in the period.
@@ -129,7 +129,7 @@ class TreeModel(object):
         first_node = self.get_node(period, 0)
         return (first_node, first_node+nodes-1)
 
-    def get_node(self, period, state):
+    def get_node(self, period, state): # find node from period and state
         """Returns the node in period and state provided.
 
         Parameters
@@ -167,7 +167,7 @@ class TreeModel(object):
             raise ValueError("No such state in period {}".format(period))
         return 2**period + state - 1
 
-    def get_state(self, node, period=None):
+    def get_state(self, node, period=None): #find state from node
         """Returns the state the node represents.
 
         Parameters
@@ -197,7 +197,7 @@ class TreeModel(object):
             period = self.get_period(node)
         return node - (2**period - 1)
 
-    def get_period(self, node):
+    def get_period(self, node): #get period from node
         """Returns what period the node is in.
 
         Parameters
