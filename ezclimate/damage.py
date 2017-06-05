@@ -150,7 +150,7 @@ class DLWDamage(Damage):
 			print("Importing stored damage simulation")
 			self.import_damages()
 
-		self._recombine_nodes()
+		self._recombine_nodes() #init emit_pct
 		if self.emit_pct is None:
 			bau_emission = self.bau.ghg_end - self.bau.ghg_start
 			self.emit_pct = 1.0 - (self.ghg_levels-self.bau.ghg_start) / bau_emission
@@ -160,7 +160,7 @@ class DLWDamage(Damage):
 		bmat = np.ones((self.tree.num_periods, self.dnum))
 
 		self.damage_coefs[:, :, -1,  -1] = self.d_rcomb[-1, :, :]
-		self.damage_coefs[:, :, -1,  -2] = (self.d_rcomb[-2, :, :] - self.d_rcomb[-1, :, :]) / self.emit_pct[-2]
+		self.damage_coefs[:, :, -1,  -2] = (self.d_rcomb[-2, :, :] - self.d_rcomb[-1, :, :]) / self.emit_pct[-2] # emit_pct should be a float? 
 		amat[:, 0, 0] = 2.0 * self.emit_pct[-2]
 		amat[:, 1:, 0] = self.emit_pct[:-1]**2
 		amat[:, 1:, 1] = self.emit_pct[:-1]
@@ -168,7 +168,7 @@ class DLWDamage(Damage):
 
 		for state in range(0, self.tree.num_final_states):
 			bmat[:, 0] = self.damage_coefs[state, :, -1,  -2] * self.emit_pct[-2]
-			bmat[:, 1:] = self.d_rcomb[:-1, state, :].T
+			bmat[:, 1:] = self.d_rcomb[:-1, state, :].T #?
 			self.damage_coefs[state, :, 0] = np.linalg.solve(amat, bmat)
 
 	def import_damages(self, file_name="simulated_damages"):
@@ -186,7 +186,7 @@ class DLWDamage(Damage):
 			If file does not exist.
 
 		"""
-		from tools import import_csv
+		from tools import import_csv # import damage from a csv file
 		try:
 			d = import_csv(file_name, ignore="#", header=False)
 		except IOError as e:
@@ -195,7 +195,7 @@ class DLWDamage(Damage):
 			sys.exit(0)
 
 		n = self.tree.num_final_states	
-		self.d = np.array([d[n*i:n*(i+1)] for i in range(0, self.dnum)])
+		self.d = np.array([d[n*i:n*(i+1)] for i in range(0, self.dnum)]) # for every simulated damage, d is an array that stores the damage for one tree: array[[tree1 damage],[tree2 damage]]
 		self._damage_interpolation()
 
 	def damage_simulation(self, draws, peak_temp=9.0, disaster_tail=12.0, tip_on=True, 
