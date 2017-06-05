@@ -169,6 +169,7 @@ class DamageSimulation(object):
 
     def _pindyck_impact_simulation(self):
         """Pindyck gamma distribution mapping temperature into damages."""
+        # get the gamma in loss function
         pindyck_impact_k=4.5
         pindyck_impact_theta=21341.0
         pindyck_impact_displace=-0.0000746,
@@ -185,21 +186,23 @@ class DamageSimulation(object):
 
     def _disaster_cons_simulation(self):
         """Simulates consumption conditional on disaster, based on the parameter disaster_tail."""
+        #get the tp_damage in the article which is drawed from a gamma distri with alpha = 1 and beta = disaster_tail
         disaster_cons = self._gamma_array(1.0, self.disaster_tail, self.draws)
         return disaster_cons
 
     def _interpolation_of_temp(self, temperature): 
-        return temperature[:, np.newaxis] * 2.0 * (1.0 - 0.5**(self.tree.decision_times[1:] / self.maxh))
+    	# for every temp in each period, modify it using a coff regards to the current period (using a smoothing method.)
+        return temperature[:, np.newaxis] * 2.0 * (1.0 - 0.5**(self.tree.decision_times[1:] / self.maxh)) # modify the temp using a exp coefficient (need the new article to get it)
       
 
     def _economic_impact_of_temp(self, temperature):
         """Economic impact of temperatures, Pindyck [2009]."""
         impact = self._pindyck_impact_simulation()
-        term1 = -2.0 * impact[:, np.newaxis] * self.maxh * temperature[:,np.newaxis] / np.log(0.5)
+        term1 = -2.0 * impact[:, np.newaxis] * self.maxh * temperature[:,np.newaxis] / np.log(0.5) # -2*gamma*maxh*temp(for each period)/log(0.5)
         term2 = (self.cons_growth - 2.0 * impact[:, np.newaxis] \
-                * temperature[:, np.newaxis]) * self.tree.decision_times[1:]
+                * temperature[:, np.newaxis]) * self.tree.decision_times[1:] # con_g-2*gamma*temp*time_now
         term3 = (2.0 * impact[:, np.newaxis] * self.maxh \
-                * temperature[:, np.newaxis] * 0.5**(self.tree.decision_times[1:] / self.maxh)) / np.log(0.5)
+                * temperature[:, np.newaxis] * 0.5**(self.tree.decision_times[1:] / self.maxh)) / np.log(0.5)# 2*gamma*maxh*temp*0.5^(time_now/maxh)/log(0.5)
         return np.exp(term1 + term2 + term3)
 
     def _tipping_point_update(self, tmp, consump, peak_temp_interval=30.0):
@@ -213,8 +216,9 @@ class DamageSimulation(object):
         
         tmp_scale = np.maximum(self.peak_temp, tmp)
         ave_prob_of_survival = 1.0 - np.square(tmp / tmp_scale) 
-        prob_of_survival = ave_prob_of_survival**(period_lengths / peak_temp_interval)
+        prob_of_survival = ave_prob_of_survival**(period_lengths / peak_temp_interval) #formula (28) prob(tb)=1-[1-(tmp/tmp_scale)^2]^(period_len/peak_interval)
         # this part may be done better, this takes a long time to loop over
+        # find unique row and the cols that the disater acurrs and modify comsuption after the point
         res = prob_of_survival < disaster
         rows, cols = np.nonzero(res)
         row, count = np.unique(rows, return_counts=True)
@@ -227,6 +231,10 @@ class DamageSimulation(object):
         """Calculate the distribution of damage for specific GHG-path. Implementation of 
         the temperature and economic impacts from Pindyck [2012] page 6.
         """
+        # Remark
+        # -------------
+        # final states given periods can give us a specific state in that period since a child only have one parent
+        
         d = np.zeros((self.tree.num_final_states, self.tree.num_periods))
         tmp = self._interpolation_of_temp(temperature)
         consump = self._economic_impact_of_temp(temperature)
