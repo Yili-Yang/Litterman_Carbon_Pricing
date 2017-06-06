@@ -235,6 +235,7 @@ class DLWDamage(Damage):
 			simulated damages
 
 		"""
+		# get simulated damage from damge-simulation.py 
 		ds = DamageSimulation(tree=self.tree, ghg_levels=self.ghg_levels, peak_temp=peak_temp,
 					disaster_tail=disaster_tail, tip_on=tip_on, temp_map=temp_map, 
 					temp_dist_params=temp_dist_params, maxh=maxh, cons_growth=self.cons_growth)
@@ -300,13 +301,13 @@ class DLWDamage(Damage):
 			period = self.tree.get_period(node)
 		state = self.tree.get_state(node, period)
 		path = self.tree.get_path(node, period)
-		new_m = m[path[:-1]]
+		new_m = m[path[:-1]] # mitigation on the path until this node
 	
 		period_len = self.tree.decision_times[1:period+1] - self.tree.decision_times[:period]
 		bau_emissions = self.bau.emission_by_decisions[:period]
 		total_emission = np.dot(bau_emissions, period_len)
-		ave_mitigation = np.dot(new_m, bau_emissions*period_len)
-		return ave_mitigation / total_emission
+		ave_mitigation = np.dot(new_m, bau_emissions*period_len) # mitigation for a path until node
+		return ave_mitigation / total_emission # average mitigation until node
 
 	def average_mitigation(self, m, period):
 		"""Calculate the average mitigation for all node in a period.

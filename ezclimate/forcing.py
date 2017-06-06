@@ -28,6 +28,7 @@ class Forcing(object):
 		class constant 
 
 	"""
+	# parameters that I have no idea about 
 	sink_start = 35.596
 	forcing_start = 4.926
 	forcing_p1 = 0.13173
@@ -69,6 +70,7 @@ class Forcing(object):
         		* "both": both the forcing and GHG level is returned 
 
 		"""
+		#for the start state, return 0 for forcing and ghg_start for the ghg_level
 		if node == 0:
 			if returning == "forcing":
 				return 0.0
@@ -76,11 +78,12 @@ class Forcing(object):
 				return bau.ghg_start
 			else:
 				return 0.0, bau.ghg_start
-
+		# get the period and the path that the target node are in 
 		period = tree.get_period(node)
-		path = tree.get_path(node, period)
-
+		path = tree.get_path(node, period) 
+		# the dicision time is the time when we make a mitigation, i.e. an array like [15,30,45,70]
 		period_lengths = tree.decision_times[1:period+1] - tree.decision_times[:period]
+		#increments are the number counts of subintervals within a period
 		increments = period_lengths/subinterval_len
 
 		cum_sink = cls.sink_start
@@ -88,12 +91,15 @@ class Forcing(object):
 		ghg_level = bau.ghg_start
 
 		for p in range(0, period):
-			start_emission = (1.0 - m[path[p]]) * bau.emission_by_decisions[p]
+			#for each period, we calculate the start_emission
+			#! problem: when will the act takes in to effect? either way, code here should be wrong.
+			start_emission = (1.0 - m[path[p]]) * bau.emission_by_decisions[p] # this function doesn't exist!
 			if p < tree.num_periods-1: 
-				end_emission = (1.0 - m[path[p]]) * bau.emission_by_decisions[p+1]
+				end_emission = (1.0 - m[path[p]]) * bau.emission_by_decisions[p+1] #if not the final states, the end emission is 
 			else:
 				end_emission = start_emission
 			increment = int(increments[p])
+			# for each increment in a period, the forcing is affecting ghg_level in the end
 			for i in range(0, increment):
 				p_co2_emission = start_emission + i * (end_emission-start_emission) / increment
 				p_co2 = 0.71 * p_co2_emission 
