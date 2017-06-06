@@ -93,7 +93,7 @@ class Forcing(object):
 		for p in range(0, period):
 			#for each period, we calculate the start_emission
 			#! problem: when will the act takes in to effect? either way, code here should be wrong.
-			start_emission = (1.0 - m[path[p]]) * bau.emission_by_decisions[p] # this function doesn't exist!
+			start_emission = (1.0 - m[path[p]]) * bau.emission_by_decisions[p] # this is a attr of func: emission_by_step, might needed recode this
 			if p < tree.num_periods-1: 
 				end_emission = (1.0 - m[path[p]]) * bau.emission_by_decisions[p+1] #if not the final states, the end emission is 
 			else:
