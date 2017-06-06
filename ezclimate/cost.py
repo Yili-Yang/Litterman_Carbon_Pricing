@@ -26,38 +26,38 @@ class DLWCost(Cost):
 	emit_at_0 : float
 		initial GHG emission level
 	g : float --> const of k = gx^a
-		intital scale of the cost function
+		initial scale of the cost function
 	a : float --> alpha
 		curvature of the cost function
-	join_price : float -->tau star
+	join_price : float -->tau_*
 		price at which the cost curve is extended
-	max_price : float --> tau hat
+	max_price : float --> tau_tilda
 		price at which carbon dioxide can be removed from atmosphere in unlimited scale
-	tech_const : float 
+	tech_const : float  --> alpha_0
 		determines the degree of exogenous technological improvement over time. A number 
-			of 1.0 implies 1 percent per yer lower cost
-	tech_scale : float
+			of 1.0 implies 1 percent per year lower cost
+	tech_scale : float  --> alpha_1
 		determines the sensitivity of technological change to previous mitigation
-	cons_at_0 : float 
-		intital consumption. Default $30460bn based on US 2010 values.
+	cons_at_0 : float   --> c_bar
+		initial consumption. Default $30460bn based on US 2010 values.
 
-	Attributes
+	Attributes cbs: cost as a fraction of baseline consumption
 	----------
 	tree : `TreeModel` object
 		tree structure used
 	g : float
-		intital scale of the cost function
+		initial scale of the cost function
 	a : float
 		curvature of the cost function
 	max_price : float
 		price at which carbon dioxide can be removed from atmosphere in unlimited scale
-	tech_const : float 
+	tech_const : float
 		determines the degree of exogenous technological improvement over time. A number 
-			of 1.0 implies 1 percent per yer lower cost
+			of 1.0 implies 1 percent per year lower cost
 	tech_scale : float
 		determines the sensitivity of technological change to previous mitigation
 	cons_at_0 : float 
-		intital consumption. Default $30460bn based on US 2010 values.
+		initial consumption. Default $30460bn based on US 2010 values.
 	cbs_level : float
 		constant 
 	cbs_deriv : float
@@ -79,7 +79,7 @@ class DLWCost(Cost):
 		self.max_price = max_price
 		self.tech_const = tech_const
 		self.tech_scale = tech_scale
-		self.cbs_level = (join_price / (g * a))**(1.0 / (a - 1.0)) # tau^star in the paper
+		self.cbs_level = (join_price / (g * a))**(1.0 / (a - 1.0)) #after which the backstop tech kicks in
 		self.cbs_deriv = self.cbs_level / (join_price * (a - 1.0))
 		self.cbs_b = self.cbs_deriv * (max_price - join_price) / self.cbs_level
 		self.cbs_k = self.cbs_level * (max_price - join_price)**self.cbs_b
@@ -106,17 +106,17 @@ class DLWCost(Cost):
 		"""		
 		years = self.tree.decision_times[period]
 		tech_term = (1.0 - ((self.tech_const + self.tech_scale*ave_mitigation) / 100.0))**years
-		cbs = self.g * (mitigation**self.a) #cost is a power function of mitigation percentage
-		bool_arr = (mitigation < self.cbs_level).astype(int) # check if backstop tech is used 
-		if np.all(bool_arr):
+		cbs = self.g * (mitigation**self.a) #cbs is a power function of mitigation
+		bool_arr = (mitigation < self.cbs_level).astype(int) # check if backstop technology is implemented
+		if np.all(bool_arr): # cost of traditional mitigation
 			c = (cbs * tech_term) / self.cons_per_ton 
-		else:
-			base_cbs = self.g * self.cbs_level**self.a
+		else: # cost with backstop technology
+			base_cbs = self.g * self.cbs_level**self.a #cost of normal mitigation
 			bool_arr2 = (mitigation > self.cbs_level).astype(int)
-			extension = ((mitigation-self.cbs_level) * self.max_price 
+			extension = ((mitigation-self.cbs_level) * self.max_price
 						- self.cbs_b*mitigation * (self.cbs_k/mitigation)**(1.0/self.cbs_b) / (self.cbs_b-1.0)
 						+ self.cbs_b*self.cbs_level * (self.cbs_k/self.cbs_level)**(1.0/self.cbs_b) / (self.cbs_b-1.0))
-			
+			#cost of implementing backstop technology
 			c = (cbs * bool_arr + (base_cbs + extension)*bool_arr2) * tech_term / self.cons_per_ton
 		return c
 	
@@ -141,9 +141,9 @@ class DLWCost(Cost):
 		"""
 		tech_term = (1.0 - ((self.tech_const + self.tech_scale*ave_mitigation) / 100))**years
 		if mitigation < self.cbs_level:
-			return self.g * self.a * (mitigation**(self.a-1.0)) * tech_term
+			return self.g * self.a * (mitigation**(self.a-1.0)) * tech_term #price under traditional mitigation
 		else:
-			return (self.max_price - (self.cbs_k/mitigation)**(1.0/self.cbs_b)) * tech_term
+			return (self.max_price - (self.cbs_k/mitigation)**(1.0/self.cbs_b)) * tech_term # marginal price with backstop technology
 
 
 
