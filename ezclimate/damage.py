@@ -82,6 +82,8 @@ class DLWDamage(Damage):
 		= 1.0 - (self.ghg_levels-self.bau.ghg_start) / bau_emission
 		the percentage of the emission which is already been done until now
 
+	cum_forcings :???
+
 	"""
 
 	def __init__(self, tree, bau, cons_growth, ghg_levels, subinterval_len):
@@ -159,8 +161,10 @@ class DLWDamage(Damage):
 		amat = np.ones((self.tree.num_periods, self.dnum, self.dnum))
 		bmat = np.ones((self.tree.num_periods, self.dnum))
 
-		self.damage_coefs[:, :, -1,  -1] = self.d_rcomb[-1, :, :]
-		self.damage_coefs[:, :, -1,  -2] = (self.d_rcomb[-2, :, :] - self.d_rcomb[-1, :, :]) / self.emit_pct[-2] # emit_pct should be a float? 
+		self.damage_coefs[:, :, -1,  -1] = self.d_rcomb[-1, :, :] # d_romb's index is [path_index,the numbers in the class, period]
+		# emit_pct is a array contains the percentage of the emission which is already been done until now(relevent to ghg_level array)
+		self.damage_coefs[:, :, -1,  -2] = (self.d_rcomb[-2, :, :] - self.d_rcomb[-1, :, :]) / self.emit_pct[-2]
+
 		amat[:, 0, 0] = 2.0 * self.emit_pct[-2]
 		amat[:, 1:, 0] = self.emit_pct[:-1]**2
 		amat[:, 1:, 1] = self.emit_pct[:-1]
@@ -245,10 +249,27 @@ class DLWDamage(Damage):
 		self._damage_interpolation()
 		return self.d
 
+	def _forcing_init(self):
+		"""Initialize `Forcing` object and cum_forcings used in calculating the force mitigation up to a node.""" 
+		if self.emit_pct is None:
+			bau_emission = self.bau.ghg_end - self.bau.ghg_start
+			self.emit_pct = 1.0 - (self.ghg_levels-self.bau.ghg_start) / bau_emission
+
+		self.cum_forcings = np.zeros((self.tree.num_periods, self.dnum)) # array like [x,y] contains number of the periods and the path
+		mitigation = np.ones((self.dnum, self.tree.num_decision_nodes)) * self.emit_pct[:, np.newaxis] #mitigaion is indexed with number of path (row) and number of nodes(column), and is the emit_pct
+
+		for i in range(0, self.dnum):
+			for n in range(1, self.tree.num_periods+1):
+				node = self.tree.get_node(n, 0)
+				self.cum_forcings[n-1, i] = Forcing.forcing_at_node(mitigation[i], node, self.tree,
+																	self.bau, self.subinterval_len) # return the forcing on the node
+
+
 	def _forcing_based_mitigation(self, forcing, period): 
 		"""Calculation of mitigation based on forcing up to period. Interpolating between the forcing associated 
 		with the constant degree of mitigation consistent with the damage simulation scenarios.
 		"""
+		# this whole funcion is based on a new theory
 		p = period - 1
 		if forcing > self.cum_forcings[p][1]:
 			weight_on_sim2 = (self.cum_forcings[p][2] - forcing) / (self.cum_forcings[p][2] - self.cum_forcings[p][1])
@@ -262,20 +283,6 @@ class DLWDamage(Damage):
 		
 		return weight_on_sim2 * self.emit_pct[1] + weight_on_sim3*self.emit_pct[0]
 
-	def _forcing_init(self):
-		"""Initialize `Forcing` object and cum_forcings used in calculating the force mitigation up to a node.""" 
-		if self.emit_pct is None:
-			bau_emission = self.bau.ghg_end - self.bau.ghg_start
-			self.emit_pct = 1.0 - (self.ghg_levels-self.bau.ghg_start) / bau_emission
-
-		self.cum_forcings = np.zeros((self.tree.num_periods, self.dnum))
-		mitigation = np.ones((self.dnum, self.tree.num_decision_nodes)) * self.emit_pct[:, np.newaxis]
-
-		for i in range(0, self.dnum):
-			for n in range(1, self.tree.num_periods+1):
-				node = self.tree.get_node(n, 0)
-				self.cum_forcings[n-1, i] = Forcing.forcing_at_node(mitigation[i], node, self.tree,
-																	self.bau, self.subinterval_len)
 
 	def average_mitigation_node(self, m, node, period=None):
 		"""Calculate the average mitigation until node.
@@ -383,12 +390,14 @@ class DLWDamage(Damage):
 			GHG levels 
 
 		"""
+		#create stroage space for ghg_level for every possible states
 		if periods is None:
 			periods = self.tree.num_periods-1
 		if periods >= self.tree.num_periods:
 			ghg_level = np.zeros(self.tree.num_decision_nodes+self.tree.num_final_states)
 		else:
 			ghg_level = np.zeros(self.tree.num_decision_nodes)
+		# for each period, find the right start and end node within this period and add ghg_level for this nodes
 		for period in range(periods+1):
 			start_node, end_node = self.tree.get_nodes_in_period(period)
 			if period >= self.tree.num_periods:
@@ -415,7 +424,7 @@ class DLWDamage(Damage):
 
 		worst_end_state, best_end_state = self.tree.reachable_end_states(node, period=period)
 		probs = self.tree.final_states_prob[worst_end_state:best_end_state+1]
-
+		# new damage formulas 
 		if force_mitigation < self.emit_pct[1]:
 			damage = (probs *(self.damage_coefs[worst_end_state:best_end_state+1, period-1, 1, 1] * force_mitigation \
 					 + self.damage_coefs[worst_end_state:best_end_state+1, period-1, 1, 2])).sum()
