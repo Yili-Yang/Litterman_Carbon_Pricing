@@ -67,11 +67,11 @@ class DLWBusinessAsUsual(BusinessAsUsual):
     emission_by_decisions : ndarray
         emissions at decision time periods??
     emission_per_period : ndarray
-        total emission at decision time period??
+        total emission at decision time period
     emission_to_ghg : ndarray
-        GHG levels in decision time period??
+        GHG levels in decision time period
     emission_to_bau : float
-        constant for converting GHG to emission??
+        constant for converting GHG to emission
     emit_time : ndarray or list
         time, in years, from now when emissions occurs
     emit_level : ndarray or list
