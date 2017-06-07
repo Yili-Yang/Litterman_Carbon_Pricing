@@ -78,7 +78,7 @@ class GeneticAlgorithm(object):
 		pop = np.random.random([size, self.num_feature])*self.bound
 		if self.fixed_values is not None:
 			for ind in pop:
-				ind[self.fixed_indicies] = self.fixed_values
+				ind[self.fixed_indicies] = self.fixed_values # override fix values
 		return pop
 
 	def _evaluate(self, indvidual):
@@ -101,8 +101,8 @@ class GeneticAlgorithm(object):
 	    	selected individuals
 
 		"""
-		index = np.random.choice(self.pop_amount, int(rate*self.pop_amount), replace=False)
-		return pop[index,:]
+		index = np.random.choice(self.pop_amount, int(rate*self.pop_amount), replace=False) 
+		return pop[index,:] #return a list of random instance of pop
 
 	def _random_index(self, individuals, size):
 		"""Generate a random index of individuals of size 'size'.
@@ -135,7 +135,8 @@ class GeneticAlgorithm(object):
 	    	 number of individuals to select
 	    tournsize : int
 	    	number of individuals participating in each tournament
-	   
+	   	fitness : 
+	   		???
 	   	Returns
 	   	-------
 	   	ndarray s
@@ -143,9 +144,10 @@ class GeneticAlgorithm(object):
 	    
 	    """
 	    chosen = []
+	    # for k times, randomly choose a tournsize number of index and pick up the one with the highest fitness
 	    for i in xrange(k):
 	        index = self._random_index(pop, tournsize)
-	        aspirants = pop[index]
+	        aspirants = pop[index] 
 	        aspirants_fitness = fitness[index]
 	        chosen_index = np.where(aspirants_fitness == np.max(aspirants_fitness))[0]
 	        if len(chosen_index) != 0:
@@ -162,10 +164,11 @@ class GeneticAlgorithm(object):
 			population given by 2D-array with shape ('pop_amount', 'num_feature')
 
 		"""
-		child_group1 = pop[::2]
-		child_group2 = pop[1::2]
+		child_group1 = pop[::2] # instance with even index
+		child_group2 = pop[1::2]# instance with odd index
 		for child1, child2 in zip(child_group1, child_group2):
 			if np.random.random() <= self.cx_prob:
+				#generates 2 random index for the swap, can be done much better.
 				cxpoint1 = np.random.randint(1, self.num_feature)
 				cxpoint2 = np.random.randint(1, self.num_feature - 1)
 				if cxpoint2 >= cxpoint1:
@@ -212,6 +215,7 @@ class GeneticAlgorithm(object):
 	    	scaling constant of the random generated number for mutation
 
 		"""
+		# it is using a expectation of prob. Can be done much better.
 		pop_tmp = np.copy(pop)
 		mutate_index = np.random.choice(self.pop_amount, int(self.mut_prob * self.pop_amount), replace=False)
 		for i in mutate_index:
@@ -310,7 +314,7 @@ class GeneticAlgorithm(object):
 		pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
 		fitness = pool.map(self._evaluate, pop) # how do we know pop[i] belongs to fitness[i]?
 		fitness = np.array([val[0] for val in fitness])
-		u_hist = np.zeros(self.num_gen)
+		u_hist = np.zeros(self.num_gen) # not been used ...
 		for g in range(0, self.num_gen):
 			print ("-- Generation {} --".format(g+1))
 			pop_select = self._select(np.copy(pop), rate=1)
@@ -405,7 +409,7 @@ class GradientSearch(object) :
 		minus_utility = self.u.utility(m_copy)
 		m_copy[i] += 2*self.delta
 		plus_utility = self.u.utility(m_copy)
-		grad = (plus_utility-minus_utility) / (2*self.delta)
+		grad = (plus_utility-minus_utility) / (2*self.delta) # the math is trival
 		return grad, i
 
 	def numerical_gradient(self, m, delta=1e-08, fixed_indicies=None):
@@ -442,7 +446,7 @@ class GradientSearch(object) :
 		pool.join()
 		del self.m
 		del self.delta
-		return grad
+		return grad 
 
 	def _accelerate_scale(self, accelerator, prev_grad, grad):
 		sign_vector = np.sign(prev_grad * grad)
@@ -480,13 +484,13 @@ class GradientSearch(object) :
 		x_hist[0] = initial_point
 		
 		beta1, beta2 = 0.90, 0.90
-		eta = 0.0015
+		eta = 0.0015 # learning rate
 		eps = 1e-3
 		m_t, v_t = 0, 0
 
 		prev_grad = 0.0
 		accelerator = np.ones(self.var_nums)
-
+		# formula at http://sebastianruder.com/optimizing-gradient-descent/index.html#fnref:15	
 		for i in range(self.iterations):
 			grad = self.numerical_gradient(x_hist[i], fixed_indicies=self.fixed_indicies)
 			m_t = beta1*m_t + (1-beta1)*grad
@@ -496,7 +500,7 @@ class GradientSearch(object) :
 			if i != 0:
 				accelerator = self._accelerate_scale(accelerator, prev_grad, grad)
 			
-			new_x = x_hist[i] + ((eta*m_hat)/(np.square(v_hat)+eps)) * accelerator
+			new_x = x_hist[i] + ((eta*m_hat)/(np.square(v_hat)+eps)) * accelerator # empirical acceleration, parameter =1.1 is need to be proved later on
 			new_x[new_x < 0] = 0.0
 
 			if self.fixed_values is not None:
