@@ -27,7 +27,7 @@ class TreeModel(object):
     1.  nodes: int, path-dependent. It orders the possible situations throughout the whole time span.
         state: the order of situation with a specific period.
         Since the nodes are path dependent, we can find the only parent given a child node.
-    2.  All the tree code is bionomial.
+    2.  All the tree code is binomial.
     """
 
     def __init__(self, decision_times, prob_scale=1.0):

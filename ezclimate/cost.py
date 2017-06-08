@@ -74,8 +74,8 @@ class DLWCost(Cost):
 	def __init__(self, tree, emit_at_0, g, a, join_price, max_price,
 				tech_const, tech_scale, cons_at_0):
 		self.tree = tree
-		self.g = g
-		self.a = a
+		self.g = g #92.08
+		self.a = a #3.413
 		self.max_price = max_price
 		self.tech_const = tech_const
 		self.tech_scale = tech_scale
