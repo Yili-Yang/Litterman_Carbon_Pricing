@@ -354,12 +354,12 @@ class SmallStorageTree(BaseStorageTree):
 
 class BigStorageTree(BaseStorageTree):
 	"""Storage tree class for the EZ-Climate model. Storage in nodes between 
-	periods in `decision_times`. 
+	periods in `decision_times`.float
+		years between p 
 
 	Parameters
 	----------
-	subintervals_len : float
-		years between periods in tree
+	subintervals_len : eriods in tree
 	decision_times : ndarray or list
 		array of years from start where decisions about mitigation levels are done
 
