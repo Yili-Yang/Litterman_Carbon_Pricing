@@ -136,7 +136,7 @@ class GeneticAlgorithm(object):
 	    tournsize : int
 	    	number of individuals participating in each tournament
 	   	fitness : 
-	   		???
+	   		utility in our model
 	   	Returns
 	   	-------
 	   	ndarray s
