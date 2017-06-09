@@ -113,8 +113,8 @@ class DamageSimulation(object):
     def _uniform_array(self, dimension):
         return np.random.random(dimension)
 
-    def _sort_array(self, array):
-        return array[array[:, self.tree.num_periods-1].argsort()]
+	    def _sort_array(self, array):
+	        return array[array[:, self.tree.num_periods-1].argsort()]
 
     def _normal_simulation(self):
         """Draw random samples from normal distribution for mapping GHG to temperature for 
@@ -218,7 +218,7 @@ class DamageSimulation(object):
         ave_prob_of_survival = 1.0 - np.square(tmp / tmp_scale) 
         prob_of_survival = ave_prob_of_survival**(period_lengths / peak_temp_interval) #formula (28) prob(tb)=1-[1-(tmp/tmp_scale)^2]^(period_len/peak_interval)
         # this part may be done better, this takes a long time to loop over
-        # find unique row and the cols that the disater acurrs and modify comsuption after the point
+        # find unique final state and the periods that the diaster occurs and modify consumption after the point
         res = prob_of_survival < disaster
         rows, cols = np.nonzero(res)
         row, count = np.unique(rows, return_counts=True)
@@ -268,7 +268,7 @@ class DamageSimulation(object):
         Returns
         -------
         ndarray 
-            3D-array of simulated damages 
+            3D-array of simulated damages # it should be 2D : self.tree.num_final_states, self.tree.num_periods
 
         Raises
         ------
