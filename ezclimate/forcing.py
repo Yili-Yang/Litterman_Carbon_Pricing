@@ -18,10 +18,10 @@ class Forcing(object):
 		forcing constant 
 	forcing_p3 : float
 		forcing constant
-	absorbtion_p1 : float
-		absorbtion constant
-	absorbtion_p2 : float 
-		absorbtion constant
+	absorption_p1 : float
+		absorption constant
+	absorption_p2 : float
+		absorption constant
 	lsc_p1 : float
 		class constant
 	lsc_p2 : float
@@ -34,8 +34,8 @@ class Forcing(object):
 	forcing_p1 = 0.13173
 	forcing_p2 = 0.607773
 	forcing_p3 = 315.3785
-	absorbtion_p1 = 0.94835
-	absorbtion_p2 = 0.741547
+	absorption_p1 = 0.94835
+	absorption_p2 = 0.741547
 	lsc_p1 = 285.6268
 	lsc_p2 = 0.88414
 
@@ -71,6 +71,7 @@ class Forcing(object):
 
 		"""
 		#for the start state, return 0 for forcing and ghg_start for the ghg_level
+		#call bau to get the ghg level
 		if node == 0:
 			if returning == "forcing":
 				return 0.0
@@ -81,35 +82,39 @@ class Forcing(object):
 		# get the period and the path that the target node are in 
 		period = tree.get_period(node)
 		path = tree.get_path(node, period) 
-		# the dicision time is the time when we make a mitigation, i.e. an array like [15,30,45,70]
+		# the decision time is the time when we make a mitigation, i.e. an array like [15,30,45,70]
 		period_lengths = tree.decision_times[1:period+1] - tree.decision_times[:period]
 		#increments are the number counts of subintervals within a period
 		increments = period_lengths/subinterval_len
 
+		#assign beginning values
 		cum_sink = cls.sink_start
 		cum_forcing = cls.forcing_start
 		ghg_level = bau.ghg_start
 
 		for p in range(0, period):
-			#for each period, we calculate the start_emission
+			#for each period, we calculate the start_emission and end_emission from bau.emission_by_decisions
 			#! problem: when will the act takes in to effect? either way, code here should be wrong.
+			#emission_by_decision: the emission level at a decision point
 			start_emission = (1.0 - m[path[p]]) * bau.emission_by_decisions[p] # this is a attr of func: emission_by_step, might needed recode this
-			if p < tree.num_periods-1: 
+			if p < tree.num_periods-1: #if not too late to implement mitigation
 				end_emission = (1.0 - m[path[p]]) * bau.emission_by_decisions[p+1] #if not the final states, the end emission is 
 			else:
-				end_emission = start_emission
+				end_emission = start_emission #emission level remains constant since the second to last period
 			increment = int(increments[p])
+
 			# for each increment in a period, the forcing is affecting ghg_level in the end
 			for i in range(0, increment):
+				#allocate the emission level change across time
 				p_co2_emission = start_emission + i * (end_emission-start_emission) / increment
 				p_co2 = 0.71 * p_co2_emission 
 				p_c = p_co2 / 3.67 
 				add_p_ppm = subinterval_len * p_c / 2.13
 				lsc = cls.lsc_p1 + cls.lsc_p2 * cum_sink
-				absorbtion = 0.5 * cls.absorbtion_p1 * np.sign(ghg_level-lsc) * np.abs(ghg_level-lsc)**cls.absorbtion_p2
-				cum_sink += absorbtion
+				absorption = 0.5 * cls.absorption_p1 * np.sign(ghg_level-lsc) * np.abs(ghg_level-lsc)**cls.absorption_p2
+				cum_sink += absorption
 				cum_forcing += cls.forcing_p1*np.sign(ghg_level-cls.forcing_p3)*np.abs(ghg_level-cls.forcing_p3)**cls.forcing_p2
-				ghg_level += add_p_ppm - absorbtion
+				ghg_level += add_p_ppm - absorption
 
 		if returning == "forcing":
 			return cum_forcing

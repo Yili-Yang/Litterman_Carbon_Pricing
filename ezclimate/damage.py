@@ -72,7 +72,7 @@ class DLWDamage(Damage):
 	d_rcomb : ndarray
 		adjusted simulated damages for recombining tree
 	cum_forcing : ndarray
-		cumulative forcing interpolation coeffiecients, used to calculate forcing based mitigation 
+		cumulative forcing interpolation coefficients, used to calculate forcing based mitigation
 	forcing : `Forcing` object
 		class for calculating cumulative forcing and GHG levels
 	damage_coefs : ndarray
