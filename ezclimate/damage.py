@@ -80,7 +80,7 @@ class DLWDamage(Damage):
 
 	emit_pct: float
 		= 1.0 - (self.ghg_levels-self.bau.ghg_start) / bau_emission
-		the percentage of the emission which is already been done until now
+		the percentage of the cumulative emission up to the beginning of the period
 
 	cum_forcings :???
 
@@ -113,57 +113,75 @@ class DLWDamage(Damage):
 		temp_prob = self.tree.final_states_prob.copy()
 		self.d_rcomb = self.d.copy()
 
-		for old_state in range(self.tree.num_final_states):
+		for old_state in range(self.tree.num_final_states): #look at final states
 			temp = old_state
-			n = nperiods-2
+			n = nperiods-2 #last period before recombining
 			d_class = 0
 			while n >= 0:
-				if temp >= 2**n:
+				if temp >= 2**n: #modify the lower half of all final states
 					temp -= 2**n
 					d_class += 1
 				n -= 1
 			sum_class[d_class] += 1
 			new_state[d_class, sum_class[d_class]-1] = old_state # slicing the np array with the right length and merge the old states in to a new one (states given period is the order of a situation.)
-		
-		sum_nodes = np.append(0, sum_class.cumsum())
-		prob_sum = np.array([self.tree.final_states_prob[sum_nodes[i]:sum_nodes[i+1]].sum() for i in range(len(sum_nodes)-1)]) #sum_class is storing how many situations are in one right now and add their prob. together.
-		for period in range(nperiods):
-			for k in range(self.dnum):
-				d_sum = np.zeros(nperiods)
-				old_state = 0
-				for d_class in range(nperiods): # for each period
-					d_sum[d_class] = (self.tree.final_states_prob[old_state:old_state+sum_class[d_class]] \
-						 			 * self.d_rcomb[k, old_state:old_state+sum_class[d_class], period]).sum()	# it is Prob. * damage, damage is got through slicing the input damage array, summing up damage of the old states.
-					old_state += sum_class[d_class] # moving the starting old state to the next one (first in the next new class)
-					self.tree.final_states_prob[new_state[d_class, 0:sum_class[d_class]]] = temp_prob[0] #update final_states_prob with the summed prob.
-				for d_class in range(nperiods):	
-					self.d_rcomb[k, new_state[d_class, 0:sum_class[d_class]], period] = d_sum[d_class] / prob_sum[d_class] # for each period, adjust damge with the Prob. ???? why not mutilply prob?
+		'''
+		the new_state for our model should be something like
+		 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15
+		16 17 18 19 20 21 22 23
+		24 25 26 27
+		28 29
+		30
+		31
+		the sum_class should be [16 8 4 2 1 1]
+		'''
+		sum_nodes = np.append(0, sum_class.cumsum())  #array([ 0, 16, 24, 28, 30, 31, 32])
+		prob_sum = np.array([self.tree.final_states_prob[sum_nodes[i]:sum_nodes[i+1]].sum() for i in range(len(sum_nodes)-1)])
+		#prob_sum sums up the probabilities of final states [0-15, 16-23, 24-27, 28-29, 30, 31# ]
 
-		self.tree.node_prob[-len(self.tree.final_states_prob):] = self.tree.final_states_prob #update the prob in the nodes
-		for p in range(1,nperiods-1):
-			nodes = self.tree.get_nodes_in_period(p)
-			for node in range(nodes[0], nodes[1]+1):
+
+		for period in range(nperiods): #look into each period
+			for k in range(self.dnum): #look into each simulated path
+				d_sum = np.zeros(nperiods) #to store sums of simulated damage for sliced states
+				old_state = 0 #look at states by jumps/stages
+				for d_class in range(nperiods): #look into each stage
+					d_sum[d_class] = (self.tree.final_states_prob[old_state:old_state+sum_class[d_class]] \
+						 			 * self.d_rcomb[k, old_state:old_state+sum_class[d_class], period]).sum()
+					# it is Prob. * damage, damage is got through slicing the input damage array, summing up damage of the old states.
+					old_state += sum_class[d_class] # moving the starting old state to the next one (first in the next new class)
+					self.tree.final_states_prob[new_state[d_class, 0:sum_class[d_class]]] = temp_prob[0]
+                    #update final_states_prob with the summed prob.
+
+				for d_class in range(nperiods):	
+					self.d_rcomb[k, new_state[d_class, 0:sum_class[d_class]], period] = d_sum[d_class] / prob_sum[d_class]
+                # find the probability-weighted average damage
+
+		self.tree.node_prob[-len(self.tree.final_states_prob):] = self.tree.final_states_prob #update the prob corresponding to the final nodes
+		for p in range(1,nperiods-1): #look into intermediate periods
+			nodes = self.tree.get_nodes_in_period(p) #the first and last node for the period
+			for node in range(nodes[0], nodes[1]+1): #look into all the nodes for the period
 				worst_end_state, best_end_state = self.tree.reachable_end_states(node, period=p)
-				self.tree.node_prob[node] = self.tree.final_states_prob[worst_end_state:best_end_state+1].sum() #update the final nodes's prob using the new final_states_prob (always end with storing in the nodes)
+				self.tree.node_prob[node] = self.tree.final_states_prob[worst_end_state:best_end_state+1].sum()
+            #update the nodes's prob using the new final_states_prob (always end with storing in the nodes)
 
 	def _damage_interpolation(self):
-		"""Create the interpolation coeffiecients used in `damage_function`."""
+		"""Create the interpolation coefficients used in `damage_function`."""
 		if self.d is None:
 			print("Importing stored damage simulation")
 			self.import_damages()
 
-		self._recombine_nodes() #init emit_pct
+		self._recombine_nodes()
+        #init emit_pct
 		if self.emit_pct is None:
 			bau_emission = self.bau.ghg_end - self.bau.ghg_start
-			self.emit_pct = 1.0 - (self.ghg_levels-self.bau.ghg_start) / bau_emission
+			self.emit_pct = 1.0 - (self.ghg_levels-self.bau.ghg_start) / bau_emission #percentage of the past emission
 		
 		self.damage_coefs = np.zeros((self.tree.num_final_states, self.tree.num_periods, self.dnum-1, self.dnum))
 		amat = np.ones((self.tree.num_periods, self.dnum, self.dnum))
-		bmat = np.ones((self.tree.num_periods, self.dnum))
+		bmat = np.ones((self.tree.num_periods, self.dnum)) #period vs simulation
 
 		self.damage_coefs[:, :, -1,  -1] = self.d_rcomb[-1, :, :] # d_romb's index is [path_index,the numbers in the class, period]
-		# emit_pct is a array contains the percentage of the emission which is already been done until now(relevent to ghg_level array)
 		self.damage_coefs[:, :, -1,  -2] = (self.d_rcomb[-2, :, :] - self.d_rcomb[-1, :, :]) / self.emit_pct[-2]
+        #difference in simulation outcomes/cumulative emission
 
 		amat[:, 0, 0] = 2.0 * self.emit_pct[-2]
 		amat[:, 1:, 0] = self.emit_pct[:-1]**2
@@ -199,7 +217,8 @@ class DLWDamage(Damage):
 			sys.exit(0)
 
 		n = self.tree.num_final_states	
-		self.d = np.array([d[n*i:n*(i+1)] for i in range(0, self.dnum)]) # for every simulated damage, d is an array that stores the damage for one tree: array[[tree1 damage],[tree2 damage]]
+		self.d = np.array([d[n*i:n*(i+1)] for i in range(0, self.dnum)])
+        #d is an array with entries being the simulated outcomes for damages in the final states.
 		self._damage_interpolation()
 
 	def damage_simulation(self, draws, peak_temp=9.0, disaster_tail=12.0, tip_on=True, 
@@ -256,11 +275,12 @@ class DLWDamage(Damage):
 			self.emit_pct = 1.0 - (self.ghg_levels-self.bau.ghg_start) / bau_emission
 
 		self.cum_forcings = np.zeros((self.tree.num_periods, self.dnum)) # array like [x,y] contains number of the periods and the path
-		mitigation = np.ones((self.dnum, self.tree.num_decision_nodes)) * self.emit_pct[:, np.newaxis] #mitigaion is indexed with number of path (row) and number of nodes(column), and is the emit_pct
+		mitigation = np.ones((self.dnum, self.tree.num_decision_nodes)) * self.emit_pct[:, np.newaxis]
+        #mitigaion is indexed with number of path (row) and number of nodes(column), and is the emit_pct
 
-		for i in range(0, self.dnum):
+		for i in range(0, self.dnum): #look into each simulation
 			for n in range(1, self.tree.num_periods+1):
-				node = self.tree.get_node(n, 0)
+				node = self.tree.get_node(n, 0) #the node of state 0 in period n
 				self.cum_forcings[n-1, i] = Forcing.forcing_at_node(mitigation[i], node, self.tree,
 																	self.bau, self.subinterval_len) # return the forcing on the node
 
@@ -269,7 +289,7 @@ class DLWDamage(Damage):
 		"""Calculation of mitigation based on forcing up to period. Interpolating between the forcing associated 
 		with the constant degree of mitigation consistent with the damage simulation scenarios.
 		"""
-		# this whole funcion is based on a new theory
+		# this whole function is based on a new theory
 		p = period - 1
 		if forcing > self.cum_forcings[p][1]:
 			weight_on_sim2 = (self.cum_forcings[p][2] - forcing) / (self.cum_forcings[p][2] - self.cum_forcings[p][1])
@@ -285,7 +305,7 @@ class DLWDamage(Damage):
 
 
 	def average_mitigation_node(self, m, node, period=None):
-		"""Calculate the average mitigation until node.
+		"""Calculate the average mitigation up to a given node.
 
 		Parameters
 		----------
@@ -311,13 +331,13 @@ class DLWDamage(Damage):
 		new_m = m[path[:-1]] # mitigation on the path until this node
 	
 		period_len = self.tree.decision_times[1:period+1] - self.tree.decision_times[:period]
-		bau_emissions = self.bau.emission_by_decisions[:period]
-		total_emission = np.dot(bau_emissions, period_len)
+		bau_emissions = self.bau.emission_by_decisions[:period] #emission levels at each decision point
+		total_emission = np.dot(bau_emissions, period_len) #total emission: sum of emissions during each period
 		ave_mitigation = np.dot(new_m, bau_emissions*period_len) # mitigation for a path until node
 		return ave_mitigation / total_emission # average mitigation until node
 
 	def average_mitigation(self, m, period):
-		"""Calculate the average mitigation for all node in a period.
+		"""Calculate the average mitigation for all nodes in a period.
 
 		m : ndarray or list
 			array of mitigation
@@ -330,7 +350,7 @@ class DLWDamage(Damage):
 			average mitigations 
 
 		"""
-		nodes = self.tree.get_num_nodes_period(period)
+		nodes = self.tree.get_num_nodes_period(period) #number of nodes for a given period
 		ave_mitigation = np.zeros(nodes)
 		for i in range(nodes):
 			node = self.tree.get_node(period, i)
