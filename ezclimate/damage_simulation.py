@@ -113,8 +113,8 @@ class DamageSimulation(object):
     def _uniform_array(self, dimension):
         return np.random.random(dimension)
 
-	    def _sort_array(self, array):
-	        return array[array[:, self.tree.num_periods-1].argsort()]
+	def _sort_array(self, array):
+	    return array[array[:, self.tree.num_periods-1].argsort()]
 
     def _normal_simulation(self):
         """Draw random samples from normal distribution for mapping GHG to temperature for 
