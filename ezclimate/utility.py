@@ -163,7 +163,7 @@ class EZUtility(object):
 			period_consumption[period_consumption <= 0.0] = 1e-18
 
 			if not utility_tree.is_decision_period(period):
-				#if not a dicision time
+				#if not a decision time
 				next_consumption = cons_tree.get_next_period_array(period)
 				segment = period - utility_tree.decision_times[damage_period]
 				interval = segment + utility_tree.subinterval_len
@@ -173,7 +173,7 @@ class EZUtility(object):
 						next_cost = cost_tree[period+self.period_len]
 						next_consumption *= (1.0 - np.repeat(period_cost,2)) / (1.0 - next_cost)
 						next_consumption[next_consumption<=0.0] = 1e-18
-				# if the infomation is not gained in next period, the consumption next period is the same to now
+				# if the information is not gained in next period, the consumption next period is the same to now
 				if period < utility_tree.decision_times[-2]:
 					temp_consumption = next_consumption/np.repeat(period_consumption,2)
 					period_consumption = np.sign(temp_consumption)*(np.abs(temp_consumption)**(segment/float(interval))) \
