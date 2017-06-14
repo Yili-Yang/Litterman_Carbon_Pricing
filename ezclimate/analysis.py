@@ -24,7 +24,7 @@ def additional_ghg_emission(m, utility):
 	"""
 	additional_emission = np.zeros(len(m))
 	cache = set()
-	for node in range(utility.tree.num_final_states, len(m)): # the number of final states equal to the sum of previous states
+	for node in range(utility.tree.num_final_states, len(m)):
 		path = utility.tree.get_path(node)
 		for i in range(len(path)):
 			if path[i] not in cache:
@@ -53,7 +53,7 @@ def store_trees(prefix=None, start_year=2015, **kwargs):
 
 def delta_consumption(m, utility, cons_tree, cost_tree, delta_m):
 	"""Calculate the changes in consumption and the mitigation cost component 
-	of consumption when increaseing period 0 mitigiation with `delta_m`.
+	of consumption when increasing period 0 mitigation with `delta_m`.
 
 	Parameters
 	----------
@@ -72,7 +72,7 @@ def delta_consumption(m, utility, cons_tree, cost_tree, delta_m):
 	Returns
 	-------
 	tuple
-		(storage tree of changes in consumption, ndarray of costs in first sub periods, new utility)
+		(storage tree of changes in consumption, ndarray of costs in first sub periods)
 
 	"""
 	m_copy = m.copy()
@@ -111,7 +111,6 @@ def constraint_first_period(utility, first_node, m_size):
 		(new mitigation array, storage tree of changes in consumption, ndarray of costs in first sub periods)
 
 	"""
-	#fix the first period
 	fixed_values = np.array([first_node])
 	fixed_indicies = np.array([0])
 	ga_model = GeneticAlgorithm(pop_amount=150, num_generations=100, cx_prob=0.8, mut_prob=0.5, bound=1.5,
@@ -121,7 +120,7 @@ def constraint_first_period(utility, first_node, m_size):
 	gs_model = GradientSearch(var_nums=m_size, utility=utility, accuracy=1e-7,
 							  iterations=250, fixed_values=fixed_values, fixed_indicies=fixed_indicies, 
 							  print_progress=True)
-	#run opt again
+
 	final_pop, fitness = ga_model.run()
 	sort_pop = final_pop[np.argsort(fitness)][::-1]
 	new_m, new_utility = gs_model.run(initial_point_list=sort_pop, topk=1)
@@ -166,7 +165,7 @@ def find_ir(m, utility, payment, a=0.0, b=1.0):
 
 def find_term_structure(m, utility, payment, a=0.0, b=1.5): 
 	"""Find the price of a bond that creates equal utility at time 0 as adding `payment` to the value of 
-	consumption before the final period. The purpose of this function is to find the interest rate 
+	consumption in the final period. The purpose of this function is to find the interest rate 
 	embedded in the `EZUtility` model. 
 
 	Parameters
@@ -345,10 +344,10 @@ class ClimateOutput(object):
 		self.ghg_levels = self.utility.damage.ghg_level(m)
 
 		for period in range(0, periods):
-			years = tree.decision_times[period]
+			years = tree.decision_times[period] #corresponding year
 			period_years = tree.decision_times[period+1] - tree.decision_times[period]
 			nodes = tree.get_nodes_in_period(period)
-			num_nodes_period = 1 + nodes[1] - nodes[0]
+			num_nodes_period = 1 + nodes[1] - nodes[0] #number of nodes in that year
 			period_lens = tree.decision_times[:period+1] 
 			
 			for node in range(nodes[0], nodes[1]+1):
@@ -476,18 +475,16 @@ class RiskDecomposition(object):
 
 		utility_tree, cons_tree, cost_tree, ce_tree = self.utility.utility(m, return_trees=True)
 		cost_sum = 0
-		# Calculate the changes in consumption and the mitigation cost component of consumption when increaseing period 0 mitigiation with `delta_m`
-		self.delta_cons_tree, self.delta_cost_array, delta_utility = delta_consumption(m, self.utility, cons_tree, cost_tree, 0.01) 
-		# Calculate the marginal utilities
+
+		self.delta_cons_tree, self.delta_cost_array, delta_utility = delta_consumption(m, self.utility, cons_tree, cost_tree, 0.01)
 		mu_0, mu_1, mu_2 = self.utility.marginal_utility(m, utility_tree, cons_tree, cost_tree, ce_tree)
 		sub_len = self.sdf_tree.subinterval_len
 		i = 1
-		# for every period in sdf_tree (except the init point), 
 		for period in self.sdf_tree.periods[1:]:
 			node_period = self.sdf_tree.decision_interval(period)
 			period_probs = self.utility.tree.get_probs_in_period(node_period)
 			expected_damage = np.dot(self.delta_cons_tree[period], period_probs)
-			self.expected_damages[i] = expected_damage # calculate the expected damage (= sigma(cons_increased_per_delta * prob)), not neccessary the damage, more like excess utility
+			self.expected_damages[i] = expected_damage
 			
 			if self.sdf_tree.is_information_period(period-self.sdf_tree.subinterval_len):
 				total_probs = period_probs[::2] + period_probs[1::2]
@@ -501,13 +498,13 @@ class RiskDecomposition(object):
 				period_sdf = self.sdf_tree[period-sub_len]*sdf 
 
 			self.expected_sdf[i] = np.dot(period_sdf, period_probs)
-			self.cross_sdf_damages[i] = np.dot(period_sdf, self.delta_cons_tree[period]*period_probs) # actual utility loss in a period
-			self.cov_term[i] = self.cross_sdf_damages[i] - self.expected_sdf[i]*expected_damage # actual_utility_loss - expecte_price*expected_damage
+			self.cross_sdf_damages[i] = np.dot(period_sdf, self.delta_cons_tree[period]*period_probs)
+			self.cov_term[i] = self.cross_sdf_damages[i] - self.expected_sdf[i]*expected_damage
 
 			self.sdf_tree.set_value(period, period_sdf)
 
 			if i < len(self.delta_cost_array):
-				self.net_discount_damages[i] = -(expected_damage + self.delta_cost_array[i, 1]) * self.expected_sdf[i] / self.delta_cons_tree[0] # price / consumption
+				self.net_discount_damages[i] = -(expected_damage + self.delta_cost_array[i, 1]) * self.expected_sdf[i] / self.delta_cons_tree[0]
 				cost_sum += -self.delta_cost_array[i, 1] * self.expected_sdf[i] / self.delta_cons_tree[0]
 			else:
 				self.net_discount_damages[i] = -expected_damage * self.expected_sdf[i] / self.delta_cons_tree[0]
@@ -578,9 +575,8 @@ class ConstraintAnalysis(object):
 		self.delta_emission_gton = self.opt_m[0]*self.utility.damage.bau.emit_level[0]
 		self.deadweight = self.delta_c*self.utility.cost.cons_per_ton / self.opt_m[0]
 
-		# adjusted benefit when +0.01 to the mitigation level at time zero
 		self.delta_u2 = self._first_period_delta_udiff2()
-		self.marginal_benefit = (self.delta_u2 / self.delta_u) * self.utility.cost.cons_per_ton # cons_per_ton = cons_at_0 / emit_at_0
+		self.marginal_benefit = (self.delta_u2 / self.delta_u) * self.utility.cost.cons_per_ton
 		self.marginal_cost = self.utility.cost.price(0, self.cfp_m[0], 0)
 
 	def _get_optimal_m(self):
@@ -596,7 +592,7 @@ class ConstraintAnalysis(object):
 		return opt_u - cfp_u
 
 	def _delta_consumption(self):
-		return find_bec(self.cfp_m, self.utility, self.con_cost) # value for consumption that equalizes utility at time 0 in two different solutions
+		return find_bec(self.cfp_m, self.utility, self.con_cost)
 
 	def _first_period_delta_udiff(self):
 		u_given_delta_con = self.utility.adjusted_utility(self.cfp_m, first_period_consadj=0.01)
@@ -605,7 +601,7 @@ class ConstraintAnalysis(object):
 
 	def _first_period_delta_udiff2(self):
 		m = self.cfp_m.copy()
-		m[0] += 0.01 # adjusted with a fixed number
+		m[0] += 0.01
 		u = self.utility.utility(m)
 		cfp_u = self.utility.utility(self.cfp_m)
 		return u - cfp_u
