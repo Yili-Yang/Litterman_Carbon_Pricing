@@ -87,9 +87,10 @@ class EZUtility(object):
 
 	def _end_period_utility(self, m, utility_tree, cons_tree, cost_tree):
 		"""Calculate the terminal utility."""
-		period_ave_mitigation = self.damage.average_mitigation(m, self.tree.num_periods) # average_mitigation of all the possibilities in the final period (an array containing all the possible ave_mititgation)
+		period_ave_mitigation = self.damage.average_mitigation(m, self.tree.num_periods)
+		# average_mitigation of all the possibilities in the final period (an array containing all the possible ave_mitigation)
 		period_damage = self.damage.damage_function(m, self.tree.num_periods)
-		damage_nodes = self.tree.get_nodes_in_period(self.tree.num_periods) # average damage from n times of simulations for each node in the final period for each path 
+		damage_nodes = self.tree.get_nodes_in_period(self.tree.num_periods)
 		
 		period_mitigation = m[damage_nodes[0]:damage_nodes[1]+1] #storage space for mitigation level of each nodes in a certain period
 		period_cost = self.cost.cost(self.tree.num_periods, period_mitigation, period_ave_mitigation) # cost for the period
@@ -100,7 +101,8 @@ class EZUtility(object):
 		period_consumption = self.potential_cons[-1] * (1.0 - period_damage)
 		period_consumption[period_consumption<=0.0] = 1e-18
 		cons_tree.set_value(cons_tree.last_period, period_consumption) # set the value of consumption for the final states
-		utility_tree.set_value(utility_tree.last_period, (1.0 - self.b)**(1.0/self.r) * cons_tree.last * continuation) # set the value for the last period (final states)
+		utility_tree.set_value(utility_tree.last_period, (1.0 - self.b)**(1.0/self.r) * cons_tree.last * continuation)
+		# set the value for the last period (final states)
 
 	def _end_period_marginal_utility(self, mu_tree_0, mu_tree_1, ce_tree, utility_tree, cons_tree):
 		"""Calculate the terminal marginal utility."""
@@ -144,7 +146,7 @@ class EZUtility(object):
 
 	def _utility_generator(self, m, utility_tree, cons_tree, cost_tree, ce_tree, cons_adj=0.0):
 		"""Generator for calculating utility for each utility period besides the terminal utility."""
-		# there are two kinds of periods: make dicision/not make dicision.
+		# there are two kinds of periods: make decision/not make decision.
 		periods = utility_tree.periods[::-1]
 
 		for period in periods[1:]:

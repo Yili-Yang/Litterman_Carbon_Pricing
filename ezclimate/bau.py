@@ -121,13 +121,6 @@ class DLWBusinessAsUsual(BusinessAsUsual):
             provides the tree structure used
 
         """
-        num_periods = tree.num_periods
-        self.emission_by_decisions = np.zeros(num_periods)
-        self.emission_per_period = np.zeros(num_periods)
-        self.bau_path = np.zeros(num_periods)
-        self.bau_path[0] = self.ghg_start
-        self.emission_by_decisions[0] = self.emission_by_time(tree.decision_times[0])
-        period_len = tree.decision_times[1:] - tree.decision_times[:-1]
 
         num_periods = tree.num_periods
         self.emission_by_decisions = np.zeros(num_periods)
