@@ -54,6 +54,8 @@ class DLWDamage(Damage):
 		constant consumption growth rate
 	ghg_levels : ndarray or list
 		end GHG levels for each end scenario
+	subinterval_len: float
+	 	represents the length of a typical sub-interval.
 
 	Attributes
 	----------
@@ -66,7 +68,7 @@ class DLWDamage(Damage):
 	ghg_levels : ndarray or list
 		end GHG levels for each end scenario
 	dnum : int 
-		number of simulated damage paths
+		number of simulated damage scenarios
 	d : ndarray
 		simulated damages
 	d_rcomb : ndarray
@@ -78,9 +80,8 @@ class DLWDamage(Damage):
 	damage_coefs : ndarray
 		interpolation coefficients used to calculate damages
 
-	emit_pct: float
+	emit_pct: float? shouldn't it be an array?
 		= 1.0 - (self.ghg_levels-self.bau.ghg_start) / bau_emission
-		the percentage of the cumulative emission up to the beginning of the period
 
 	cum_forcings :???
 
@@ -126,40 +127,44 @@ class DLWDamage(Damage):
 			new_state[d_class, sum_class[d_class]-1] = old_state # slicing the np array with the right length and merge the old states in to a new one (states given period is the order of a situation.)
 		'''
 		the new_state for our model should be something like
-		 0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15
-		16 17 18 19 20 21 22 23
-		24 25 26 27
-		28 29
-		30
-		31
-		the sum_class should be [16 8 4 2 1 1]
+		 0
+		 1  2  4  8  16
+		 3  5  6  9  10 12 17 18 20 24
+		 7 11  13  14 19 21 22 25 26 28
+		 15 23 27 29 30
+		 31
+		the sum_class should be [1 5 10 10 5 1]
 		'''
-		sum_nodes = np.append(0, sum_class.cumsum())  #array([ 0, 16, 24, 28, 30, 31, 32])
+		sum_nodes = np.append(0, sum_class.cumsum())
 		prob_sum = np.array([self.tree.final_states_prob[sum_nodes[i]:sum_nodes[i+1]].sum() for i in range(len(sum_nodes)-1)])
-		#prob_sum sums up the probabilities of final states [0-15, 16-23, 24-27, 28-29, 30, 31# ]
 
+		'''
+		sum_nodes: [ 0, 16, 24, 28, 30, 31, 32]
+		prob_sum: sums up the probabilities of final states [0-15, 16-23, 24-27, 28-29, 30, 31]
+		'''
 
 		for period in range(nperiods): #look into each period
-			for k in range(self.dnum): #look into each simulated path
-				d_sum = np.zeros(nperiods) #to store sums of simulated damage for sliced states
-				old_state = 0 #look at states by jumps/stages
-				for d_class in range(nperiods): #look into each stage
+			for k in range(self.dnum): #look into each simulated scenario
+				d_sum = np.zeros(nperiods)  #store the probability-weighted sum of the simulated damage for each category
+				old_state = 0 #direct to the first node in the signal the category set
+				for d_class in range(nperiods): #look into each category
 					d_sum[d_class] = (self.tree.final_states_prob[old_state:old_state+sum_class[d_class]] \
 						 			 * self.d_rcomb[k, old_state:old_state+sum_class[d_class], period]).sum()
-					# it is Prob. * damage, damage is got through slicing the input damage array, summing up damage of the old states.
-					old_state += sum_class[d_class] # moving the starting old state to the next one (first in the next new class)
-					self.tree.final_states_prob[new_state[d_class, 0:sum_class[d_class]]] = temp_prob[0]
-                    #update final_states_prob with the summed prob.
 
-				for d_class in range(nperiods):	
-					self.d_rcomb[k, new_state[d_class, 0:sum_class[d_class]], period] = d_sum[d_class] / prob_sum[d_class]
-                # find the probability-weighted average damage
+					old_state += sum_class[d_class] # moving to the next category set
+					self.tree.final_states_prob[new_state[d_class, 0:sum_class[d_class]]] = temp_prob[0] #same probability for the final states
 
-		self.tree.node_prob[-len(self.tree.final_states_prob):] = self.tree.final_states_prob #update the prob corresponding to the final nodes
+                for d_class in range(nperiods):
+                    self.d_rcomb[k, new_state[d_class, 0:sum_class[d_class]], period] = d_sum[d_class] / prob_sum[d_class]
+                    # find the probability-weighted average damage
+
+###?
+        self.tree.node_prob[-len(self.tree.final_states_prob):] = self.tree.final_states_prob
+    #update the prob corresponding to the final nodes
 		for p in range(1,nperiods-1): #look into intermediate periods
 			nodes = self.tree.get_nodes_in_period(p) #the first and last node for the period
 			for node in range(nodes[0], nodes[1]+1): #look into all the nodes for the period
-				worst_end_state, best_end_state = self.tree.reachable_end_states(node, period=p)
+				worst_end_state, best_end_state = self.tree.reachable_end_states(node, period=p) #determine reachable final states
 				self.tree.node_prob[node] = self.tree.final_states_prob[worst_end_state:best_end_state+1].sum()
             #update the nodes's prob using the new final_states_prob (always end with storing in the nodes)
 
@@ -173,11 +178,11 @@ class DLWDamage(Damage):
         #init emit_pct
 		if self.emit_pct is None:
 			bau_emission = self.bau.ghg_end - self.bau.ghg_start
-			self.emit_pct = 1.0 - (self.ghg_levels-self.bau.ghg_start) / bau_emission #percentage of the past emission
+			self.emit_pct = 1.0 - (self.ghg_levels-self.bau.ghg_start) / bau_emission
 		
 		self.damage_coefs = np.zeros((self.tree.num_final_states, self.tree.num_periods, self.dnum-1, self.dnum))
 		amat = np.ones((self.tree.num_periods, self.dnum, self.dnum))
-		bmat = np.ones((self.tree.num_periods, self.dnum)) #period vs simulation
+		bmat = np.ones((self.tree.num_periods, self.dnum))
 
 		self.damage_coefs[:, :, -1,  -1] = self.d_rcomb[-1, :, :] # d_romb's index is [path_index,the numbers in the class, period]
 		self.damage_coefs[:, :, -1,  -2] = (self.d_rcomb[-2, :, :] - self.d_rcomb[-1, :, :]) / self.emit_pct[-2]
@@ -245,7 +250,7 @@ class DLWDamage(Damage):
 		temp_dist_params : ndarray or list, optional
 			if temp_map is either 3 or 4, user needs to define the distribution parameters
 		maxh : float, optional
-			time paramter from Pindyck which indicates the time it takes for temp to get half 
+			time parameter from Pindyck which indicates the time it takes for temp to get half
 		        way to its max value for a given level of ghg
 		cons_growth : float, optional 
 			yearly growth in consumption
@@ -258,7 +263,7 @@ class DLWDamage(Damage):
 			simulated damages
 
 		"""
-		# get simulated damage from damge-simulation.py 
+		# get simulated damage from damage-simulation.py
 		ds = DamageSimulation(tree=self.tree, ghg_levels=self.ghg_levels, peak_temp=peak_temp,
 					disaster_tail=disaster_tail, tip_on=tip_on, temp_map=temp_map, 
 					temp_dist_params=temp_dist_params, maxh=maxh, cons_growth=self.cons_growth)
@@ -410,7 +415,7 @@ class DLWDamage(Damage):
 			GHG levels 
 
 		"""
-		#create stroage space for ghg_level for every possible states
+		#create storage space for ghg_level for every possible states
 		if periods is None:
 			periods = self.tree.num_periods-1
 		if periods >= self.tree.num_periods:
