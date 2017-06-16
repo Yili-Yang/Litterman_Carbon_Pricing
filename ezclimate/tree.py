@@ -92,7 +92,7 @@ class TreeModel(object):
         >>> t.get_num_nodes_period(2)
         4
         >>> t.get_num_nodes_period(5)
-        32
+        324
 
         """
         if period >= self.num_periods:
