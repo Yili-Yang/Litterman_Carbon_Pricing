@@ -137,6 +137,12 @@ class DamageSimulation(object):
         n = len(k)
         return np.array([self._gamma_array(k[i], theta[i], self.draws) 
                          + displace[i] for i in range(0, n)])
+    def _generate_parameter(mean,variance,times):
+        para_list = list()
+        for i in range(times):
+            _temp = numpy.random.normal(mean,variance)
+            para_list.append(_temp)
+            return para_list
 
     def _pindyck_simulation(self):
         """Draw random samples for mapping GHG to temperature based on Pindyck. The `pindyck_impact_k` 
