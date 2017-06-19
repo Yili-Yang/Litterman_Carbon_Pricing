@@ -116,10 +116,10 @@ class DLWDamage(Damage):
 
 		for old_state in range(self.tree.num_final_states): #look at final states
 			temp = old_state
-			n = nperiods-2 #last period before recombining
+			n = nperiods-2
 			d_class = 0
 			while n >= 0:
-				if temp >= 2**n: #modify the lower half of all final states
+				if temp >= 2**n:
 					temp -= 2**n
 					d_class += 1
 				n -= 1
@@ -139,8 +139,8 @@ class DLWDamage(Damage):
 		prob_sum = np.array([self.tree.final_states_prob[sum_nodes[i]:sum_nodes[i+1]].sum() for i in range(len(sum_nodes)-1)])
 
 		'''
-		sum_nodes: [ 0, 16, 24, 28, 30, 31, 32]
-		prob_sum: sums up the probabilities of final states [0-15, 16-23, 24-27, 28-29, 30, 31]
+		sum_nodes: [ 0, 1, 6, 16, 26, 31, 32]
+		prob_sum: sums up the probabilities of final states
 		'''
 
 		for period in range(nperiods): #look into each period
@@ -198,7 +198,7 @@ class DLWDamage(Damage):
 			bmat[:, 1:] = self.d_rcomb[:-1, state, :].T #?
 			self.damage_coefs[state, :, 0] = np.linalg.solve(amat, bmat)
 
-	def import_damages(self, file_name="simulated_damages"):
+	def import_damages(self, file_name="simulated_damages"): #documented
 		"""Import saved simulated damages. File must be saved in 'data' directory
 		inside current working directory. Save imported values in `d`. 
 
@@ -227,7 +227,7 @@ class DLWDamage(Damage):
 		self._damage_interpolation()
 
 	def damage_simulation(self, draws, peak_temp=9.0, disaster_tail=12.0, tip_on=True, 
-		temp_map=1, temp_dist_params=None, maxh=100.0, save_simulation=True):
+		temp_map=1, temp_dist_params=None, maxh=100.0, save_simulation=True): #documented
 		"""Initializion and simulation of damages, given by :mod:`ez_climate.DamageSimulation`.
 
 		Parameters
@@ -309,7 +309,7 @@ class DLWDamage(Damage):
 		return weight_on_sim2 * self.emit_pct[1] + weight_on_sim3*self.emit_pct[0]
 
 
-	def average_mitigation_node(self, m, node, period=None):
+	def average_mitigation_node(self, m, node, period=None): #documented
 		"""Calculate the average mitigation up to a given node.
 
 		Parameters
@@ -341,7 +341,7 @@ class DLWDamage(Damage):
 		ave_mitigation = np.dot(new_m, bau_emissions*period_len) # mitigation for a path until node
 		return ave_mitigation / total_emission # average mitigation until node
 
-	def average_mitigation(self, m, period):
+	def average_mitigation(self, m, period): #documented
 		"""Calculate the average mitigation for all nodes in a period.
 
 		m : ndarray or list
@@ -362,10 +362,10 @@ class DLWDamage(Damage):
 			ave_mitigation[i] = self.average_mitigation_node(m, node, period)
 		return ave_mitigation
 
-	def _ghg_level_node(self, m, node):
+	def _ghg_level_node(self, m, node): #documented
 		return Forcing.ghg_level_at_node(m, node, self.tree, self.bau, self.subinterval_len)
 
-	def ghg_level_period(self, m, period=None, nodes=None):
+	def ghg_level_period(self, m, period=None, nodes=None): #documented
 		"""Calculate the GHG levels corresponding to the given mitigation.
 		Need to provide either `period` or `nodes`.
 
@@ -399,7 +399,7 @@ class DLWDamage(Damage):
 			ghg_level[i] = self._ghg_level_node(m, nodes[i])
 		return ghg_level
 
-	def ghg_level(self, m, periods=None):
+	def ghg_level(self, m, periods=None): #documented
 		"""Calculate the GHG levels for more than one period.
 
 		Parameters
