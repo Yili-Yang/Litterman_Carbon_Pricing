@@ -1,5 +1,12 @@
 # -*- coding: utf-8 -*-
 """
+Created on Tue Jun 20 10:26:46 2017
+
+@author: matlabyy
+"""
+
+# -*- coding: utf-8 -*-
+"""
 Created on Fri Jun 16 15:16:44 2017
 
 @author: Ted Yang
@@ -9,7 +16,7 @@ import datetime as dt
 from tree import TreeModel
 from bau import DLWBusinessAsUsual
 from cost import DLWCost
-from damage import DLWDamage
+from damage_Yili import DLWDamage
 from utility import EZUtility
 from optimization import GeneticAlgorithm, GradientSearch
 import numpy as np
@@ -52,7 +59,7 @@ def base_case():
     for i in range(len(time_list)-1):
         i+=1
         result_time_list.append(time_list[i]-time_list[i-1])
-    return time_list, c.price(0, m_opt[0], 0)
+    return result_time_list,df.parameter_list, c.price(0, m_opt[0], 0)
 if __name__ == "__main__":
     x= base_case()
     print(x)
