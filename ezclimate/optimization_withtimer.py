@@ -534,7 +534,7 @@ class GradientSearch(object) :
 			decreaset_end=dt.datetime.now()
 			decreaset_start = dt.timedelta(hours=decreaset_start.hour, minutes=decreaset_start.minute, seconds=decreaset_start.second, microseconds=decreaset_start.microsecond)
 			decreaset_end = dt.timedelta(hours=decreaset_end.hour, minutes=decreaset_end.minute, seconds=decreaset_end.second, microseconds=decreaset_end.microsecond)
-			decrease_time = (decreaset_start-decreaset_end).total_seconds()
+			decrease_time = (decreaset_end-decreaset_start).total_seconds()
 			decrease_time_list.append(decrease_time)
 		if return_last:
 			return x_hist[i+1], u_hist[i+1]
