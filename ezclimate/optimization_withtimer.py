@@ -359,7 +359,7 @@ class GeneticAlgorithm(object):
 		fitness = pool.map(self._evaluate, pop)
 		fitness = np.array([val[0] for val in fitness])
 
-		return pop, fitness,np.array(generate_time_list).mean(),np.arrray(evaluate_time_list).mean()
+		return pop, fitness,np.array(generate_time_list).mean(),np.array(evaluate_time_list).mean()
 
 
 class GradientSearch(object) :
