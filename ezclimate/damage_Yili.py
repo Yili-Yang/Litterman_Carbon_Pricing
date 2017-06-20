@@ -3,7 +3,7 @@ import numpy as np
 from abc import ABCMeta, abstractmethod
 from Damage_Simulation_Yili import DamageSimulation
 from forcing import Forcing
-
+#-*- coding: utf-8 -*-
 class Damage(object):
 	"""Abstract damage class for the EZ-Climate model.
 
@@ -85,8 +85,7 @@ class DLWDamage(Damage):
 
 	cum_forcings :???
 	
-	parameter_list： list of 3 lists:
-		storing the simulated parameter from the nomal distribution for pindyck method.
+	parameter_list: list of 3 lists, storing the simulated parameter from the nomal distribution for pindyck method.
 
 	"""
 

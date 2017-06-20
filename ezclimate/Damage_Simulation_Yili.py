@@ -162,10 +162,12 @@ class DamageSimulation(object):
             b450 = np.random.normal(0.6,0.005)
             b650 = np.random.normal(0.63,0.005)
             b1000 = np.random.normal(0.67,0.0067)
+            return [b450,b650,b1000]
         def draw_theta():
             t450 = np.random.normal(-0.25,0.0417)
             t650 = np.random.normal(-0.5,0.0417)
             t1000 = np.random.normal(-0.9,0.0667)  
+            return [t450,t650,t1000]
         draw_func_list = [draw_alpha,draw_beta,draw_theta]
         # make sure that the probabilities of temperature increase by a given number is higher or a larger GHG level
         temp_list =[[],[],[]]

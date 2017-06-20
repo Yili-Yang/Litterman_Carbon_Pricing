@@ -38,7 +38,7 @@ def base_case():
     time_list.append(dt.datetime.time(dt.datetime.now()))
     df = DLWDamage(tree=t, bau=bau_default_model, cons_growth=0.015, ghg_levels=[450, 650, 1000], subinterval_len=5)    
     df.damage_simulation(draws=4000000, peak_temp=6.0, disaster_tail=18.0, tip_on=True, 
-							 temp_map=1, temp_dist_params=None, maxh=100.0,change=[1,1,1])
+							 temp_map=0, temp_dist_params=None, maxh=100.0,change=[1,1,1])
     print('End damage',dt.datetime.time(dt.datetime.now()))
     time_list.append(dt.datetime.time(dt.datetime.now()))
     u = EZUtility(tree=t, damage=df, cost=c, period_len=5.0, eis=0.9, ra=7.0, time_pref=0.005)
