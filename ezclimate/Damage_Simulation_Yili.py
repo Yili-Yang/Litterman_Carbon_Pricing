@@ -170,11 +170,11 @@ class DamageSimulation(object):
         # make sure that the probabilities of temperature increase by a given number is higher or a larger GHG level
         temp_list =[[],[],[]]
         for i in range(2):
-            if change[i]= 1:
+            if change[i]== 1:
                 temp_list[i] = draw_func_list[i]()
                 while temp_list[0] >= temp_list[1] or  temp_list[1] >= temp_list[2]:
                     temp_list = draw_alpha()
-        if change[2] = 1:
+        if change[2] == 1:
             temp_list = draw_func_list[2]()
             while temp_list[0] <= temp_list[1] or  temp_list[1] <= temp_list[2]:
                 temp_list = draw_alpha()
