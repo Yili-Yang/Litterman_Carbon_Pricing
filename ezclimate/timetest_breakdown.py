@@ -48,10 +48,14 @@ def base_case():
     print("SCC: ", c.price(0, m_opt[0], 0))
     print('End opt/End',dt.datetime.time(dt.datetime.now()))
     time_list.append(dt.datetime.time(dt.datetime.now()))
-    result_time_list =[0]
-    for i in range(len(time_list)-1):
+    result_time_list =[dt.timedelta(0,0,0,0)]
+    #change dt.time to dt.timedelta so that it can be added or minused
+    temp_list =list()
+    for x in time_list:
+        temp_list.append( dt.timedelta(hours=x.hour, minutes=x.minute, seconds=x.second, microseconds=x.microsecond))
+    for i in range(len(temp_list)-1):
         i+=1
-        result_time_list.append(time_list[i]-time_list[i-1])
+        result_time_list.append(temp_list[i]-temp_list[i-1])
     return result_time_list, c.price(0, m_opt[0], 0), descent_time_list,generate_time,evaluate_time
 if __name__ == "__main__":
     x= base_case()

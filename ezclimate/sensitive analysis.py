@@ -55,7 +55,7 @@ def base_case():
     print("SCC: ", c.price(0, m_opt[0], 0))
     print('End opt/End',dt.datetime.time(dt.datetime.now()))
     time_list.append(dt.datetime.time(dt.datetime.now()))
-    result_time_list =[0]
+    result_time_list =[dt.timedelta(0,0,0,0)]
     #change dt.time to dt.timedelta so that it can be added or minused
     temp_list =list()
     for x in time_list:
