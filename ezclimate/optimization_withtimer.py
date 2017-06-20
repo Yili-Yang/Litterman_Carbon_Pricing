@@ -302,8 +302,10 @@ class GeneticAlgorithm(object):
 		Returns
 		-------
 		tuple
-			final population and the fitness for the final population
-
+			final population, 
+			the fitness for the final population,
+			generate_time, mean time of generate the next pop
+			evaluate_time, mean time of evaluate the fitness of a pop.
 		Note
 		----
 		Uses the :mod:`~multiprocessing` package.
@@ -315,6 +317,8 @@ class GeneticAlgorithm(object):
 		fitness = pool.map(self._evaluate, pop) # how do we know pop[i] belongs to fitness[i]?
 		fitness = np.array([val[0] for val in fitness])
 		u_hist = np.zeros(self.num_gen) # not been used ...
+		generate_time_list = list()
+		evaluate_time_list =list()
 		for g in range(0, self.num_gen):
 			print ("-- Generation {} --".format(g+1))
 			pop_select = self._select(np.copy(pop), rate=1)
@@ -330,9 +334,16 @@ class GeneticAlgorithm(object):
 			fitness_tmp = np.append(fitness, fitness_select, axis=0)
 
 			pop_survive, fitness_survive = self._survive(pop_tmp, fitness_tmp)
-
+			gt_start = dt.datetime.now()
 			pop_new = self._generate_population(self.pop_amount - len(pop_survive))
+			gt_end = dt.datetime.now()
+			generate_time = (gt_end-gt_start).total_seconds()
+			generate_time_list.append(generate_time)
+			et_start = dt.datetime.now()
 			fitness_new = pool.map(self._evaluate, pop_new)
+			et_end = dt.datetime.now()
+			evaluate_time = (et_end-et_start).total_seconds()
+			evaluate_time_list.append(evaluate_time)
 			fitness_new = np.array([val[0] for val in fitness_new])
 
 			pop = np.append(pop_survive, pop_new, axis=0)
@@ -343,7 +354,8 @@ class GeneticAlgorithm(object):
 
 		fitness = pool.map(self._evaluate, pop)
 		fitness = np.array([val[0] for val in fitness])
-		return pop, fitness
+
+		return pop, fitness,np.array(generate_time_list).mean(),np.arrray(evaluate_time_list).mean()
 
 
 class GradientSearch(object) :
@@ -553,15 +565,20 @@ class GradientSearch(object) :
 		candidate_points = initial_point_list[:topk]
 		mitigations = []
 		utilities = np.zeros(topk)
+		descent_time_list=list()
 		for cp, count in zip(candidate_points, range(topk)):
 			if not isinstance(cp, np.ndarray):
 				cp = np.array(cp)
 			print("Starting process {} of Gradient Descent".format(count+1))
+			dt_start = dt.datetime.now()
 			m, u  = self.gradient_descent(cp)
+			dt_end = dt.datetime.now()
+			descent_time = (dt_end-dt_start).total_seconds()
+			descent_time_list.append(descent_time)
 			mitigations.append(m)
 			utilities[count] = u
 		best_index = np.argmax(utilities)
-		return mitigations[best_index], utilities[best_index]
+		return mitigations[best_index], utilities[best_index],descent_time_list
 
 
 class CoordinateDescent(object):

@@ -11,7 +11,7 @@ from bau import DLWBusinessAsUsual
 from cost import DLWCost
 from damage import DLWDamage
 from utility import EZUtility
-from optimization import GeneticAlgorithm, GradientSearch
+from optimization_withtimer import GeneticAlgorithm, GradientSearch
 import numpy as np
 
 def base_case():
@@ -41,9 +41,9 @@ def base_case():
 	                            bound=1.5, num_feature=63, utility=u, print_progress=True) 
     gs_model = GradientSearch(var_nums=63, utility=u, accuracy=1e-8, 
 	                          iterations=200, print_progress=True)
-    final_pop, fitness = ga_model.run()
+    final_pop, fitness, generate_time,evaluate_time= ga_model.run()
     sort_pop = final_pop[np.argsort(fitness)][::-1]
-    m_opt, u_opt = gs_model.run(initial_point_list=sort_pop, topk=1)
+    m_opt, u_opt, descent_time_list= gs_model.run(initial_point_list=sort_pop, topk=1)
 
     print("SCC: ", c.price(0, m_opt[0], 0))
     print('End opt/End',dt.datetime.time(dt.datetime.now()))
@@ -52,7 +52,7 @@ def base_case():
     for i in range(len(time_list)-1):
         i+=1
         result_time_list.append(time_list[i]-time_list[i-1])
-    return time_list, c.price(0, m_opt[0], 0)
+    return result_time_list, c.price(0, m_opt[0], 0), descent_time_list,generate_time,evaluate_time
 if __name__ == "__main__":
     x= base_case()
     print(x)
