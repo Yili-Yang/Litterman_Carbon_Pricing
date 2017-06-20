@@ -13,6 +13,7 @@ from damage import DLWDamage
 from utility import EZUtility
 from optimization_withtimer import GeneticAlgorithm, GradientSearch
 import numpy as np
+import pickle
 
 def base_case():
     time_list =list()
@@ -60,3 +61,5 @@ def base_case():
 if __name__ == "__main__":
     x= base_case()
     print(x)
+    with open('time_break_down.pkl','wb') as output:
+    	pickle.dump(x,output)
