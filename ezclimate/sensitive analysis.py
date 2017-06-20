@@ -58,7 +58,7 @@ def base_case():
     result_time_list =[0]
     #change dt.time to dt.timedelta so that it can be added or minused
     for x in time_list:
-        x = datetime.timedelta(hours=x.hour, minutes=x.minute, seconds=x.second, microseconds=x.microsecond)
+        x = dt.timedelta(hours=x.hour, minutes=x.minute, seconds=x.second, microseconds=x.microsecond)
     for i in range(len(time_list)-1):
         i+=1
         result_time_list.append(time_list[i]-time_list[i-1])
