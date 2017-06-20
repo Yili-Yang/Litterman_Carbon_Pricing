@@ -174,11 +174,11 @@ class DamageSimulation(object):
         for i in range(2):
             if change[i]== 1:
                 temp_list[i] = draw_func_list[i]()
-                while temp_list[0] >= temp_list[1] or  temp_list[1] >= temp_list[2]:
-                    temp_list[i] = draw_fun_list[i]
+                while temp_list[i][0] >= temp_list[i][1] or  temp_list[i][1] >= temp_list[i][2]:
+                    temp_list[i] = draw_func_list[i]
         if change[2] == 1:
-            temp_list = draw_func_list[2]()
-            while temp_list[0] <= temp_list[1] or  temp_list[1] <= temp_list[2]:
+            temp_list[2] = draw_func_list[2]()
+            while temp_list[2][0] <= temp_list[2][1] or  temp_list[2][1] <= temp_list[2][2]:
                 temp_list[2] = draw_theta()
         # default parameters
         pindyck_temp_k = [2.81, 4.6134, 6.14]
