@@ -154,12 +154,11 @@ class DLWDamage(Damage):
 					old_state += sum_class[d_class] # moving to the next category set
 					self.tree.final_states_prob[new_state[d_class, 0:sum_class[d_class]]] = temp_prob[0] #same probability for the final states
 
-                for d_class in range(nperiods):
-                    self.d_rcomb[k, new_state[d_class, 0:sum_class[d_class]], period] = d_sum[d_class] / prob_sum[d_class]
+				for d_class in range(nperiods):
+					self.d_rcomb[k, new_state[d_class, 0:sum_class[d_class]], period] = d_sum[d_class] / prob_sum[d_class]
                     # find the probability-weighted average damage
 
-###?
-        self.tree.node_prob[-len(self.tree.final_states_prob):] = self.tree.final_states_prob
+		self.tree.node_prob[-len(self.tree.final_states_prob):] = self.tree.final_states_prob
     #update the prob corresponding to the final nodes
 		for p in range(1,nperiods-1): #look into intermediate periods
 			nodes = self.tree.get_nodes_in_period(p) #the first and last node for the period
