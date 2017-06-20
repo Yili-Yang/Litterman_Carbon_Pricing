@@ -62,7 +62,7 @@ def base_case():
         temp_list.append( dt.timedelta(hours=x.hour, minutes=x.minute, seconds=x.second, microseconds=x.microsecond))
     for i in range(len(temp_list)-1):
         i+=1
-        result_time_list.append(temp_list[i]-temp_list[i-1])
+        result_time_list.append((temp_list[i]-temp_list[i-1]).total_seconds())
     return result_time_list,df.parameter_list, c.price(0, m_opt[0], 0)
 if __name__ == "__main__":
     count =0
