@@ -20,7 +20,7 @@ from damage_Yili import DLWDamage
 from utility import EZUtility
 from optimization import GeneticAlgorithm, GradientSearch
 import numpy as np
-
+import pickle
 def base_case():
     time_list =list()
     print('Start',dt.datetime.time(dt.datetime.now()))
@@ -61,5 +61,12 @@ def base_case():
         result_time_list.append(time_list[i]-time_list[i-1])
     return result_time_list,df.parameter_list, c.price(0, m_opt[0], 0)
 if __name__ == "__main__":
-    x= base_case()
-    print(x)
+    count =0
+    result_list = list()
+    while count <10:
+        x= base_case()
+        result_list.append(x)
+        count +=1
+    with open('sensitive_analysis.pkl','wb') as f:
+        pickle.dump(result_list,f)
+        
