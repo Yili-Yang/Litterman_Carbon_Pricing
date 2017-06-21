@@ -48,7 +48,7 @@ class BaseStorageTree(object):
          90.0: array([ 0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.]),
          95.0: array([ 0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.]),
          100.0: array([ 0.,  0.,  0.,  0.,  0.,  0.,  0.,  0.])}
-        it only split when hitting the "can make dicision time" (elements in the information_times attr)
+        it only split when hitting the "can make decision time" (elements in the information_times attr)
         
 	"""
 	__metaclass__ = ABCMeta
@@ -207,7 +207,7 @@ class BaseStorageTree(object):
 		+------------+------------+-----------+
 		|    Year    |    Node 	  |  header   |
 		+============+============+===========+
-		| start_year |     0	      |   val0    |
+		| start_year |     0	  |   val0    |
 		+------------+------------+-----------+
 		|     ..     |	   .. 	  |    ..     |
 		+------------+------------+-----------+
@@ -464,9 +464,9 @@ class BigStorageTree(BaseStorageTree):
 		>>> bst = BigStorageTree(5, [0, 15, 45, 85, 185, 285, 385])
 		>>> bst.decision_interval(5)
 		1
-		>>> bst.between_decision_times(15)
+		>>> bst.decision_interval(15)
 		1
-		>>> bst.between_decision_times(20)
+		>>> bst.decision_interval(20)
 		2
 
 		"""
