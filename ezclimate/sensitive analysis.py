@@ -67,12 +67,12 @@ def base_case():
 if __name__ == "__main__":
     count =0
     result_list = list()
-    while count <1:
+    while count <30:
         x= base_case()
         result_list.append(x)
         count +=1
-    with open('sensitive_analysis.pkl','wb') as f:
+    with open('sensitive_analysis_30.pkl','wb') as f:
         pickle.dump(result_list,f)
-    with open('sensitive_analysis.pkl','rb') as inputs:
-        re = pickle.load(inputs)
-    print(re)
+#    with open('sensitive_analysis.pkl','rb') as inputs:
+#        re = pickle.load(inputs)
+#    print(re)
