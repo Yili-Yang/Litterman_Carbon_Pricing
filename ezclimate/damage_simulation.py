@@ -269,7 +269,7 @@ class DamageSimulation(object):
         draws : int
             number of samples drawn in Monte Carlo simulation.
         write_to_file : bool, optional
-            wheter to save simulated values 
+            whether to save simulated values
        
         Returns
         -------

@@ -149,7 +149,7 @@ class DamageSimulation(object):
         is the shape parameter from Pyndyck damage function, `pindyck_impact_theta` the scale parameter 
         from Pyndyck damage function, and `pindyck_impact_displace` the displacement parameter from Pyndyck
         damage function.
-        change is a control list with 3 elements which determins what parameter is fixed by random seed. for example
+        change is a control list with 3 elements which determines what parameter is fixed by random seed. for example
         if change is [0,1,0] than only theta is drawn from normal distribution.
         """
         # fix the random seed

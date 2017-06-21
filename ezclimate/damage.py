@@ -140,13 +140,13 @@ class DLWDamage(Damage):
 
 		'''
 		sum_nodes: [ 0, 1, 6, 16, 26, 31, 32]
-		prob_sum: sums up the probabilities of final states
+		prob_sum: sums up the probabilities of final states partitioned by sum_nodes
 		'''
 
 		for period in range(nperiods): #look into each period
 			for k in range(self.dnum): #look into each simulated scenario
 				d_sum = np.zeros(nperiods)  #store the probability-weighted sum of the simulated damage for each category
-				old_state = 0 #direct to the first node in the signal the category set
+				old_state = 0 #direct to the first node in the the category set, signal
 				for d_class in range(nperiods): #look into each category
 					d_sum[d_class] = (self.tree.final_states_prob[old_state:old_state+sum_class[d_class]] \
 						 			 * self.d_rcomb[k, old_state:old_state+sum_class[d_class], period]).sum()
@@ -154,11 +154,12 @@ class DLWDamage(Damage):
 					old_state += sum_class[d_class] # moving to the next category set
 					self.tree.final_states_prob[new_state[d_class, 0:sum_class[d_class]]] = temp_prob[0] #same probability for the final states
 
-				for d_class in range(nperiods):
-					self.d_rcomb[k, new_state[d_class, 0:sum_class[d_class]], period] = d_sum[d_class] / prob_sum[d_class]
+                for d_class in range(nperiods):
+                    self.d_rcomb[k, new_state[d_class, 0:sum_class[d_class]], period] = d_sum[d_class] / prob_sum[d_class]
                     # find the probability-weighted average damage
 
-		self.tree.node_prob[-len(self.tree.final_states_prob):] = self.tree.final_states_prob
+###?
+        self.tree.node_prob[-len(self.tree.final_states_prob):] = self.tree.final_states_prob
     #update the prob corresponding to the final nodes
 		for p in range(1,nperiods-1): #look into intermediate periods
 			nodes = self.tree.get_nodes_in_period(p) #the first and last node for the period
@@ -227,7 +228,7 @@ class DLWDamage(Damage):
 
 	def damage_simulation(self, draws, peak_temp=9.0, disaster_tail=12.0, tip_on=True, 
 		temp_map=1, temp_dist_params=None, maxh=100.0, save_simulation=True): #documented
-		"""Initializion and simulation of damages, given by :mod:`ez_climate.DamageSimulation`.
+		"""Initialization and simulation of damages, given by :mod:`ez_climate.DamageSimulation`.
 
 		Parameters
 		----------
