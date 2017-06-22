@@ -44,10 +44,10 @@ def base_case():
     u = EZUtility(tree=t, damage=df, cost=c, period_len=5.0, eis=0.9, ra=7.0, time_pref=0.005)
     print('End utility',dt.datetime.time(dt.datetime.now()))
     time_list.append(dt.datetime.time(dt.datetime.now()))
-    ga_model = GeneticAlgorithm(pop_amount=150, num_generations=75, cx_prob=0.8, mut_prob=0.5, 
+    ga_model = GeneticAlgorithm(pop_amount=150, num_generations=1, cx_prob=0.8, mut_prob=0.5, 
 	                            bound=1.5, num_feature=63, utility=u, print_progress=True) 
     gs_model = GradientSearch(var_nums=63, utility=u, accuracy=1e-8, 
-	                          iterations=200, print_progress=True)
+	                          iterations=1, print_progress=True)
     final_pop, fitness = ga_model.run()
     sort_pop = final_pop[np.argsort(fitness)][::-1]
     m_opt, u_opt = gs_model.run(initial_point_list=sort_pop, topk=1)
@@ -64,24 +64,22 @@ def base_case():
         i+=1
         result_time_list.append((temp_list[i]-temp_list[i-1]).total_seconds())
     price_list = list()
-    for decision_time in range(len(t.decision_times)):
+    for decision_time in range(len(t.decision_times)-1):
     	start_node,end_node = t.get_nodes_in_period(decision_time)
     	average_mit = df.average_mitigation(m_opt,decision_time)
     	for index in range(end_node-start_node+1):
-    		index_ori += start_node
+    		index_ori =index + start_node
     		price_list.append(c.price(t.decision_times[decision_time],m_opt[index_ori],average_mit[index]))
-
-    c.price(0, m_opt[0], 0)
-    return result_time_list,df.parameter_list, m_opt,price_list
+    return result_time_list,df.parameter_list, m_opt,u_opt,price_list
 if __name__ == "__main__":
     count =0
     result_list = list()
-    while count <1:
+    while count <100:
         x= base_case()
         result_list.append(x)
         count +=1
-    with open('sensitive_analysis_1.pkl','wb') as f:
+    with open('sensitive_analysis_100.pkl','wb') as f:
         pickle.dump(result_list,f)
-#    with open('sensitive_analysis.pkl','rb') as inputs:
+#    with open('sensitive_analysis_100.pkl','rb') as inputs:
 #        re = pickle.load(inputs)
 #    print(re)
