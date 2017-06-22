@@ -515,7 +515,7 @@ class GradientSearch(object) :
 			grad_start = dt.timedelta(hours=grad_start.hour, minutes=grad_start.minute, seconds=grad_start.second, microseconds=grad_start.microsecond)
 			grad_end = dt.timedelta(hours=grad_end.hour, minutes=grad_end.minute, seconds=grad_end.second, microseconds=grad_end.microsecond)
 			grad_time = (grad_end-grad_start).total_seconds()
-			grad_time_list.append(grad_time_list)
+			grad_time_list.append(grad_time)
 			m_t = beta1*m_t + (1-beta1)*grad
 			v_t = beta2*v_t + (1-beta2)*np.power(grad, 2) 
 			m_hat = m_t / (1-beta1**(i+1))
