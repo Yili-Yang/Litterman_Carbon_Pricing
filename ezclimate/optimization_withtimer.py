@@ -506,11 +506,16 @@ class GradientSearch(object) :
 
 		prev_grad = 0.0
 		accelerator = np.ones(self.var_nums)
-		decrease_time_list =list()
+		grad_time_list =list()
 		# formula at http://sebastianruder.com/optimizing-gradient-descent/index.html#fnref:15	
 		for i in range(self.iterations):
-			decreaset_start=dt.datetime.now()
+			grad_start = dt.datetime.now()
 			grad = self.numerical_gradient(x_hist[i], fixed_indicies=self.fixed_indicies)
+			grad_end = dt.datetime.now()
+			grad_start = dt.timedelta(hours=grad_start.hour, minutes=grad_start.minute, seconds=grad_start.second, microseconds=grad_start.microsecond)
+			grad_end = dt.timedelta(hours=grad_end.hour, minutes=grad_end.minute, seconds=grad_end.second, microseconds=grad_end.microsecond)
+			grad_time = (grad_end-grad_start).total_seconds()
+			grad_time_list.append(grad_time_list)
 			m_t = beta1*m_t + (1-beta1)*grad
 			v_t = beta2*v_t + (1-beta2)*np.power(grad, 2) 
 			m_hat = m_t / (1-beta1**(i+1))
@@ -531,15 +536,10 @@ class GradientSearch(object) :
 			if self.print_progress:
 				print("-- Iteration {} -- \n Current Utility: {}".format(i+1, u_hist[i+1]))
 				print(new_x)
-			decreaset_end=dt.datetime.now()
-			decreaset_start = dt.timedelta(hours=decreaset_start.hour, minutes=decreaset_start.minute, seconds=decreaset_start.second, microseconds=decreaset_start.microsecond)
-			decreaset_end = dt.timedelta(hours=decreaset_end.hour, minutes=decreaset_end.minute, seconds=decreaset_end.second, microseconds=decreaset_end.microsecond)
-			decrease_time = (decreaset_end-decreaset_start).total_seconds()
-			decrease_time_list.append(decrease_time)
 		if return_last:
 			return x_hist[i+1], u_hist[i+1]
 		best_index = np.argmax(u_hist)
-		return x_hist[best_index], u_hist[best_index],decrease_time_list
+		return x_hist[best_index], u_hist[best_index],grad_time_list
 
 	def run(self, initial_point_list, topk=4):
 		"""Initiate the gradient search algorithm. 
