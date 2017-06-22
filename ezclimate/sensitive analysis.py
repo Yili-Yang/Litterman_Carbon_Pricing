@@ -63,15 +63,24 @@ def base_case():
     for i in range(len(temp_list)-1):
         i+=1
         result_time_list.append((temp_list[i]-temp_list[i-1]).total_seconds())
-    return result_time_list,df.parameter_list, c.price(0, m_opt[0], 0)
+    price_list = list()
+    for decision_time in range(len(t.decision_times)):
+    	start_node,end_node = t.get_nodes_in_period(decision_time)
+    	average_mit = df.average_mitigation(m_opt,decision_time)
+    	for index in range(end_node-start_node+1):
+    		index_ori += start_node
+    		price_list.append(c.price(t.decision_times[decision_time],m_opt[index_ori],average_mit[index]))
+
+    c.price(0, m_opt[0], 0)
+    return result_time_list,df.parameter_list, m_opt,price_list
 if __name__ == "__main__":
     count =0
     result_list = list()
-    while count <30:
+    while count <1:
         x= base_case()
         result_list.append(x)
         count +=1
-    with open('sensitive_analysis_30.pkl','wb') as f:
+    with open('sensitive_analysis_1.pkl','wb') as f:
         pickle.dump(result_list,f)
 #    with open('sensitive_analysis.pkl','rb') as inputs:
 #        re = pickle.load(inputs)
