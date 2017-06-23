@@ -38,7 +38,7 @@ def base_case():
     time_list.append(dt.datetime.time(dt.datetime.now()))
     df = DLWDamage(tree=t, bau=bau_default_model, cons_growth=0.015, ghg_levels=[450, 650, 1000], subinterval_len=5)    
     df.damage_simulation(draws=4000000, peak_temp=6.0, disaster_tail=18.0, tip_on=True, 
-							 temp_map=0, temp_dist_params=None, maxh=100.0,change=[1,1,1])
+							 temp_map=0, temp_dist_params=None, maxh=100.0,change=[0,0,0])
     print('End damage',dt.datetime.time(dt.datetime.now()))
     time_list.append(dt.datetime.time(dt.datetime.now()))
     u = EZUtility(tree=t, damage=df, cost=c, period_len=5.0, eis=0.9, ra=7.0, time_pref=0.005)
@@ -74,11 +74,11 @@ def base_case():
 if __name__ == "__main__":
     count =0
     result_list = list()
-    while count <100:
+    while count <1:
         x= base_case()
         result_list.append(x)
         count +=1
-    with open('sensitive_analysis_100.pkl','wb') as f:
+    with open('sensitive_analysis_base.pkl','wb') as f:
         pickle.dump(result_list,f)
 #    with open('sensitive_analysis_100.pkl','rb') as inputs:
 #        re = pickle.load(inputs)
