@@ -153,43 +153,56 @@ class DamageSimulation(object):
         if change is [0,1,0] than only theta is drawn from normal distribution.
         """
         # fix the random seed
-        def draw_alpha():
+        def a450():
             a450 = np.random.normal(loc = 2.810,scale=0.3033)
+            return a450
+        def a650():
             a650 = np.random.normal(4.63,0.2450)
+            return a650
+        def a1000:    
             a1000 = np.random.normal(6.1,0.245)
-            return [a450,a650,a1000]
-        def draw_beta():
+            return a1000
+        def b450():
             b450 = np.random.normal(0.6,0.005)
+            return b450
+        def b650():
             b650 = np.random.normal(0.63,0.005)
+            return b650
+        def b1000():
             b1000 = np.random.normal(0.67,0.0067)
-            return [b450,b650,b1000]
-        def draw_theta():
+            return b1000
+        def t450():
             t450 = np.random.normal(-0.25,0.0417)
+            return t450
+        def t650():
             t650 = np.random.normal(-0.5,0.0417)
+            return t650
+        def t1000():
             t1000 = np.random.normal(-0.9,0.0667)  
-            return [t450,t650,t1000]
-        draw_func_list = [draw_alpha,draw_beta,draw_theta]
+            return t1000
+        draw_func_list = [a450,a650,a650,b450,b650,b650,t450,t650,t650]
         # make sure that the probabilities of temperature increase by a given number is higher or a larger GHG level
         temp_list =[[],[],[]]
-        for i in range(2):
-            if change[i]== 1:
-                temp_list[i] = draw_func_list[i]()
-                while temp_list[i][0] >= temp_list[i][1] or  temp_list[i][1] >= temp_list[i][2]:
-                    temp_list[i] = draw_func_list[i]
-        if change[2] == 1:
-            temp_list[2] = draw_func_list[2]()
-            while temp_list[2][0] <= temp_list[2][1] or  temp_list[2][1] <= temp_list[2][2]:
-                temp_list[2] = draw_theta()
         # default parameters
         pindyck_temp_k = [2.81, 4.6134, 6.14]
         pindyck_temp_theta = [1.6667, 1.5974, 1.53139]
         pindyck_temp_displace = [-0.25, -0.5, -1.0]
-        para_list = [pindyck_temp_k,pindyck_temp_theta,pindyck_temp_displace]
+        
         # change with random value.
-        for index in range(3):
-            if bool(temp_list[i]):
-                para_list[i] = temp_list[i]
-
+        if change <=2:
+            while pindyck_temp_k[0] >= pindyck_temp_k[1] or pindyck_temp_k[1] >= pindyck_temp_k[2]:
+                pindyck_temp_k[change] = draw_func_list[change]
+        elif change <=5:
+            change -= 3
+            while pindyck_temp_theta[0] >= pindyck_temp_theta[1] or pindyck_temp_theta[1] >= pindyck_temp_theta[2]:
+                pindyck_temp_theta[change] = draw_func_list[change]
+        elif change <=8:
+            change -= 6
+            while pindyck_temp_displace[0] <= pindyck_temp_displace[1] or pindyck_temp_displace[1] <= pindyck_temp_displace[2]:
+                pindyck_temp_displace[change] = draw_func_list[change]
+        else:
+            raise ValueError('change should be 0 to 8')
+        para_list = [pindyck_temp_k,pindyck_temp_theta,pindyck_temp_displace]
         return np.array([self._gamma_array(pindyck_temp_k[i], pindyck_temp_theta[i], self.draws) 
                          + pindyck_temp_displace[i] for i in range(0, 3)]),temp_list
 
