@@ -182,7 +182,6 @@ class DamageSimulation(object):
             return t1000
         draw_func_list = [a450,a650,a650,b450,b650,b650,t450,t650,t650]
         # make sure that the probabilities of temperature increase by a given number is higher or a larger GHG level
-        temp_list =[[],[],[]]
         # default parameters
         pindyck_temp_k = [2.81, 4.6134, 6.14]
         pindyck_temp_theta = [1.6667, 1.5974, 1.53139]
@@ -204,7 +203,7 @@ class DamageSimulation(object):
             raise ValueError('change should be 0 to 8')
         para_list = [pindyck_temp_k,pindyck_temp_theta,pindyck_temp_displace]
         return np.array([self._gamma_array(pindyck_temp_k[i], pindyck_temp_theta[i], self.draws) 
-                         + pindyck_temp_displace[i] for i in range(0, 3)]),temp_list
+                         + pindyck_temp_displace[i] for i in range(0, 3)]),para_list
 
     def _ww_simulation(self):
         """Draw random samples for mapping GHG to temperature based on Wagner-Weitzman."""
