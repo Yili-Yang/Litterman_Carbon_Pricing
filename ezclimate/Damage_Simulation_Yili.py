@@ -154,7 +154,7 @@ class DamageSimulation(object):
         """
         # fix the random seed
         def a450():
-            return np.random.normal(loc = 3.810,scale=0.3033)
+            return np.random.normal(loc = 2.810,scale=0.3033)
         def a650():
             return np.random.normal(4.63,0.2450)
         def a1000():    

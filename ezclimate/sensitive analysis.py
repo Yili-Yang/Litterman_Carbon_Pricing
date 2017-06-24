@@ -37,17 +37,17 @@ def base_case(change):
     print('End cost',dt.datetime.time(dt.datetime.now()))
     time_list.append(dt.datetime.time(dt.datetime.now()))
     df = DLWDamage(tree=t, bau=bau_default_model, cons_growth=0.015, ghg_levels=[450, 650, 1000], subinterval_len=5,change=change)    
-    df.damage_simulation( draws=4, peak_temp=6.0, disaster_tail=18.0, tip_on=True, 
+    df.damage_simulation( draws=4000000, peak_temp=6.0, disaster_tail=18.0, tip_on=True, 
 							 temp_map=0, temp_dist_params=None, maxh=100.0)
     print('End damage',dt.datetime.time(dt.datetime.now()))
     time_list.append(dt.datetime.time(dt.datetime.now()))
     u = EZUtility(tree=t, damage=df, cost=c, period_len=5.0, eis=0.9, ra=7.0, time_pref=0.005)
     print('End utility',dt.datetime.time(dt.datetime.now()))
     time_list.append(dt.datetime.time(dt.datetime.now()))
-    ga_model = GeneticAlgorithm(pop_amount=150, num_generations=1, cx_prob=0.8, mut_prob=0.5, 
+    ga_model = GeneticAlgorithm(pop_amount=150, num_generations=75, cx_prob=0.8, mut_prob=0.5, 
 	                            bound=1.5, num_feature=63, utility=u, print_progress=True) 
     gs_model = GradientSearch(var_nums=63, utility=u, accuracy=1e-8, 
-	                          iterations=1, print_progress=True)
+	                          iterations=200, print_progress=True)
     final_pop, fitness = ga_model.run()
     sort_pop = final_pop[np.argsort(fitness)][::-1]
     m_opt, u_opt = gs_model.run(initial_point_list=sort_pop, topk=1)
