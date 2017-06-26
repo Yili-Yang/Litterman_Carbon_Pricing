@@ -32,7 +32,7 @@ def get_init_m():
     return sort_pop
 
 def get_utility(m):
-	m = m.flatten()
+    m = np.array(m)
     t = TreeModel(decision_times=[0, 15, 45, 85, 185, 285, 385])
     bau_default_model = DLWBusinessAsUsual()
     bau_default_model.bau_emissions_setup(tree=t)
