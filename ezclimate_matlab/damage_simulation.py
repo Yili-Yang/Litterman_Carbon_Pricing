@@ -1,6 +1,6 @@
 from __future__ import division
 import numpy as np
-import multiprocessing as mp
+#import multiprocessing as mp
 from tools import _pickle_method, _unpickle_method
 from tools import write_columns_csv, append_to_existing
 try:
@@ -303,9 +303,12 @@ class DamageSimulation(object):
         else:
             raise ValueError("temp_map not in interval 0-4")
 
-        pool = mp.Pool(processes=dnum)
-        self.d = np.array(pool.map(self._run_path, temperature))
-
+        #pool = mp.Pool(processes=dnum)
+        #self.d = np.array(pool.map(self._run_path, temperature))
+        result_list =list()
+        for i in temperature:
+            result_list.append(self._run_path(i))
+        self.d = np.array(result_list)
         if write_to_file:
             self._write_to_file()
         return self.d

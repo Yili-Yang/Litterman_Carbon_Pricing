@@ -1,6 +1,6 @@
 from __future__ import division, print_function
 import numpy as np
-import multiprocessing
+#import multiprocessing
 from tools import _pickle_method, _unpickle_method
 try:
     import copy_reg
@@ -311,8 +311,11 @@ class GeneticAlgorithm(object):
 		"""
 		print("----------------Genetic Evolution Starting----------------")
 		pop = self._generate_population(self.pop_amount)
-		pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
-		fitness = pool.map(self._evaluate, pop) # how do we know pop[i] belongs to fitness[i]?
+		#pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
+		fitness =list()
+		for i in pop:
+			fitness.append(self._evaluate(i))
+		#fitness = pool.map(self._evaluate, pop) # how do we know pop[i] belongs to fitness[i]?
 		fitness = np.array([val[0] for val in fitness])
 		u_hist = np.zeros(self.num_gen) # not been used ...
 		for g in range(0, self.num_gen):
@@ -322,8 +325,10 @@ class GeneticAlgorithm(object):
 			self._uniform_cross_over(pop_select, 0.50)
 			self._uniform_mutation(pop_select, 0.25, np.exp(-float(g)/self.num_gen)**2)
 			#self._mutate(pop_select, 0.05)
-			
-			fitness_select = pool.map(self._evaluate, pop_select)
+			fitness_select =list()
+			for i in pop_select:
+				fitness_select.append(self._evaluate(i))
+			#fitness_select = pool.map(self._evaluate, pop_select)
 			fitness_select = np.array([val[0] for val in fitness_select])
 			
 			pop_tmp = np.append(pop, pop_select, axis=0)
@@ -332,7 +337,10 @@ class GeneticAlgorithm(object):
 			pop_survive, fitness_survive = self._survive(pop_tmp, fitness_tmp)
 
 			pop_new = self._generate_population(self.pop_amount - len(pop_survive))
-			fitness_new = pool.map(self._evaluate, pop_new)
+			fitness_new = list()
+			for i in pop_new:
+				fitness_new.append(self._evaluate(i))
+			#fitness_new = pool.map(self._evaluate, pop_new)
 			fitness_new = np.array([val[0] for val in fitness_new])
 
 			pop = np.append(pop_survive, pop_new, axis=0)
@@ -341,9 +349,12 @@ class GeneticAlgorithm(object):
 				self._show_evolution(fitness, pop)
 			u_hist[g] = fitness[0]
 
-		fitness = pool.map(self._evaluate, pop)
-		fitness = np.array([val[0] for val in fitness])
-		return pop, fitness
+		#fitness = pool.map(self._evaluate, pop)
+		fitness1 =list()
+		for i in pop:
+			fitness1.append(self._evaluate(i))
+		fitness1 = np.array([val[0] for val in fitness1])
+		return pop, fitness1
 
 
 class GradientSearch(object) :
@@ -437,13 +448,17 @@ class GradientSearch(object) :
 		grad = np.zeros(len(m))
 		if not isinstance(m, np.ndarray):
 			self.m = np.array(m)
-		pool = multiprocessing.Pool()
+
+		#pool = multiprocessing.Pool()
 		indicies = np.delete(range(len(m)), fixed_indicies)
-		res = pool.map(self._partial_grad, indicies)
-		for g, i in res:
-			grad[i] = g
-		pool.close()
-		pool.join()
+		res =list()
+		for i in indicies:
+			res.append(self._partial_grad(i))
+		#res = pool.map(self._partial_grad, indicies)
+		for item in res:
+			grad[item[1]] = item[0]
+		#pool.close()
+		#pool.join()
 		del self.m
 		del self.delta
 		return grad 
