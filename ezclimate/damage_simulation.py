@@ -257,7 +257,7 @@ class DamageSimulation(object):
         weights = (weights.cumsum()).astype(int)
     
         d[0,] = damage[:weights[0], :].mean(axis=0)
-        for n in range(1, self.tree.num_final_states):
+        for n in range(1, self.tree.num_final_states):s
             d[n,] = np.maximum(0.0, damage[weights[n-1]:weights[n], :].mean(axis=0))
         return d
 

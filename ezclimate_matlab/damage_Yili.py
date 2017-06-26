@@ -89,7 +89,7 @@ class DLWDamage(Damage):
 
 	"""
 
-	def __init__(self, tree, bau, cons_growth, ghg_levels, subinterval_len,change):
+	def __init__(self, tree, bau, cons_growth, ghg_levels, subinterval_len):
 		super(DLWDamage, self).__init__(tree, bau)
 		self.ghg_levels = ghg_levels
 		if isinstance(self.ghg_levels, list):
@@ -102,7 +102,6 @@ class DLWDamage(Damage):
 		self.d_rcomb = None
 		self.emit_pct = None
 		self.damage_coefs = None
-		self.change=change
 		self.parameter_list =list()
 	def _recombine_nodes(self):
 		"""Creating damage coefficients for recombining tree. The state reached by an up-down move is
@@ -228,7 +227,7 @@ class DLWDamage(Damage):
 		self._damage_interpolation()
 
 	def damage_simulation(self, draws, peak_temp=9.0, disaster_tail=12.0, tip_on=True, 
-		temp_map=1, temp_dist_params=None, maxh=100.0, save_simulation=True):
+		temp_map=1, temp_dist_params=None, maxh=100.0, save_simulation=True,change=[1,1,1]):
 		"""Initializion and simulation of damages, given by :mod:`ez_climate.DamageSimulation`.
 
 		Parameters
@@ -269,7 +268,7 @@ class DLWDamage(Damage):
 					disaster_tail=disaster_tail, tip_on=tip_on, temp_map=temp_map, 
 					temp_dist_params=temp_dist_params, maxh=maxh, cons_growth=self.cons_growth)
 		print("Starting damage simulation..")
-		self.d, self.parameter_list= ds.simulate(draws,self.change, write_to_file = save_simulation)
+		self.d, self.parameter_list= ds.simulate(draws,change, write_to_file = save_simulation)
 		print("Done!")
 		self._damage_interpolation()
 		return self.d

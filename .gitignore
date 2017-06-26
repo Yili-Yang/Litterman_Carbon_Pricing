@@ -104,3 +104,5 @@ utility.py
 ezclimate/utility.py
 
 ezclimate/damage.py
+
+*.pyc

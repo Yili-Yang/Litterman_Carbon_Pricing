@@ -144,60 +144,17 @@ class DamageSimulation(object):
             para_list.append(_temp)
             return para_list
 
-    def _pindyck_simulation(self,change):
+    def _pindyck_simulation(self):
         """Draw random samples for mapping GHG to temperature based on Pindyck. The `pindyck_impact_k` 
         is the shape parameter from Pyndyck damage function, `pindyck_impact_theta` the scale parameter 
         from Pyndyck damage function, and `pindyck_impact_displace` the displacement parameter from Pyndyck
         damage function.
-        change is a control list with 3 elements which determines what parameter is fixed by random seed. for example
-        if change is [0,1,0] than only theta is drawn from normal distribution.
         """
-        # fix the random seed
-        def a450():
-            return np.random.normal(loc = 2.810,scale=0.3033)
-        def a650():
-            return np.random.normal(4.63,0.2450)
-        def a1000():    
-            return np.random.normal(6.1,0.245)
-        def b450():
-            return np.random.normal(0.6,0.005)
-        def b650():
-            return np.random.normal(0.63,0.005)
-        def b1000():
-            return np.random.normal(0.67,0.0067)
-        def t450():
-            return np.random.normal(-0.25,0.0417)
-        def t650():
-            return np.random.normal(-0.5,0.0417)
-        def t1000():
-            return np.random.normal(-0.9,0.0667)  
-        draw_func_list = [a450,a650,a1000,b450,b650,b1000,t450,t650,t1000]
-        # make sure that the probabilities of temperature increase by a given number is higher or a larger GHG level
-        # default parameters
-        pindyck_temp_k = [2.81, 4.63, 6.1]
-        pindyck_temp_theta = [0.6, 0.63, 0.67]
+        pindyck_temp_k = [2.81, 4.6134, 6.14]
+        pindyck_temp_theta = [1.6667, 1.5974, 1.53139]
         pindyck_temp_displace = [-0.25, -0.5, -1.0]
-        
-        # change with random value.
-        if change <=2:
-            pindyck_temp_k[change] = draw_func_list[change]()
-            while pindyck_temp_k[0] >= pindyck_temp_k[1] or pindyck_temp_k[1] >= pindyck_temp_k[2]:
-                pindyck_temp_k[change] = draw_func_list[change]()
-        elif change <=5:
-            change -= 3
-            pindyck_temp_theta[change] = draw_func_list[change]()
-            while pindyck_temp_theta[0] >= pindyck_temp_theta[1] or pindyck_temp_theta[1] >= pindyck_temp_theta[2]:
-                pindyck_temp_theta[change] = draw_func_list[change]()
-        elif change <=8:
-            change -= 6
-            pindyck_temp_displace[change] = draw_func_list[change]()
-            while pindyck_temp_displace[0] <= pindyck_temp_displace[1] or pindyck_temp_displace[1] <= pindyck_temp_displace[2]:
-                pindyck_temp_displace[change] = draw_func_list[change]()
-        else:
-            raise ValueError('change should be 0 to 8')
-        para_list = [pindyck_temp_k,pindyck_temp_theta,pindyck_temp_displace]
         return np.array([self._gamma_array(pindyck_temp_k[i], pindyck_temp_theta[i], self.draws) 
-                         + pindyck_temp_displace[i] for i in range(0, 3)]),para_list
+                         + pindyck_temp_displace[i] for i in range(0, 3)])
 
     def _ww_simulation(self):
         """Draw random samples for mapping GHG to temperature based on Wagner-Weitzman."""
@@ -240,7 +197,7 @@ class DamageSimulation(object):
         return disaster_cons
 
     def _interpolation_of_temp(self, temperature): 
-        # for every temp in each period, modify it using a coff regards to the current period (using a smoothing method.)
+    	# for every temp in each period, modify it using a coff regards to the current period (using a smoothing method.)
         return temperature[:, np.newaxis] * 2.0 * (1.0 - 0.5**(self.tree.decision_times[1:] / self.maxh)) # modify the temp using a exp coefficient (need the new article to get it)
       
 
@@ -304,7 +261,7 @@ class DamageSimulation(object):
             d[n,] = np.maximum(0.0, damage[weights[n-1]:weights[n], :].mean(axis=0))
         return d
 
-    def simulate(self, draws, change, write_to_file=True):
+    def simulate(self, draws, write_to_file=False):
         """Create damage function values in 'p-period' version of the Summers - Zeckhauser model.
 
         Parameters
@@ -312,7 +269,7 @@ class DamageSimulation(object):
         draws : int
             number of samples drawn in Monte Carlo simulation.
         write_to_file : bool, optional
-            wheter to save simulated values 
+            whether to save simulated values
        
         Returns
         -------
@@ -334,7 +291,7 @@ class DamageSimulation(object):
         self.peak_cons = np.exp(self.cons_growth*self.tree.decision_times[1:])
 
         if self.temp_map == 0:
-            temperature, parameter_list= self._pindyck_simulation(change)
+            temperature = self._pindyck_simulation()
         elif self.temp_map == 1:
             temperature = self._ww_simulation()
         elif self.temp_map == 2:
@@ -351,7 +308,7 @@ class DamageSimulation(object):
 
         if write_to_file:
             self._write_to_file()
-        return self.d, parameter_list
+        return self.d
 
 
     
