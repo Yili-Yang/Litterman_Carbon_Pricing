@@ -420,7 +420,7 @@ class GradientSearch(object) :
 		minus_utility = self.u.utility(m_copy)
 		m_copy[i] += 2*self.delta
 		plus_utility = self.u.utility(m_copy)
-		grad = (plus_utility-minus_utility) / (2*self.delta) # the math is trival
+		grad = (plus_utility-minus_utility) / (2*self.delta) # the math is trivial
 		return grad, i
 
 	def numerical_gradient(self, m, delta=1e-08, fixed_indicies=None):
