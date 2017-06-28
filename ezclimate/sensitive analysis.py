@@ -75,11 +75,11 @@ if __name__ == "__main__":
     count =0 
     result_list = list()
     change = 1
-    while count <70:
+    while count <26:
         x = base_case(change)
         result_list.append(x)
         count +=1
-    with open('sensitive_analysis_2t70.pkl','wb') as f:
+    with open('sensitive_analysis_2v26.pkl','wb') as f:
         pickle.dump(result_list,f)
 #    with open('sensitive_analysis_100.pkl','rb') as inputs:
 #        re = pickle.load(inputs)

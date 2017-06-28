@@ -199,8 +199,10 @@ class DamageSimulation(object):
             change -= 6
             while pindyck_temp_displace[0] <= pindyck_temp_displace[1] or pindyck_temp_displace[1] <= pindyck_temp_displace[2]:
                 pindyck_temp_displace[change] = draw_func_list[change]
+        elif change == 9:
+            print('nothing is changed')
         else:
-            raise ValueError('change should be 0 to 8')
+            raise ValueError('change should be 0 to 9')
         para_list = [pindyck_temp_k,pindyck_temp_theta,pindyck_temp_displace]
         return np.array([self._gamma_array(pindyck_temp_k[i], pindyck_temp_theta[i], self.draws) 
                          + pindyck_temp_displace[i] for i in range(0, 3)]),para_list
