@@ -184,18 +184,16 @@ class DamageSimulation(object):
             while pindyck_temp_k[0] >= pindyck_temp_k[1] or pindyck_temp_k[1] >= pindyck_temp_k[2]:
                 pindyck_temp_k[change] = draw_func_list[change]()
         elif change <=5:
-            print('!here')
-            change = change -3
-            print(change)
-            pindyck_temp_theta[change] = draw_func_list[change]()
-            print(draw_func_list[change]())
+            change1 = change -3
+            pindyck_temp_theta[change1] = draw_func_list[change]()
             while pindyck_temp_theta[0] >= pindyck_temp_theta[1] or pindyck_temp_theta[1] >= pindyck_temp_theta[2]:
-                pindyck_temp_theta[change] = draw_func_list[change]()
+                pindyck_temp_theta[change1] = draw_func_list[change]()
+                print(1)
         elif change <=8:
-            change = change - 6
-            pindyck_temp_displace[change] = draw_func_list[change]()
+            change1 = change - 6
+            pindyck_temp_displace[change1] = draw_func_list[change]()
             while pindyck_temp_displace[0] <= pindyck_temp_displace[1] or pindyck_temp_displace[1] <= pindyck_temp_displace[2]:
-                pindyck_temp_displace[change] = draw_func_list[change]()
+                pindyck_temp_displace[change1] = draw_func_list[change]()
         elif change == 9:
             print('nothing is changed')
         else:
