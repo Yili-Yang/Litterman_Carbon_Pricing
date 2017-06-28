@@ -72,14 +72,13 @@ def base_case(change):
     		price_list.append(c.price(t.decision_times[decision_time],m_opt[index_ori],average_mit[index]))
     return result_time_list,df.parameter_list, m_opt,u_opt,price_list
 if __name__ == "__main__":
-    
+    count =0 
     result_list = list()
-    for change in range(2):
-        count =0
-        while count <70:
-	        x= base_case(change)
-	        result_list.append(x)
-	        count +=1
+    change = 1
+    while count <70:
+        x = base_case(change)
+        result_list.append(x)
+        count +=1
     with open('sensitive_analysis_2t70.pkl','wb') as f:
         pickle.dump(result_list,f)
 #    with open('sensitive_analysis_100.pkl','rb') as inputs:
