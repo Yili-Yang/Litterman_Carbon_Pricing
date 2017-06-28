@@ -269,7 +269,7 @@ class DLWDamage(Damage):
 					disaster_tail=disaster_tail, tip_on=tip_on, temp_map=temp_map, 
 					temp_dist_params=temp_dist_params, maxh=maxh, cons_growth=self.cons_growth)
 		print("Starting damage simulation..")
-		self.d, self.parameter_list= ds.simulate(draws,self.change, write_to_file = save_simulation)
+		self.d, self.parameter_list= ds.simulate(draws,self.change, write_to_file = False)
 		print("Done!")
 		self._damage_interpolation()
 		return self.d
