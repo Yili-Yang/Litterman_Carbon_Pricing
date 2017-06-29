@@ -54,7 +54,7 @@ class DamageSimulation(object):
     temp_dist_params : ndarray or list
         if temp_map is either 3 or 4, user needs to define the distribution parameters
     maxh : float
-        time paramter from Pindyck which indicates the time it takes for temp to get half 
+        time parameter from Pindyck which indicates the time it takes for temp to get half
         way to its max value for a given level of ghg
     cons_growth : float 
         yearly growth in consumption
@@ -78,6 +78,7 @@ class DamageSimulation(object):
     maxh : float
         time paramter from Pindyck which indicates the time it takes for temp to get half 
         way to its max value for a given level of ghg
+        the time span of temperature change that we would like to model
     cons_growth : float 
         yearly growth in consumption
     d : ndarray
@@ -190,7 +191,7 @@ class DamageSimulation(object):
         disaster = self._uniform_array((self.draws, self.tree.num_periods))
         return disaster
 
-    def _disaster_cons_simulation(self):
+    def _disaster_cons_simulation(self): #TP_damage in the paper
         """Simulates consumption conditional on disaster, based on the parameter disaster_tail."""
         #get the tp_damage in the article which is drawed from a gamma distri with alpha = 1 and beta = disaster_tail
         disaster_cons = self._gamma_array(1.0, self.disaster_tail, self.draws)
@@ -198,7 +199,7 @@ class DamageSimulation(object):
 
     def _interpolation_of_temp(self, temperature): 
     	# for every temp in each period, modify it using a coff regards to the current period (using a smoothing method.)
-        return temperature[:, np.newaxis] * 2.0 * (1.0 - 0.5**(self.tree.decision_times[1:] / self.maxh)) # modify the temp using a exp coefficient (need the new article to get it)
+        return temperature[:, np.newaxis] * 2.0 * (1.0 - 0.5**(self.tree.decision_times[1:] / self.maxh)) #refer to equation 25 in the paper
       
 
     def _economic_impact_of_temp(self, temperature):
@@ -257,7 +258,7 @@ class DamageSimulation(object):
         weights = (weights.cumsum()).astype(int)
     
         d[0,] = damage[:weights[0], :].mean(axis=0)
-        for n in range(1, self.tree.num_final_states):s
+        for n in range(1, self.tree.num_final_states):
             d[n,] = np.maximum(0.0, damage[weights[n-1]:weights[n], :].mean(axis=0))
         return d
 
