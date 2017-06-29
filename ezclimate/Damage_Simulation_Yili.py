@@ -171,6 +171,7 @@ class DamageSimulation(object):
             return np.random.normal(-0.5,0.0417)
         def t1000():
             return np.random.normal(-0.9,0.0667)  
+
         draw_func_list = [a450,a650,a1000,b450,b650,b1000,t450,t650,t1000]
         # make sure that the probabilities of temperature increase by a given number is higher or a larger GHG level
         # default parameters
