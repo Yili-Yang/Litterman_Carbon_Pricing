@@ -102,12 +102,12 @@ def base_case(ind):
     		price_list.append(c.price(t.decision_times[decision_time],m_opt[index_ori],average_mit[index]))
     return result_time_list,c,g , m_opt,u_opt,price_list
 if __name__ == "__main__":
-    ind = 0 
+    ind = 1 
     count =0
     result_list = list()
-    while count <35:
+    while count <40:
         x = base_case(ind)
         result_list.append(x)
         count +=1
-    with open('sensitive_analysis_1G_35.pkl','wb') as f:
+    with open('sensitive_analysis_2G_40.pkl','wb') as f:
         pickle.dump(result_list,f)
