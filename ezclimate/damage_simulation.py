@@ -151,8 +151,8 @@ class DamageSimulation(object):
         from Pyndyck damage function, and `pindyck_impact_displace` the displacement parameter from Pyndyck
         damage function.
         """
-        pindyck_temp_k = [2.81, 4.6134, 6.14]
-        pindyck_temp_theta = [1.6667, 1.5974, 1.53139]
+        pindyck_temp_k = [2.81, 4.63, 6.1]
+        pindyck_temp_theta = [0.6, 0.63, 0.67]
         pindyck_temp_displace = [-0.25, -0.5, -1.0]
         return np.array([self._gamma_array(pindyck_temp_k[i], pindyck_temp_theta[i], self.draws) 
                          + pindyck_temp_displace[i] for i in range(0, 3)])
