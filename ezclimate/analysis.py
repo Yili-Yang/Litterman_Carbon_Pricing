@@ -108,7 +108,7 @@ def constraint_first_period(utility, first_node, m_size):
 	Returns
 	-------
 	tuple
-		(new mitigation array, storage tree of changes in consumption, ndarray of costs in first sub periods)
+		(new mitigation array)
 
 	"""
 	fixed_values = np.array([first_node])
