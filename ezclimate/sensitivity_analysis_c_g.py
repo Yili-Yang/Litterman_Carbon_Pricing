@@ -19,7 +19,7 @@ import pickle
 def sensitivity_analysis_c_k(ind):
     '''take fraction GHG reduction for different taxation rate from normal distribution
     returns the modified c and k in project description page 2 equation (2.3)'''
-    #1.12 dollar = 1 euro
+    #1.2 dollar = 1 euro
     xdata = [60*1.2,100*1.2]
     a = np.random.normal(0.543,0.0213)
     b = np.random.normal(0.671,0.0213)
@@ -39,9 +39,9 @@ def sensitivity_analysis_c_k(ind):
         return p[0] * x ** p[1]
 
     linear = Model(f)
-    #sx, sy are arrays os error estimates
+    #sx, sy are arrays of error estimates
     mydata = Data(xdata, ydata)
-    #beta0 are the inital parameter estimates
+    #beta0 are the initial parameter estimates
     myodr = ODR(mydata, linear, beta0=[1, -1.0])
     myoutput = myodr.run()
     x = myoutput.beta
