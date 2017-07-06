@@ -51,7 +51,7 @@ def sensitivity_analysis_c_k(ind):
 
 
 def base_case(ind):
-    c,g = sensitivity_analysis_c_k(ind)
+    cost,g = sensitivity_analysis_c_k(ind)
     time_list =list()
     print('Start',dt.datetime.time(dt.datetime.now()))
     time_list.append(dt.datetime.time(dt.datetime.now()))
@@ -62,7 +62,7 @@ def base_case(ind):
     bau_default_model.bau_emissions_setup(tree=t)
     print('End bau',dt.datetime.time(dt.datetime.now()))
     time_list.append(dt.datetime.time(dt.datetime.now()))
-    c = DLWCost(t, bau_default_model.emit_level[0], g=g, a=c, join_price=2000.0, max_price=2500.0,
+    c = DLWCost(t, bau_default_model.emit_level[0], g=g, a=cost, join_price=2000.0, max_price=2500.0,
 					tech_const=1.5, tech_scale=0.0, cons_at_0=30460.0)
     print('End cost',dt.datetime.time(dt.datetime.now()))
     time_list.append(dt.datetime.time(dt.datetime.now()))
@@ -100,7 +100,7 @@ def base_case(ind):
     	for index in range(end_node-start_node+1):
     		index_ori =index + start_node
     		price_list.append(c.price(t.decision_times[decision_time],m_opt[index_ori],average_mit[index]))
-    return result_time_list,c,g , m_opt,u_opt,price_list
+    return result_time_list,cost,g , m_opt,u_opt,price_list
 if __name__ == "__main__":
     ind = 1 
     count =0
