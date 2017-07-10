@@ -8,6 +8,7 @@ c=1e-4;
 fcount=0;
 gcount=0;
 fval=feval(myfun,x+alpha*p,varargin{:});
+p
 fcount=fcount+1;
 
 while (fval > f+c*alpha*g'*p && alpha>1e-5)
