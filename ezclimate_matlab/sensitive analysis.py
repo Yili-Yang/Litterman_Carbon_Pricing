@@ -64,6 +64,7 @@ def base_case():
         i+=1
         result_time_list.append((temp_list[i]-temp_list[i-1]).total_seconds())
     price_list = list()
+    #calculate the SCC price on each node.
     for decision_time in range(len(t.decision_times)-1):
     	start_node,end_node = t.get_nodes_in_period(decision_time)
     	average_mit = df.average_mitigation(m_opt,decision_time)
