@@ -32,5 +32,5 @@ def get_py_m(m):
                               bound=1.5, num_feature=63, utility=u, print_progress=True) 
         final_pop, fitness = ga_model.run()
         sort_pop = final_pop[np.argsort(fitness)][-1]
-        return u.utility(sort_pop)
+        return sort_pop
 
