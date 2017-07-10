@@ -28,7 +28,7 @@ def get_py_m(m):
     if m.max() >0:
         return u.utility(m)
     else :
-        ga_model = GeneticAlgorithm(pop_amount=150, num_generations=75, cx_prob=0.8, mut_prob=0.5, 
+        ga_model = GeneticAlgorithm(pop_amount=150, num_generations=1, cx_prob=0.8, mut_prob=0.5, 
                               bound=1.5, num_feature=63, utility=u, print_progress=True) 
         final_pop, fitness = ga_model.run()
         sort_pop = final_pop[np.argsort(fitness)][-1]
