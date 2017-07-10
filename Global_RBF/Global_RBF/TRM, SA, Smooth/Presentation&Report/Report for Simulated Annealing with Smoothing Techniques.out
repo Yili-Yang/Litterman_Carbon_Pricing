@@ -1,0 +1,19 @@
+\BOOKMARK [0][-]{chapter.1}{Smoothing Techniques}{}% 1
+\BOOKMARK [1][-]{section.1.1}{Reasons for Smoothing}{chapter.1}% 2
+\BOOKMARK [1][-]{section.1.2}{Two Ways for Smoothing}{chapter.1}% 3
+\BOOKMARK [1][-]{section.1.3}{The Pictures of Trace-Smooth Technique}{chapter.1}% 4
+\BOOKMARK [1][-]{section.1.4}{Original Smoothing Algorithm and Our Modified Smoothing Techniques}{chapter.1}% 5
+\BOOKMARK [0][-]{chapter.2}{Numerical Results}{}% 6
+\BOOKMARK [1][-]{section.2.1}{Griewank}{chapter.2}% 7
+\BOOKMARK [1][-]{section.2.2}{Rastrigin}{chapter.2}% 8
+\BOOKMARK [1][-]{section.2.3}{Ackley}{chapter.2}% 9
+\BOOKMARK [0][-]{chapter.3}{Trust-Region Method with Simulated Annealing and Smoothing Technique}{}% 10
+\BOOKMARK [1][-]{section.3.1}{Introduction}{chapter.3}% 11
+\BOOKMARK [1][-]{section.3.2}{Numerical Results}{chapter.3}% 12
+\BOOKMARK [0][-]{chapter.4}{Summary}{}% 13
+\BOOKMARK [1][-]{section.4.1}{Advantage of SA+Smoothing}{chapter.4}% 14
+\BOOKMARK [1][-]{section.4.2}{TRM with SA and Smoothing}{chapter.4}% 15
+\BOOKMARK [1][-]{section.4.3}{Challenges}{chapter.4}% 16
+\BOOKMARK [1][-]{section.4.4}{Further Work}{chapter.4}% 17
+\BOOKMARK [1][-]{section.4.5}{Existing Codes}{chapter.4}% 18
+\BOOKMARK [1][-]{section.4.6}{Test Problems and Contact Information}{chapter.4}% 19

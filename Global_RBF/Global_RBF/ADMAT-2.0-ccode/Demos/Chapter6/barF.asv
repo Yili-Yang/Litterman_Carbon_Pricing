@@ -1,0 +1,18 @@
+% scale-valued function
+%
+%      barF(x) = x1^2 + x2^2 + ... + x(n)^2 + 5*x1*x2 + 5*x2*x3 + ... +
+%      5*xi*x(i+1) + ... + 5*x(n-1)*xn + ,
+% 
+% where x = [x1, x2, ..., x(n)]. The Hessian matrix of barF(x) is symmetric
+% tridiagonal.
+%
+function fval = barF(x, Extra)
+
+y = Extra.y;
+n = length(y);
+i = 1 : (n-1);
+z = x'*y + 5*y(i)'*y(i+1);
+
+fval = z + x'*x;
+
+    

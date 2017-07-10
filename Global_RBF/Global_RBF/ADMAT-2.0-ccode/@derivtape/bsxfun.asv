@@ -1,0 +1,42 @@
+function sout = bsxfun(fun, s1, s2)
+%
+% Apply element-by-element binary operation to two arrays with singleton
+% expansion enabled. Currently, only support
+%
+% @plus   Plus
+%
+% @minus  Minus
+%
+% @times  Array multiply
+%
+% @ldivide  Left array divide
+%
+% @rdivide  Right array divide
+%
+% @power    Array power
+%
+%
+%       ******************************************************************
+%       *                          ADMAT - 2.0                           *
+%       *              Copyright (c) 2008-2012 Cayuga Research           *
+%       *                Associates, LLC. All Rights Reserved.           *
+%       ******************************************************************
+%
+%
+global varcounter;
+if (~isa(s2,'derivtape'))
+    sout.val= bsxfun(fun, s1.val, s2);
+    sout.varcount=varcounter;
+    sout=class(sout,'derivtape');
+    savetape('bsxfun',sout,fun, s1.varcount,s2, -2);
+elseif  (~isa(s1,'derivtape'))
+    sout.val = bsxfun(fun, s1,s2.val);
+    sout.varcount=varcounter;
+    sout=class(sout,'derivtape');
+    savetape('bsxfun',sout, fun, s1,s2.varcount,-1);
+else
+    sout.val=s1.val+s2.val;
+    sout.varcount=varcounter;
+    sout=class(sout,'derivtape');
+    savetape('plus',sout,s1.varcount,s2.varcount);
+end

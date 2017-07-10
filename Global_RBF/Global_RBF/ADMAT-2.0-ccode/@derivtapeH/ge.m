@@ -1,0 +1,11 @@
+function sout = ge(s1,s2)
+%
+%       ******************************************************************
+%       *                          ADMAT - 2.0                           *
+%       *              Copyright (c) 2008-2009 Cayuga Research           *
+%       *                Associates, LLC. All Rights Reserved.           *
+%       ******************************************************************
+
+%   August 2008   -- replace s1.val with getval(s1)
+
+sout=(getval(s1)>=getval(s2));

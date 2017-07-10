@@ -47,11 +47,11 @@ def sensitivity_analysis_c_k(ind):
     x = myoutput.beta
     c= (1/x[1])*(x[1]+1) 
     g= ((1/(x[0]**(1/x[1])))**(x[1]+1) )*(x[0]-x[0]/(x[1]+1))
-    return c,g
+    return a,b,c,g
 
 
 def base_case(ind):
-    cost,g = sensitivity_analysis_c_k(ind)
+    aa,bb,cost,g = sensitivity_analysis_c_k(ind)
     time_list =list()
     print('Start',dt.datetime.time(dt.datetime.now()))
     time_list.append(dt.datetime.time(dt.datetime.now()))
@@ -100,7 +100,7 @@ def base_case(ind):
     	for index in range(end_node-start_node+1):
     		index_ori =index + start_node
     		price_list.append(c.price(t.decision_times[decision_time],m_opt[index_ori],average_mit[index]))
-    return result_time_list,cost,g , m_opt,u_opt,price_list
+    return result_time_list,[aa,bb,cost,g] , m_opt,u_opt,price_list
 if __name__ == "__main__":
     ind = 1 
     count =0

@@ -1,0 +1,35 @@
+function sout=csc(s1)
+%
+
+%       ******************************************************************
+%       *                          ADMAT - 2.0                           *
+%       *              Copyright (c) 2008-2009 Cayuga Research           *
+%       *                Associates, LLC. All Rights Reserved.           *
+%       ******************************************************************
+
+%
+
+%
+global globp;
+
+sout.val=csc(s1.val);
+[m1,n1]=size(getval(s1));
+if issparse(s1.deriv)
+    tmp = - cot(full(s1.val(:)));
+    tmp = sout.val(:) .* tmp;
+    sizederiv = size(s1.deriv,1);
+    [ia,ja,sa] = find(s1.deriv);
+    dsout = tmp(ia) .* sa;
+    sout.deriv = sparse(ia,ja, dsout, sizederiv, globp);
+else
+    if m1 > 1 && n1 > 1         % s1.val is a matrix
+        tmp = -cot(s1.val);
+        tmp = sout.val .* tmp;
+        sout.deriv = tmp(:,:, ones(1,globp)) .* s1.deriv;
+    else      % s1.val is a column vector
+        tmp = -cot(s1.val);
+        tmp = sout.val(:) .* tmp(:);
+        sout.deriv = tmp(:, ones(1,globp)) .* s1.deriv;
+    end
+end
+sout=class(sout,'deriv');

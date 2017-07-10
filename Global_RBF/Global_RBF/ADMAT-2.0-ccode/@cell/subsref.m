@@ -1,0 +1,107 @@
+function sout=subsref(x,s1)
+
+%       ******************************************************************
+%       *                          ADMAT - 2.0                           *
+%       *              Copyright (c) 2008-2009 Cayuga Research           *
+%       *                Associates, LLC. All Rights Reserved.           *
+%       ******************************************************************
+
+
+global globp
+global ADhess;
+
+[m,n]=size(x);
+
+if length(s1.subs)==1
+    I=s1.subs{1};
+    if ~ADhess  || (m == 1 || n ==1)
+        sout=sparse(length(x{1}(I)),globp);
+        for i=1:globp
+            sout(:,i)=x{i}(I);
+        end
+    else
+        if length(x{1}(I)) == 1
+            sout=sparse(globp,globp);
+            for i=1:globp
+                for j=1:globp
+                    sout(i,j)=x{i,j}(I);
+                end
+            end
+        else
+            sout=cell(size(x));
+            if (strcmp(I,':') && ischar(I))
+                for i=1:globp
+                    for j=1:globp
+                        temp=x{i,j};
+                        sout{i,j}=temp(:);
+                    end
+                end
+            else
+                for i=1:globp
+                    for j=1:globp
+                        temp=x{i,j};
+                        sout{i,j}=temp(I);
+                    end
+                end
+            end
+        end
+    end
+    
+else
+    
+    I1=s1.subs{1};
+    I2=s1.subs{2};
+    if size(x{1}(I1,I2),1) > 1 && size(x{1}(I1,I2),2) > 1
+        if ~ADhess  || (m == 1 || n ==1)
+            sout = cell(globp,1);
+            for i=1:globp
+                sout{i}=x{i}(I1,I2);
+            end
+        else
+            [m1, n1] = size(x{1,1}(I1,I2));
+            if m1 == 1 && n1 == 1
+                sout = zeros(globp);
+                for i=1:globp
+                    for j=1:globp
+                        sout(i,j)=x{i,j}(I1,I2);
+                    end
+                end
+            else
+                sout = cell(globp);
+                for i=1:globp
+                    for j=1:globp
+                        sout{i,j}=x{i,j}(I1,I2);
+                    end
+                end
+            end
+        end
+    else
+        if ~ADhess || (m == 1 || n ==1)
+            temp=x{1}(I1,I2);
+            sout=sparse(length(temp(:)),globp);
+            for i=1:globp
+                temp=x{i}(I1,I2);
+                sout(:,i)=temp(:);
+            end
+        else
+            [m1, n1] = size(x{1,1}(I1,I2));
+            if m1 == 1 && n1 == 1
+                sout = zeros(globp);
+                for i=1:globp
+                    for j=1:globp
+                        sout(i,j)=x{i,j}(I1,I2);
+                    end
+                end
+            else
+                 sout = cell(globp);
+            for i=1:globp
+                for j=1:globp
+                    tmp = x{i,j};
+                    sout{i,j}=tmp(I1,I2);
+                end
+            end
+            end
+           
+        end
+    end
+end

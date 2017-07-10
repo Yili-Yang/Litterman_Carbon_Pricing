@@ -1,0 +1,44 @@
+function adjctranspose(i)
+%
+%
+%   03/2007 -- consider all cases for tape(i).W is a scalar, row
+%              vector, column vector and matrix
+%   03/2007 -- correct the computation of derivatives of asech(x).
+%
+%
+%       ******************************************************************
+%       *                          ADMAT - 2.0                           *
+%       *              Copyright (c) 2008-2009 Cayuga Research           *
+%       *                Associates, LLC. All Rights Reserved.           *
+%       ******************************************************************
+
+global tape;
+global globp;
+
+[m,n]=size(tape(i).val);
+
+if m==1 && n==1               % tape(i).val is a scalar
+    tape(tape(i).arg1vc).W = tape(tape(i).arg1vc).W + ...
+                               tape(i).W;
+else
+    if m == 1                 % tape(i).val is a row vector
+        tape(tape(i).arg1vc).W = tape(tape(i).arg1vc).W + ...
+                                  tape(i).W;
+    else
+        if n == 1               % tape(i).val is a column vector
+            tape(tape(i).arg1vc).W = tape(tape(i).arg1vc).W + ...
+                                       tape(i).W;
+ 
+        else                   % tape(i).val is a matrix
+            for j = 1 : globp
+                tape(tape(i).arg1vc).W(:,:,j) = ...
+                   tape(tape(i).arg1vc).W(:,:,j) + tape(i).W(:,:,j)';
+            end
+        end
+    end
+end
+
+
+% p=size(tape(i).W,2);
+% 
+% tape(tape(i).arg1vc).W = tape(tape(i).arg1vc).W + tape(i).W';

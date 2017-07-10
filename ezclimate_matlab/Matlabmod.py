@@ -40,4 +40,5 @@ def get_utility(m):
     df.damage_simulation(draws=4000000, peak_temp=6.0, disaster_tail=18.0, tip_on=True, 
                              temp_map=1, temp_dist_params=None, maxh=100.0)
     u = EZUtility(tree=t, damage=df, cost=c, period_len=5.0, eis=0.9, ra=7.0, time_pref=0.005)
+
     return u.utility(m)

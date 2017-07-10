@@ -1,0 +1,10 @@
+global globp;
+global tape;
+global varcounter;
+global tape_begin;
+globp=1;
+global ADhess;
+ADhess=0;
+tape_begin = 1;
+varcounter=1;
+tape = [];

@@ -1,0 +1,801 @@
+function sout = bsxfun(fun, A, B)
+%
+% Apply element-by-element binary operation to two arrays with singleton
+% expansion enabled. Currently, only support
+%
+% @plus   Plus
+%
+% @minus  Minus
+%
+% @times  Array multiply
+%
+% @ldivide  Left array divide
+%
+% @rdivide  Right array divide
+%
+% @power    Array power
+%
+%
+%       ******************************************************************
+%       *                          ADMAT - 2.0                           *
+%       *              Copyright (c) 2008-2012 Cayuga Research           *
+%       *                Associates, LLC. All Rights Reserved.           *
+%       ******************************************************************
+%
+%
+global globp;
+
+if isa(A, 'deriv') && ~isa(B, 'deriv')   % A belongs to deriv class, but B doesn't
+    sout.val = bsxfun(fun, A.val, B);
+    [mA, nA] = size(A.val);
+    [mB, nB] = size(B);
+    switch func2str(fun)
+        case {'plus', 'minus'}
+            if mA >= mB && nA >= nB  % The size of A is no less than the size of B
+                sout.deriv = A.deriv;
+            elseif (nA == 1 && mB==1) && (mA>1 && nB>1) % A is a column vector, B is a row vector
+                sout.deriv = zeros(mA, nB, globp);
+                for i = 1 : globp
+                    sout.deriv(:,:,i) = repmat(A.deriv(:,i), 1, nB);
+                end
+            elseif (mA==1 && nB==1) && (nA>1 && mB>1)   % A is a row vector, B is a column vector
+                sout.deriv = zeros(mB, nA, globp);
+                for i = 1 : globp
+                    sout.deriv(:,:,i) = repmat(A.deriv(:,i)', mB, 1);
+                end
+            elseif  (mB>1 && nB>1) && (nA>1 || mA>1)  %  A is a vector and B is a matrix
+                if (mA == 1 && nA>1) % A is a row vector
+                    sout.deriv = zeros(mB, nA, globp);
+                    for i = 1 : globp
+                        sout.deriv(:,:,i) = repmat(A.deriv(:,i)', mB, 1);
+                    end
+                elseif (mA>1 && nA==1)  % A is a column vector
+                    sout.deriv = zeros(mA, nB, globp);
+                    for i = 1 : globp
+                        sout.deriv(:,:,i) = repmat(A.deriv(:,i),1, nB);
+                    end
+                end
+            else  % A is a scalar
+                if (mB==1 && nB > 1) || (mB>1 && nB == 1)   % B is a vector
+                    sout.deriv = repmat(A.deriv, max(nB,mB),1);
+                else   % B is a matrix
+                    sout.deriv = zeros(mB, nB, globp);
+                    for i = 1 : globp
+                        sout.deriv(:,:,i) = repmat(A.deriv(i), mB, nB);
+                    end
+                end
+            end
+        case {'times'}% @rdivide, @power, @ldivide}
+            if (mA>=mB) && (nA>=nB)   % The size of A is not smaller than B's
+                if mA == 1   % A is a row vector
+                    sout.deriv = bsxfun(fun, A.deriv', B)';
+                else
+                    sout.deriv = bsxfun(fun, A.deriv, B);
+                end
+            elseif (mA ==1 && nA>1) && (mB>1 && nB==1) % A is a row vector and B is a column vector
+                sout.deriv = zeros(mB, nA, globp);
+                for i = 1 : globp
+                    sout.deriv(:,:,i) = bsxfun(fun, A.deriv(:,i)', B);
+                end
+            elseif (mA>1 && nA==1) && (mB==1 && nB>1)  % A is a column vector and B is a row vector
+                sout.deriv = zeros(mA,nB,globp);
+                for i = 1 : globp
+                    sout.deriv(:,:,i) = bsxfun(fun, A.deriv(:,i),B);
+                end
+            elseif (mA>1  || nA>1)&&(mB>1 && nB>1)  % A is a vector and B is a matrix
+                if (mA==1)  % A is a row vector
+                    sout.deriv = zeros(mB, nB, globp);
+                    for i = 1 : globp
+                        sout.deriv(:,:,i) = bsxfun(fun, A.deriv(:,i)', B);
+                    end
+                else    % A is a column vector
+                    sout.deriv = zeros(mB,nB,globp);
+                    for i = 1 : globp
+                        sout.deriv(:,:,i) = bsxfun(fun, A.deriv(:,i), B);
+                    end
+                end
+            else % A is a scalar
+                if (mB == 1 && nB>1) || (mB>1 && nB==1)   % B is a vector
+                    sout.deriv = bsxfun(fun, A.deriv, B(:)')';
+                else  % B is a matrix
+                    sout.deriv = zeros(mB,nB,globp);
+                    for i = 1 : globp
+                        sout.deriv(:,:,i) = bsxfun(fun, A.deriv(i), B);
+                    end
+                end
+                
+            end
+        case{'ldivide'}
+            if mA>=mB && nA>=nB    %  size of A is no smaller than B
+                tmp = -A.val.*A.val;
+                tmp1 = bsxfun(fun, tmp, B);
+                if mA == 1   % A is a row vector
+                    sout.deriv = bsxfun(@times, tmp1', A.deriv);
+                else
+                    sout.deriv = bsxfun(@times, tmp1, A.deriv);
+                end
+            elseif (mA ==1 && nA>1) && (mB>1 && nB==1) % A is a row vector and B is a column vector
+                sout.deriv = zeros(mB, nA, globp);
+                tmp = -A.val.*A.val;
+                tmp1 = bsxfun(fun, tmp, B);
+                for i = 1 : globp
+                    sout.deriv(:,:,i) = bsxfun(@times, tmp1, A.deriv(:,i)');
+                end
+            elseif (mA>1 && nA==1) && (mB==1 && nB>1)  % A is a column vector and B is a row vector
+                sout.deriv = zeros(mA,nB,globp);
+                tmp = -A.val.*A.val;
+                tmp1 = bsxfun(fun, tmp, B);
+                for i = 1 : globp
+                    sout.deriv(:,:,i) = bsxfun(@times, tmp1, A.deriv(:,i));
+                end
+            elseif (mA>1  || nA>1)&&(mB>1 && nB>1)  % A is a vector and B is a matrix
+                if (mA==1)  % A is a row vector
+                    sout.deriv = zeros(mB, nB, globp);
+                    tmp = -A.val.*A.val;
+                    tmp1 = bsxfun(fun, tmp, B);
+                    for i = 1 : globp
+                        sout.deriv(:,:,i) = bsxfun(@times, tmp1, A.deriv(:,i)');
+                    end
+                else    % A is a column vector
+                    sout.deriv = zeros(mB,nB,globp);
+                    tmp = -A.val.*A.val;
+                    tmp1 = bsxfun(fun, tmp, B);
+                    for i = 1 : globp
+                        sout.deriv(:,:,i) = bsxfun(@times, tmp1, A.deriv(:,i));
+                    end
+                end
+            else % A is a scalar
+                if (mB == 1 && nB>1) || (mB>1 && nB==1)   % B is a vector
+                    tmp = -A.val.*A.val;
+                    tmp1 = bsxfun(fun, tmp, B);
+                    sout.deriv = bsxfun(@times, tmp1(:)', A.deriv)';
+                else  % B is a matrix
+                    sout.deriv = zeros(mB,nB,globp);
+                    tmp = -A.val.*A.val;
+                    tmp1 = bsxfun(fun, tmp, B);
+                    for i = 1 : globp
+                        sout.deriv(:,:,i) = bsxfun(@times, tmp1, A.deriv(i));
+                    end
+                end
+                
+            end
+        case {'rdivide'}
+            tmp = 1./B;
+            if mA >= mB && nA >= nB  % The size of A is no less than the size of B
+                if mA == 1  % A is a row vector
+                    sout.deriv = bsxfun(@times,tmp', A.deriv);
+                else
+                    sout.deriv = bsxfun(@times, tmp, A.deriv);
+                end
+            elseif (nA == 1 && mB==1) && (mA>1 && nB>1) % A is a column vector, B is a row vector
+                sout.deriv = zeros(mA, nB, globp);
+                for i = 1 : globp
+                    sout.deriv(:,:,i) = bsxfun(@times, tmp, A.deriv(:,i));
+                end
+            elseif (mA==1 && nB==1) && (nA>1 && mB>1)   % A is a row vector, B is a column vector
+                sout.deriv = zeros(mB, nA, globp);
+                for i = 1 : globp
+                    sout.deriv(:,:,i) = bsxfun(@times, tmp, A.deriv(:,i)');
+                end
+            elseif  (mB>1 && nB>1) && (nA>1 || mA>1)  %  A is a vector and B is a matrix
+                if (mA == 1 && nA>1) % A is a row vector
+                    sout.deriv = zeros(mB, nA, globp);
+                    for i = 1 : globp
+                        sout.deriv(:,:,i) = bsxfun(@times, tmp, A.deriv(:,i)');
+                    end
+                elseif (mA>1 && nA==1)  % A is a column vector
+                    sout.deriv = zeros(mA, nB, globp);
+                    for i = 1 : globp
+                        sout.deriv(:,:,i) = bsxfun(@times, tmp, A.deriv(:,i));
+                    end
+                end
+            else  % A is a scalar
+                if (mB==1 && nB > 1) || (mB>1 && nB == 1)   % B is a vector
+                    sout.deriv = bsxfun(@times, tmp(:), A.deriv');
+                else   % B is a matrix
+                    sout.deriv = zeros(mB, nB, globp);
+                    for i = 1 : globp
+                        sout.deriv(:,:,i) = bsxfun(@times, tmp, A.deriv(i));
+                    end
+                end
+            end 
+        case{'power'}
+            tmp = bsxfun(fun, A.val, B-1);
+            tmp1 = bsxfun(@times, B, tmp);
+            if mA >= mB && nA >= nB  % The size of A is no less than the size of B
+                if mA == 1  % A is a row vector
+                    sout.deriv = bsxfun(@times,tmp1', A.deriv);
+                else
+                    sout.deriv = bsxfun(@times, tmp1, A.deriv);
+                end
+            elseif (nA == 1 && mB==1) && (mA>1 && nB>1) % A is a column vector, B is a row vector
+                sout.deriv = zeros(mA, nB, globp);
+                for i = 1 : globp
+                    sout.deriv(:,:,i) = bsxfun(@times, tmp1, A.deriv(:,i));
+                end
+            elseif (mA==1 && nB==1) && (nA>1 && mB>1)   % A is a row vector, B is a column vector
+                sout.deriv = zeros(mB, nA, globp);
+                for i = 1 : globp
+                    sout.deriv(:,:,i) = bsxfun(@times, tmp1, A.deriv(:,i)');
+                end
+            elseif  (mB>1 && nB>1) && (nA>1 || mA>1)  %  A is a vector and B is a matrix
+                if (mA == 1 && nA>1) % A is a row vector
+                    sout.deriv = zeros(mB, nA, globp);
+                    for i = 1 : globp
+                        sout.deriv(:,:,i) = bsxfun(@times, tmp1, A.deriv(:,i)');
+                    end
+                elseif (mA>1 && nA==1)  % A is a column vector
+                    sout.deriv = zeros(mA, nB, globp);
+                    for i = 1 : globp
+                        sout.deriv(:,:,i) = bsxfun(@times, tmp1, A.deriv(:,i));
+                    end
+                end
+            else  % A is a scalar
+                if (mB==1 && nB > 1) || (mB>1 && nB == 1)   % B is a vector
+                    sout.deriv = bsxfun(@times, tmp1(:), A.deriv');
+                else   % B is a matrix
+                    sout.deriv = zeros(mB, nB, globp);
+                    for i = 1 : globp
+                        sout.deriv(:,:,i) = bsxfun(@times, tmp1, A.deriv(i));
+                    end
+                end
+            end 
+    end
+elseif ~isa(A, 'deriv') && isa(B, 'deriv')  % B belongs to deriv class, but A doesn't
+    sout.val = bsxfun(fun, A, B.val);
+    [mA, nA] = size(A);
+    [mB, nB] = size(B.val);
+    switch func2str(fun)
+        case {'plus'}
+            if mB >= mA && nB >= nA  % The size of B is no less than the size of A
+                sout.deriv = B.deriv;
+            elseif (nB == 1 && mA==1) && (mB>1 && nA>1) % B is a column vector, A is a row vector
+                sout.deriv = zeros(mB, nA, globp);
+                for i = 1 : globp
+                    sout.deriv(:,:,i) = repmat(B.deriv(:,i), 1, nA);
+                end
+            elseif (mB==1 && nA==1) && (nB>1 && mA>1)   % B is a row vector, A is a column vector
+                sout.deriv = zeros(mA, nB, globp);
+                for i = 1 : globp
+                    sout.deriv(:,:,i) = repmat(B.deriv(:,i)', mA, 1);
+                end
+            elseif  (mA>1 && nA>1) && (nB>1 || mB>1)  %  B is a vector and A is a matrix
+                if (mB == 1 && nB>1) % B is a row vector
+                    sout.deriv = zeros(mA, nB, globp);
+                    for i = 1 : globp
+                        sout.deriv(:,:,i) = repmat(B.deriv(:,i)', mA, 1);
+                    end
+                elseif (mB>1 && nB==1)  % B is a column vector
+                    sout.deriv = zeros(mB, nA, globp);
+                    for i = 1 : globp
+                        sout.deriv(:,:,i) = repmat(B.deriv(:,i),1, nA);
+                    end
+                end
+            else  % B is a scalar
+                if (mA==1 && nA > 1) || (mA>1 && nA == 1)   % A is a vector
+                    sout.deriv = repmat(B.deriv, max(nA,mA),1);
+                else   % A is a matrix
+                    sout.deriv = zeros(mA, nA, globp);
+                    for i = 1 : globp
+                        sout.deriv(:,:,i) = repmat(B.deriv(i), mA, nA);
+                    end
+                end
+            end
+        case {'minus'}
+            if mB >= mA && nB >= nA  % The size of B is no less than the size of A
+                sout.deriv = B.deriv;
+            elseif (nB == 1 && mA==1) && (mB>1 && nA>1) % B is a column vector, A is a row vector
+                sout.deriv = zeros(mB, nA, globp);
+                for i = 1 : globp
+                    sout.deriv(:,:,i) = -repmat(B.deriv(:,i), 1, nA);
+                end
+            elseif (mB==1 && nA==1) && (nB>1 && mA>1)   % B is a row vector, A is a column vector
+                sout.deriv = zeros(mA, nB, globp);
+                for i = 1 : globp
+                    sout.deriv(:,:,i) = -repmat(B.deriv(:,i)', mA, 1);
+                end
+            elseif  (mA>1 && nA>1) && (nB>1 || mB>1)  %  B is a vector and A is a matrix
+                if (mB == 1 && nB>1) % B is a row vector
+                    sout.deriv = zeros(mA, nB, globp);
+                    for i = 1 : globp
+                        sout.deriv(:,:,i) = -repmat(B.deriv(:,i)', mA, 1);
+                    end
+                elseif (mB>1 && nB==1)  % B is a column vector
+                    sout.deriv = zeros(mB, nA, globp);
+                    for i = 1 : globp
+                        sout.deriv(:,:,i) = -repmat(B.deriv(:,i),1, nA);
+                    end
+                end
+            else  % B is a scalar
+                if (mA==1 && nA > 1) || (mA>1 && nA == 1)   % A is a vector
+                    sout.deriv = -repmat(B.deriv, max(nA,mA),1);
+                else   % A is a matrix
+                    sout.deriv = zeros(mA, nA, globp);
+                    for i = 1 : globp
+                        sout.deriv(:,:,i) = -repmat(B.deriv(i), mA, nA);
+                    end
+                end
+            end
+        case {'times'}% @rdivide, @power, @ldivide}
+            if (mB>=mA) && (nB>=nA)   % The size of B is not smaller than A's
+                if mB == 1   % B is a row vector
+                    sout.deriv = bsxfun(fun, A, B.deriv')';
+                else
+                    sout.deriv = bsxfun(fun, A, B.deriv);
+                end
+            elseif (mB ==1 && nB>1) && (mA>1 && nA==1) % B is a row vector and A is a column vector
+                sout.deriv = zeros(mA, nB, globp);
+                for i = 1 : globp
+                    sout.deriv(:,:,i) = bsxfun(fun, A, B.deriv(:,i)');
+                end
+            elseif (mB>1 && nB==1) && (mA==1 && nA>1)  % B is a column vector and A is a row vector
+                sout.deriv = zeros(mB,nA,globp);
+                for i = 1 : globp
+                    sout.deriv(:,:,i) = bsxfun(fun, A, B.deriv(:,i));
+                end
+            elseif (mB > 1 || nB>1)&&(mA>1 && nA>1)  % B is a vector and A is a matrix
+                if (mB==1)  % B is a row vector
+                    sout.deriv = zeros(mA, nA, globp);
+                    for i = 1 : globp
+                        sout.deriv(:,:,i) = bsxfun(fun,A, B.deriv(:,i)');
+                    end
+                else    % B is a column vector
+                    sout.deriv = zeros(mA,nA,globp);
+                    for i = 1 : globp
+                        sout.deriv(:,:,i) = bsxfun(fun,A, B.deriv(:,i));
+                    end
+                end
+            else % B is a scalar
+                if (mA == 1 && nA>1) || (mA>1 && nA==1)   % A is a vector
+                    sout.deriv = bsxfun(fun, A(:)', B.deriv)';
+                else  % A is a matrix
+                    sout.deriv = zeros(mA,nA,globp);
+                    for i = 1 : globp
+                        sout.deriv(:,:,i) = bsxfun(fun, A, B.deriv(i));
+                    end
+                end
+            end
+        case {'ldivide'}
+            tmp = 1./A;
+            if mB >= mA && nB >= nA  % The size of B is no less than the size of A
+                if mB == 1  % B is a row vector
+                    sout.deriv = bsxfun(@times,tmp', B.deriv);
+                else
+                    sout.deriv = bsxfun(@times, tmp, B.deriv);
+                end
+            elseif (nB == 1 && mA==1) && (mB>1 && nA>1) % B is a column vector, A is a row vector
+                sout.deriv = zeros(mB, nA, globp);
+                for i = 1 : globp
+                    sout.deriv(:,:,i) = bsxfun(@times, tmp, B.deriv(:,i));
+                end
+            elseif (mB==1 && nA==1) && (nB>1 && mA>1)   % B is a row vector, A is a column vector
+                sout.deriv = zeros(mA, nB, globp);
+                for i = 1 : globp
+                    sout.deriv(:,:,i) = bsxfun(@times, tmp, B.deriv(:,i)');
+                end
+            elseif  (mA>1 && nA>1) && (nB>1 || mB>1)  %  B is a vector and A is a matrix
+                if (mB == 1 && nB>1) % B is a row vector
+                    sout.deriv = zeros(mA, nB, globp);
+                    for i = 1 : globp
+                        sout.deriv(:,:,i) = bsxfun(@times, tmp, B.deriv(:,i)');
+                    end
+                elseif (mB>1 && nB==1)  % B is a column vector
+                    sout.deriv = zeros(mB, nA, globp);
+                    for i = 1 : globp
+                        sout.deriv(:,:,i) = bsxfun(@times, tmp, B.deriv(:,i));
+                    end
+                end
+            else  % B is a scalar
+                if (mA==1 && nA > 1) || (mA>1 && nA == 1)   % A is a vector
+                    sout.deriv = bsxfun(@times, tmp(:), B.deriv');
+                else   % A is a matrix
+                    sout.deriv = zeros(mA, nA, globp);
+                    for i = 1 : globp
+                        sout.deriv(:,:,i) = bsxfun(@times, tmp, B.deriv(i));
+                    end
+                end
+            end
+        case{'rdivide'}
+            tmp = -B.val.*B.val;
+            tmp1 = bsxfun(fun, tmp, A);
+            if mB>=mA && nB>=nA    %  size of B is no smaller than A
+                if mB == 1   % B is a row vector
+                    sout.deriv = bsxfun(@times, tmp1', B.deriv);
+                else
+                    sout.deriv = bsxfun(@times, tmp1, B.deriv);
+                end
+            elseif (mB ==1 && nB>1) && (mA>1 && nA==1) % B is a row vector and A is a column vector
+                sout.deriv = zeros(mA, nB, globp);
+                for i = 1 : globp
+                    sout.deriv(:,:,i) = bsxfun(@times, tmp1, B.deriv(:,i)');
+                end
+            elseif (mB>1 && nB==1) && (mA==1 && nA>1)  % B is a column vector and A is a row vector
+                sout.deriv = zeros(mB,nA,globp);
+                
+                for i = 1 : globp
+                    sout.deriv(:,:,i) = bsxfun(@times, tmp1, B.deriv(:,i));
+                end
+            elseif (mB>1  || nB>1)&&(mA>1 && nA>1)  % B is a vector and A is a matrix
+                if (mB==1)  % B is a row vector
+                    sout.deriv = zeros(mA, nA, globp);
+                  
+                    for i = 1 : globp
+                        sout.deriv(:,:,i) = bsxfun(@times, tmp1, B.deriv(:,i)');
+                    end
+                else    % B is a column vector
+                    sout.deriv = zeros(mA,nA,globp);
+                    
+                    for i = 1 : globp
+                        sout.deriv(:,:,i) = bsxfun(@times, tmp1, B.deriv(:,i));
+                    end
+                end
+            else % B is a scalar
+                if (mA == 1 && nA>1) || (mA>1 && nA==1)   % A is a vector
+                    
+                    sout.deriv = bsxfun(@times, tmp1(:)', B.deriv)';
+                else  % A is a matrix
+                    sout.deriv = zeros(mA,nA,globp);
+                    
+                    for i = 1 : globp
+                        sout.deriv(:,:,i) = bsxfun(@times, tmp1, B.deriv(i));
+                    end
+                end                
+            end
+        case{'power'}
+            tmp = bsxfun(fun,A, B.val);
+            tmp1 = bsxfun(@times, tmp, log(A));
+            if mB>=mA && nB>=nA    %  size of B is no smaller than A
+                if mB == 1   % B is a row vector
+                    sout.deriv = bsxfun(@times, tmp1', B.deriv);
+                else
+                    sout.deriv = bsxfun(@times, tmp1, B.deriv);
+                end
+            elseif (mB ==1 && nB>1) && (mA>1 && nA==1) % B is a row vector and A is a column vector
+                sout.deriv = zeros(mA, nB, globp);
+                for i = 1 : globp
+                    sout.deriv(:,:,i) = bsxfun(@times, tmp1, B.deriv(:,i)');
+                end
+            elseif (mB>1 && nB==1) && (mA==1 && nA>1)  % B is a column vector and A is a row vector
+                sout.deriv = zeros(mB,nA,globp);
+                
+                for i = 1 : globp
+                    sout.deriv(:,:,i) = bsxfun(@times, tmp1, B.deriv(:,i));
+                end
+            elseif (mB>1  || nB>1)&&(mA>1 && nA>1)  % B is a vector and A is a matrix
+                if (mB==1)  % B is a row vector
+                    sout.deriv = zeros(mA, nA, globp);
+                  
+                    for i = 1 : globp
+                        sout.deriv(:,:,i) = bsxfun(@times, tmp1, B.deriv(:,i)');
+                    end
+                else    % B is a column vector
+                    sout.deriv = zeros(mA,nA,globp);
+                    
+                    for i = 1 : globp
+                        sout.deriv(:,:,i) = bsxfun(@times, tmp1, B.deriv(:,i));
+                    end
+                end
+            else % B is a scalar
+                if (mA == 1 && nA>1) || (mA>1 && nA==1)   % A is a vector
+                    
+                    sout.deriv = bsxfun(@times, tmp1(:)', B.deriv)';
+                else  % A is a matrix
+                    sout.deriv = zeros(mA,nA,globp);
+                    
+                    for i = 1 : globp
+                        sout.deriv(:,:,i) = bsxfun(@times, tmp1, B.deriv(i));
+                    end
+                end                
+            end
+            
+    end
+else    % Both A and B belong to deriv class
+    sout.val = bsxfun(fun, A.val, B.val);
+    [mA, nA] = size(A.val);
+    [mB, nB] = size(B.val);
+    switch func2str(fun)
+        case {'plus', 'minus'}
+            if mB == mA && nB == nA  % The size of A is same as B
+                sout.deriv = bsxfun(fun, A.derivspj, B.derivspj);
+            elseif (nA> 1 && mA>1) || (mB>1 && nB>1) % one of A and B is a matrix, not both
+                sout.deriv = zeros(max(mA,mB), max(nA, nB), globp);
+                if (nA>1 && mA>1)  % A is a matrix
+                    if mB > 1  % B is a column vector
+                        for i = 1 : globp
+                            sout.deriv(:,:,i) = bsxfun(fun, A.deriv(:,:,i), B.deriv(:,i));
+                        end
+                    else  % B is a row vector or a scalar
+                        if nB == 1   % B is a saclar
+                            for i = 1 : globp
+                                sout.deriv(:,:,i) = bsxfun(fun, A.deriv(:,:,i), B.deriv(i));
+                            end
+                        else  % B is a row vector
+                            for i = 1 : globp
+                                sout.deriv(:,:,i) = bsxfun(fun, A.deriv(:,:,i), B.deriv(:,i)');
+                            end
+                        end
+                    end
+                else     % B is a matrix
+                    if mA > 1 % A is a column vector
+                        for i = 1 : globp
+                            sout.deriv(:,:,i) = bsxfun(fun, A.deriv(:,i), B.deriv(:,:,i));
+                        end
+                    else  % A is a row vector or a scalar
+                        if nA == 1  % A is a scalar
+                            for i = 1 : globp
+                                sout.deriv(:,:,i) = bsxfun(fun, A.deriv(i), B.deriv(:,:,i));
+                            end
+                        else
+                            for i = 1 : globp
+                                sout.deriv(:,:,i) = bsxfun(fun, A.deriv(:,i)', B.deriv(:,:,i));
+                            end
+                        end
+                    end
+                end
+            elseif (mB==1 && nA==1) && (nB>1 && mA>1)   % B is a row vector, A is a column vector
+                sout.deriv = zeros(mA, nB, globp);
+                for i = 1 : globp
+                    sout.deriv(:,:,i) = bsxfun(fun, A.deriv(:,i), B.deriv(:,i)');
+                end
+            elseif  (mB>1 && nB==1) && (nA>1 && mA==1)  %  B is a column vector and A is a row vector
+                sout.deriv = zeros(mB, nA, globp);
+                for i = 1 : globp
+                    sout.deriv(:,:,i) = bsxfun(fun, A.deriv(:,i)', B.deriv(:,i));
+                end
+            else  % one of A and B is a scalar
+                if mA == 1 && nA == 1   % A is a scalar
+                    sout.deriv = bsxfun(fun, A.deriv', B.deriv);
+                else
+                    sout.deriv = bsxfun(fun, A.deriv, B.deriv');
+                end
+            end
+        case {'times'}% @rdivide, @power, @ldivide}
+            if (mB==mA) && (nB==nA)   % The size of B is same as A's
+                if mB == 1   % A and B are row vectors
+                    sout.deriv = bsxfun(fun, A.deriv', B.val)' + bsxfun(fun, A.val, B.deriv')';
+                else
+                    sout.deriv = bsxfun(fun, A.val, B.deriv) + bsxfun(fun, A.deriv, B.val);
+                end
+            elseif (mB >1 && nB>1) || (mA>1 && nA>1) % One of A and B is a matrix, not both
+                sout.deriv = zeros(max(mA,mB), max(nA,nB), globp);
+                if (nA>1 && mA>1)  % A is a matrix
+                    if mB > 1  % B is a column vector
+                        for i = 1 : globp
+                            sout.deriv(:,:,i) = bsxfun(fun, A.val, B.deriv(:,i))+bsxfun(fun, A.deriv(:,:,i), B.val);
+                        end
+                    else  % B is a row vector or a scalar
+                        if nB ==1 % B is a scalar
+                            for i = 1 : globp
+                                sout.deriv(:,:,i) = bsxfun(fun, A.val, B.deriv(i))+bsxfun(fun, A.deriv(:,:,i), B.val);
+                            end
+                        else
+                            
+                            for i = 1 : globp
+                                sout.deriv(:,:,i) = bsxfun(fun, A.val, B.deriv(:,i)')+bsxfun(fun, A.deriv(:,:,i), B.val);
+                            end
+                        end
+                    end
+                else     % B is a matrix
+                    if mA > 1 % A is a column vector
+                        for i = 1 : globp
+                            sout.deriv(:,:,i) = bsxfun(fun, A.val, B.deriv(:,:,i))+ bsxfun(fun, A.deriv(:,i), B.val);
+                        end
+                    else  % A is a row vector or a scalar
+                        if nA == 1 % A is a scalar
+                            for i = 1 : globp
+                                sout.deriv(:,:,i) = bsxfun(fun, A.val, B.deriv(:,:,i))+ bsxfun(fun, A.deriv(i), B.val);
+                            end
+                        else
+                            for i = 1 : globp
+                                sout.deriv(:,:,i) = bsxfun(fun, A.val, B.deriv(:,:,i))+ bsxfun(fun, A.deriv(:,i)', B.val);
+                            end
+                        end
+                    end
+                end
+            elseif (mB==1 && nA==1) && (nB>1 && mA>1)   % B is a row vector, A is a column vector
+                sout.deriv = zeros(mA, nB, globp);
+                for i = 1 : globp
+                    sout.deriv(:,:,i) = bsxfun(fun,A.val,B.deriv(:,i)') + bsxfun(fun, A.deriv(:,i), B.val);
+                end
+            elseif  (mB>1 && nB==1) && (nA>1 && mA==1)  %  B is a column vector and A is a row vector
+                sout.deriv = zeros(mB, nA, globp);
+                for i = 1 : globp
+                    sout.deriv(:,:,i) = bsxfun(fun,A.val,B.deriv(:,i))+ bsxfun(fun, A.deriv(:,i)', B.val);
+                end
+            else  % one of A and B is a scalar
+                if mA ==1 && nA ==1   % A is a scalar
+                    sout.deriv = bsxfun(fun, A.val, B.deriv) + bsxfun(fun, A.deriv', B.val(:));
+                else % B is a scalar
+                    sout.deriv = bsxfun(fun, A.val(:), B.deriv') + bsxfun(fun, A.deriv, B.val);
+                end
+            end
+        case {'ldivide'}
+            tmp2 = 1./A.val;
+            tmp = -tmp2.*tmp2;
+            tmp1 = bsxfun(@times, tmp, B.val);
+            if (mB==mA) && (nB==nA)   % The size of B is same as A's
+                if mB == 1   % A and B are row vectors
+                    sout.deriv = bsxfun(@times, tmp1', A.deriv) + bsxfun(@times, tmp2', B.deriv);
+                else
+                    sout.deriv = bsxfun(@times, tmp1, A.deriv) + bsxfun(@times, tmp2, B.deriv);
+                end
+            elseif (mB >1 && nB>1) || (mA>1 && nA>1) % One of A and B is a matrix, not both
+                sout.deriv = zeros(max(mA,mB), max(nA,nB), globp);
+                if (nA>1 && mA>1)  % A is a matrix
+                    if mB > 1  % B is a column vector
+                        for i = 1 : globp
+                            sout.deriv(:,:,i) = bsxfun(@times, tmp1, A.deriv(:,:,i))+bsxfun(@times, tmp2, B.deriv(:,i));
+                        end
+                    else  % B is a row vector or a scalar
+                        if nB ==1 % B is a scalar
+                            for i = 1 : globp
+                                sout.deriv(:,:,i) = bsxfun(@times, tmp1, A.deriv(:,:,i))+bsxfun(@times, tmp2, B.deriv(i));
+                            end
+                        else    % B is a row vector                            
+                            for i = 1 : globp
+                                sout.deriv(:,:,i) = bsxfun(@times, tmp1, A.deriv(:,:,i))+bsxfun(@times, tmp2, B.deriv(:,i)');
+                            end
+                        end
+                    end
+                else     % B is a matrix
+                    if mA > 1 % A is a column vector
+                        for i = 1 : globp
+                            sout.deriv(:,:,i) = bsxfun(@times, tmp1, A.deriv(:,i))+ bsxfun(@times, tmp2, B.deriv(:,:,i));
+                        end
+                    else  % A is a row vector or a scalar
+                        if nA == 1 % A is a scalar
+                            for i = 1 : globp
+                                sout.deriv(:,:,i) = bsxfun(@times, tmp1, A.deriv(i))+ bsxfun(@times, tmp2, B.deriv(:,:,i));
+                            end
+                        else
+                            for i = 1 : globp
+                                sout.deriv(:,:,i) = bsxfun(@times, tmp1, A.deriv(:,i)')+ bsxfun(@times, tmp2, B.deriv(:,:,i));
+                            end
+                        end
+                    end
+                end
+            elseif (mB==1 && nA==1) && (nB>1 && mA>1)   % B is a row vector, A is a column vector
+                sout.deriv = zeros(mA, nB, globp);
+                for i = 1 : globp
+                    sout.deriv(:,:,i) = bsxfun(@times,tmp1,A.deriv(:,i)) + bsxfun(@times,tmp2, B.deriv(:,i)');
+                end
+            elseif  (mB>1 && nB==1) && (nA>1 && mA==1)  %  B is a column vector and A is a row vector
+                sout.deriv = zeros(mB, nA, globp);
+                for i = 1 : globp
+                    sout.deriv(:,:,i) = bsxfun(@times,tmp1,A.deriv(:,i)')+ bsxfun(@times, tmp2, B.deriv(:,i));
+                end
+            else  % one of A and B is a scalar
+                if mA ==1 && nA ==1   % A is a scalar
+                    sout.deriv = bsxfun(@times, tmp1(:), A.deriv') + bsxfun(@times, tmp2, B.deriv);
+                else % B is a scalar
+                    sout.deriv = bsxfun(@times, tmp1(:), A.deriv) + bsxfun(@times, tmp2(:), B.deriv');
+                end
+            end
+        case{'rdivide'}
+            tmp2 = 1./B.val;
+            tmp = -tmp2.*tmp2;
+            tmp1 = bsxfun(@times, tmp, A.val);
+            if (mA==mB) && (nA==nB)   % The size of A is same as B's
+                if mA == 1   % A and B are row vectors
+                    sout.deriv = bsxfun(@times, tmp1', B.deriv) + bsxfun(@times, tmp2', A.deriv);
+                else
+                    sout.deriv = bsxfun(@times, tmp1, B.deriv) + bsxfun(@times, tmp2, A.deriv);
+                end
+            elseif (mA >1 && nA>1) || (mB>1 && nB>1) % One of A and B is a matrix, not both
+                sout.deriv = zeros(max(mA,mB), max(nA,nB), globp);
+                if (nB>1 && mB>1)  % B is a matrix
+                    if mA > 1  % A is a column vector
+                        for i = 1 : globp
+                            sout.deriv(:,:,i) = bsxfun(@times, tmp1, B.deriv(:,:,i))+bsxfun(@times, tmp2, A.deriv(:,i));
+                        end
+                    else  % A is a row vector or a scalar
+                        if nA ==1 % A is a scalar
+                            for i = 1 : globp
+                                sout.deriv(:,:,i) = bsxfun(@times, tmp1, B.deriv(:,:,i))+bsxfun(@times, tmp2, A.deriv(i));
+                            end
+                        else    % A is a row vector                            
+                            for i = 1 : globp
+                                sout.deriv(:,:,i) = bsxfun(@times, tmp1, B.deriv(:,:,i))+bsxfun(@times, tmp2, A.deriv(:,i)');
+                            end
+                        end
+                    end
+                else     % A is a matrix
+                    if mB > 1 % B is a column vector
+                        for i = 1 : globp
+                            sout.deriv(:,:,i) = bsxfun(@times, tmp1, B.deriv(:,i))+ bsxfun(@times, tmp2, A.deriv(:,:,i));
+                        end
+                    else  % B is a row vector or a scalar
+                        if nB == 1 % B is a scalar
+                            for i = 1 : globp
+                                sout.deriv(:,:,i) = bsxfun(@times, tmp1, B.deriv(i))+ bsxfun(@times, tmp2, A.deriv(:,:,i));
+                            end
+                        else
+                            for i = 1 : globp
+                                sout.deriv(:,:,i) = bsxfun(@times, tmp1, B.deriv(:,i)')+ bsxfun(@times, tmp2, A.deriv(:,:,i));
+                            end
+                        end
+                    end
+                end
+            elseif (mA==1 && nB==1) && (nA>1 && mB>1)   % A is a row vector, B is a column vector
+                sout.deriv = zeros(mB, nA, globp);
+                for i = 1 : globp
+                    sout.deriv(:,:,i) = bsxfun(@times,tmp1,B.deriv(:,i)) + bsxfun(@times,tmp2, A.deriv(:,i)');
+                end
+            elseif  (mA>1 && nA==1) && (nB>1 && mB==1)  %  A is a column vector and B is a row vector
+                sout.deriv = zeros(mA, nB, globp);
+                for i = 1 : globp
+                    sout.deriv(:,:,i) = bsxfun(@times,tmp1,B.deriv(:,i)')+ bsxfun(@times, tmp2, A.deriv(:,i));
+                end
+            else  % one of A and B is a scalar
+                if mB ==1 && nB ==1   % B is a scalar
+                    sout.deriv = bsxfun(@times, tmp1(:), B.deriv') + bsxfun(@times, tmp2, A.deriv);
+                else % A is a scalar
+                    sout.deriv = bsxfun(@times, tmp1(:), B.deriv) + bsxfun(@times, tmp2(:), A.deriv');
+                end
+            end
+        case{'power'}
+            tmp = bsxfun(fun, A.val, B.val-1);
+            tmp = -tmp2.*tmp2;
+            tmp1 = bsxfun(@times, tmp, A.val);
+            if (mA==mB) && (nA==nB)   % The size of A is same as B's
+                if mA == 1   % A and B are row vectors
+                    sout.deriv = bsxfun(@times, tmp1', B.deriv) + bsxfun(@times, tmp2', A.deriv);
+                else
+                    sout.deriv = bsxfun(@times, tmp1, B.deriv) + bsxfun(@times, tmp2, A.deriv);
+                end
+            elseif (mA >1 && nA>1) || (mB>1 && nB>1) % One of A and B is a matrix, not both
+                sout.deriv = zeros(max(mA,mB), max(nA,nB), globp);
+                if (nB>1 && mB>1)  % B is a matrix
+                    if mA > 1  % A is a column vector
+                        for i = 1 : globp
+                            sout.deriv(:,:,i) = bsxfun(@times, tmp1, B.deriv(:,:,i))+bsxfun(@times, tmp2, A.deriv(:,i));
+                        end
+                    else  % A is a row vector or a scalar
+                        if nA ==1 % A is a scalar
+                            for i = 1 : globp
+                                sout.deriv(:,:,i) = bsxfun(@times, tmp1, B.deriv(:,:,i))+bsxfun(@times, tmp2, A.deriv(i));
+                            end
+                        else    % A is a row vector                            
+                            for i = 1 : globp
+                                sout.deriv(:,:,i) = bsxfun(@times, tmp1, B.deriv(:,:,i))+bsxfun(@times, tmp2, A.deriv(:,i)');
+                            end
+                        end
+                    end
+                else     % A is a matrix
+                    if mB > 1 % B is a column vector
+                        for i = 1 : globp
+                            sout.deriv(:,:,i) = bsxfun(@times, tmp1, B.deriv(:,i))+ bsxfun(@times, tmp2, A.deriv(:,:,i));
+                        end
+                    else  % B is a row vector or a scalar
+                        if nB == 1 % B is a scalar
+                            for i = 1 : globp
+                                sout.deriv(:,:,i) = bsxfun(@times, tmp1, B.deriv(i))+ bsxfun(@times, tmp2, A.deriv(:,:,i));
+                            end
+                        else
+                            for i = 1 : globp
+                                sout.deriv(:,:,i) = bsxfun(@times, tmp1, B.deriv(:,i)')+ bsxfun(@times, tmp2, A.deriv(:,:,i));
+                            end
+                        end
+                    end
+                end
+            elseif (mA==1 && nB==1) && (nA>1 && mB>1)   % A is a row vector, B is a column vector
+                sout.deriv = zeros(mB, nA, globp);
+                for i = 1 : globp
+                    sout.deriv(:,:,i) = bsxfun(@times,tmp1,B.deriv(:,i)) + bsxfun(@times,tmp2, A.deriv(:,i)');
+                end
+            elseif  (mA>1 && nA==1) && (nB>1 && mB==1)  %  A is a column vector and B is a row vector
+                sout.deriv = zeros(mA, nB, globp);
+                for i = 1 : globp
+                    sout.deriv(:,:,i) = bsxfun(@times,tmp1,B.deriv(:,i)')+ bsxfun(@times, tmp2, A.deriv(:,i));
+                end
+            else  % one of A and B is a scalar
+                if mB ==1 && nB ==1   % B is a scalar
+                    sout.deriv = bsxfun(@times, tmp1(:), B.deriv') + bsxfun(@times, tmp2, A.deriv);
+                else % A is a scalar
+                    sout.deriv = bsxfun(@times, tmp1(:), B.deriv) + bsxfun(@times, tmp2(:), A.deriv');
+                end
+            end
+    end
+end
+sout = class(sout, 'deriv');
+

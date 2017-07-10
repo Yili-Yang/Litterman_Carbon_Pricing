@@ -1,0 +1,157 @@
+function [sout,I]=max(s1,s2)
+%
+%
+%   03/2007 -- matrix operation is used to avoid
+%              "for" loop to improve the performance.
+%   03/2007 -- consider the case when s1.val is a matrix
+%   03/2007 -- if s1.val is a vector, it has to be a
+%              column vector
+%   03/2007 -- rearrange the program for readibilty
+%   01/2010 -- add nondifferentiable points detecting.
+%
+%       ******************************************************************
+%       *                          ADMAT - 2.0                           *
+%       *              Copyright (c) 2008-2009 Cayuga Research           *
+%       *                Associates, LLC. All Rights Reserved.           *
+%       ******************************************************************
+
+
+global globp;
+
+s1=deriv(s1);
+
+if nargin > 1
+    s2=deriv(s2);
+    if nargout <= 1
+        sout=max(s1.val,s2.val);
+    else
+        [sout,I]=max(s1.val,s2.val);
+    end
+
+    sout=deriv(sout);
+
+    if size(sout.val,1)==1 || size(sout.val,2)==1    % sout.val is a vector
+        I1=find(s1.val-s2.val > 0);
+        I2=find(s1.val-s2.val == 0);
+        I3=find(s1.val-s2.val < 0);
+        if length(s1.val)==1         % s1.val is a scalar
+            sout.deriv=s2.deriv;
+            if ~isempty(I1)
+                sout.deriv(I1,:) = s1.deriv(ones(length(I1), 1), :);
+                %                 for i=1:globp
+                %                     sout.deriv(I1,i)=s1.deriv(i);
+                %                 end;
+            end
+            if isequal(s2.deriv(I2,:),s1.deriv(ones(length(I2),1),:))
+                sout.deriv(I2,:) = s2.deriv(I2,:);
+            else
+                error('Nondifferentiable points in max() was detected.');
+            end
+            %             for j=1:length(I2)
+            %                 sout.deriv(I2(j),:)=(s2.deriv(I2(j),:)+s1.deriv)./2;
+            %             end
+        elseif length(s2.val)==1            % s2.val is a scalar
+            sout.deriv=s1.deriv;
+            if ~isempty(I3)
+                sout.deriv(I3,:) = s2.deriv(ones(length(I3),1), :);
+                %                 for i=1:globp
+                %                     sout.deriv(I3,i)=s2.deriv(i);
+                %                 end
+            end
+            if isequal(s1.deriv(I2,:), s2.deriv(ones(length(I2),1),:))
+                sout.deriv(I2,:) = s1.deriv(I2,:);
+            else
+                error('Nondifferentiable points in max() was detected.');
+            end
+            %             for j=1:length(I2)
+            %                 sout.deriv(I2(j),:)=(s1.deriv(I2(j),:)+s2.deriv)/2;
+            %             end
+        else                         % both s1.val and s2.val are vectors
+            sout.deriv=s2.deriv;
+            if ~isempty(I1)
+                sout.deriv(I1,:)=s1.deriv(I1,:);
+            end
+            if ~isempty(I2)
+                if isequal(s1.deriv(I2,:), s2.deriv(I2,:))
+                    sout.deriv(I2,:)=s1.deriv(I2,:);
+                else
+                    error('Nondifferentiable points in max() was detected.');
+                end
+            end
+        end
+
+
+    else              % sout.val is a matrix
+
+        [I1,I1j]=find(s1.val-s2.val > 0);
+        [I2,I2j]=find(s1.val-s2.val == 0);
+        [I3,I3j]=find(s1.val-s2.val < 0);
+
+        if length(s1.val)==1
+            sout.deriv=s2.deriv;
+            if ~isempty(I1)
+                for i=1:globp
+                    for j=1:length(I1)
+                        sout.deriv(I1(j),I1j(j),i)=s1.deriv(i);
+                    end;
+                end;
+            end
+            for j=1:length(I2)
+                if isequal(squeeze(s2.deriv(I2(j),I2j(j),:)), s1.deriv(:))
+                    sout.deriv(I2(j),I2j(j),:)=s1.deriv(:);
+                else
+                    error('Nondifferentiable points in max() was detected.');
+                end
+            end
+
+        elseif length(s2.val)==1
+            sout.deriv=s1.deriv;
+            if ~isempty(I3)
+                for i=1:globp
+                    for j=1:length(I3)
+                        sout.deriv(I3(j),I3j(j),i)=s2.deriv(i);
+                    end;
+                end;
+            end
+
+            for j=1:length(I2)
+                if isequal(squeeze(s1.deriv(I2(j),I2j(j),:)),s2.deriv(:))
+                    sout.deriv(I2(j),I2j(j),:)=s2.deriv(:);
+                else
+                    error('Nondifferentiable points in max() was detected.');
+                end
+            end
+        else
+            sout.deriv=s2.deriv;
+            if ~isempty(I1)
+                %                 sout.deriv(I1,I1j,:)=s1.deriv(I1,I1j,:);
+                for j=1:length(I1)
+                    sout.deriv(I1(j),I1j(j),:)=s1.deriv(I1(j),I1j(j),:);
+                end;
+            end
+            if ~isempty(I2)
+                %                 sout.deriv(I2,I2j,:)=(s1.deriv(I2,I2j,:)+s2.deriv(I2,I2j,:))./2;
+                for j=1: length(I2)
+                    if isequal(s1.deriv(I2(j),I2j(j),:),s2.deriv(I2(j),I2j(j),:))
+                        sout.deriv(I2(j),I2j(j),:)= s2.deriv(I2(j),I2j(j),:);
+                    else
+                        error('Nondifferentiable points in max() was detected.');
+                    end
+                end;
+            end
+        end
+    end
+else
+    [sout.val,II]=max(s1.val);
+    if length(sout.val) == 1
+        sout.deriv=s1.deriv(II,:);
+    else
+        for j = 1 : globp
+            sout.deriv(:,j) = s1.deriv(II(j),:,j)';
+        end
+    end
+    sout=class(sout,'deriv');
+    if nargout==2
+        I=II;
+    end
+end

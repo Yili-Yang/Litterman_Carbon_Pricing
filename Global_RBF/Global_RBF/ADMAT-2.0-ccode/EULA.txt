@@ -1,0 +1,127 @@
+1
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                                         %
+%                            Cayuga Research Associates, LLC                              %
+%                               End-User License Agreement                                %
+%                                                                                         %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Please read this document carefully. This End-User License Agreement ("Agreement") is a legal
+agreement between you and Cayuga Research Associates, LLC ("Cayuga Research") for the licensing
+of the ADMAT 2.0 Professional software toolbox and associated documentation made available by
+Cayuga Research (collectively referred to in this agreement as the "Software"). The term "you"
+refers to you personally, your company, the company or legal entity you work for or are 
+affiliated with whether as an independent contractor, employee, partner, shareholder, officer,
+director, consultant or representative. This Agreement governs your use of the Software, and 
+any updates, supplements, add-on components, or services for the Software that Cayuga Research
+may subsequently provide to you, unless otherwise agreed to in writing. You must review and 
+either accept or reject the terms of this Agreement before installing or using the Software. 
+By clicking the "I ACCEPT" button or installing or using the Software, you acknowledge that 
+you have read all of the terms and conditions of this Agreement, understand them, and agree 
+to be legally bound by them. If you do not agree to them, do not install, access or use the 
+Software. 
+
+1. Grant of License. Subject to the terms and conditions of this Agreement and the payment 
+of all applicable license fees, Cayuga Research hereby grants to you a non-exclusive, 
+non-transferable right to use, run, operate, and perform ("use") one copy of the specified 
+version of the Software on a single machine you own or control, or on multiple machines you 
+own or control if you purchase multiple licenses. The number of machines on which you install 
+the Software may not exceed the number of licenses purchased. The license granted herein is 
+contingent upon your timely and complete payment of all amounts due and payable to Cayuga 
+Research pursuant to this Agreement. You may make copies of the Software for back-up and 
+archive purposes.  The media on which any back up or archive copy of the Software is stored 
+by itself shall identify the Software as the "Cayuga Research Associates ADMAT 2.0 Professional 
+Software" and include the following notice: "Copyright (c) 2008-2010. Cayuga Research Associates,
+LLC. All rights reserved."
+
+2. Duration of License. The duration of the initial license is one year from the date Cayuga
+Research delivers the Software to you by email. You may renew your license annually for all 
+subsequent years. Information on initial license fees and subsequent annual license renewal 
+fees can be found on our website at www.cayugaresearch.com. 
+ 
+3. Ownership of Software. As between Cayuga Research and you, all right, title and interest 
+in and to the Software, including any and all intellectual property rights related thereto 
+is and shall remain the exclusive property of Cayuga Research. Your possession, installation, 
+or use of the Software does not transfer to you any title to the intellectual property in the 
+Software, and you will not acquire any rights to the Software except as expressly set forth 
+in this Agreement. All other rights with respect to the Software, whether now existing or 
+which may hereafter come into existence, which are not expressly granted to you herein, are 
+reserved for Cayuga Research. 
+
+4. Restrictions. The license granted herein applies only to the object code version of the 
+licensed Software. You shall have no rights whatsoever with respect to the source code for 
+the licensed Software. You may not rent, lease, loan, sublicense, resell or use the Software 
+as a service bureau or as an application service provider or otherwise for a third party other 
+than your own clients. You may not adapt, reverse engineer, decompile, disassemble, modify, 
+translate, prepare derivative works from or make any attempt to discover the source code of 
+the Software. You may not transfer any of the rights granted to you under this agreement. 
+All rights not expressly set forth hereunder are reserved by Cayuga Research. You shall not 
+remove, obscure, or alter Cayuga Research's copyright, trademark or other proprietary rights 
+notices affixed to or contained within the Software or accompanying documentation.
+ 
+5. Termination. This license is effective until expired or terminated. A trial or evaluation 
+license expires at the end of the evaluation period, and a license issued or renewed for a 
+limited time period shall expire at the end of the time period specified. This license is 
+subject to immediate termination if you fail to comply with any provision of this license. 
+Upon termination you shall cease all use of the Software and destroy the written materials 
+and all allowable copies of the Software (including backup copies). 
+ 
+6. Disclaimer of Warranty. THE SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY, EXPRESS OR 
+IMPLIED, OF ANY KIND.  EXCEPT AS EXPRESSLY SET FORTH IN THIS AGREEMENT, AND TO THE EXTENT 
+PERMITTED BY APPLICABLE LAW, CAYUGA RESEARCH HAS NOT AND SHALL NOT BE DEEMED TO HAVE MADE 
+ANY REPRESENTATION OR WARRANTY, EXPRESS OR IMPLIED, INCLUDING, WITHOUT LIMITATION, ANY 
+WARRANTY AS TO THE CONDITION, MERCHANTABILITY, NON-INFRINGEMENT, DESIGN, OPERATION OR FITNESS 
+FOR A PARTICULAR PURPOSE OF THE SOFTWARE.  NO ORAL OR WRITTEN INFORMATION OR ADVICE GIVEN BY 
+CAYUGA RESEARCH, ITS DEALERS, DISTRIBUTORS, AGENTS, EMPLOYEES OR REPRESENTATIVES SHALL CREATE 
+A WARRANTY, AND YOU MAY NOT RELY UPON SUCH INFORMATION OR ADVICE.  
+ 
+7. Limitation of Liability. IN NO EVENT SHALL THE CAYUGA RESEARCH, OR ITS CONTRIBUTORS BE 
+LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, 
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING 
+IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF CAYUGA RESEARCH HAS BEEN ADVISED OF 
+THE POSSIBILITY OF SUCH DAMAGES. IN ANY EVENT, THE LIABILITY OF CAYUGA RESEARCH FOR ANY 
+LOSS OR DAMAGES DIRECTLY OR INDIRECTLY SUFFERED BY YOU AS A RESULT OF THE USE OF THE SOFTWARE 
+OR ANY FAILURE, ACT, OMISSION OR BREACH OF THIS AGREEMENT BY CAYUGA RESEARCH SHALL NOT EXCEED 
+THE AGGREGATE FEES PAID BY YOU TO CAYUGA RESEARCH DURING THE CALENDAR MONTHS IN WHICH THE 
+DAMAGES WERE INCURRED BY YOU.
+ 
+8. Infringement. Should the Software or any part thereof become, or in Cayuga Research's 
+reasonable opinion be likely to become, the subject of a claim of infringement or 
+misappropriation, Cayuga Research shall have the right, at its sole option and expense, 
+(a) to procure for you the right to continue using the Software, or 
+(b) to replace or modify the Software with a non-infringing version of substantially 
+equivalent function and performance or 
+(c) accept the return of the Software in exchange for a refund of amounts paid 
+during the prior three (3) months and thereupon immediately terminate this Agreement. 
+
+9. Confidentiality. In connection with the parties performing pursuant to this Agreement, 
+you acknowledge that the Software is and contains information proprietary to Cayuga 
+Research ("Confidential Information"). Confidential Information includes, but is not 
+limited to, this Agreement and the terms hereof, information relating to the intellectual 
+property and business practices of Cayuga Research, and shall specifically include, without 
+limitation, the Software, the instructions and documentation therefor, the "look and feel" 
+thereof, the algorithms therein, the source code therefor, and the screen displays thereof. 
+Confidential Information does not include information that was already known to you, 
+information which becomes generally available to the public other than as a result of a 
+breach of this Agreement, or information which is furnished to you by a third party who is 
+lawfully in possession of such information and who lawfully conveys that information. You 
+shall protect the Confidential Information, and shall not, except in the course of performing 
+pursuant to this Agreement, (i) use, (ii) disclose, (iii) copy or (iv) allow access to the 
+Confidential Information without Cayuga Research's prior written approval. You acknowledge 
+and agree that your obligations with regard to the Confidential Information shall continue 
+until such time as one of the exceptions above applies to the subject matter in question.
+
+10. General. This Agreement shall bind and benefit the successors and permitted assigns 
+of the parties. This Agreement shall be governed and interpreted in accordance with the laws 
+of the State of New York, United States of America without regard to principles of conflict 
+of laws. The parties consent to the federal and state courts of the State of New York 
+having jurisdiction over them. This Agreement supersedes all prior oral and written 
+agreements between the parties as to the subject hereof.  
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                                                                                             %
+%        Copyright (c) 2008-2010 Cayuga Research Associates, LLC.  All Rights Reserved.       %
+%                                                                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

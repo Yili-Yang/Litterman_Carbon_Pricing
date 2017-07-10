@@ -1,0 +1,16 @@
+function y = OptmFun(x, Extr)
+%
+%     function y = F(F1(x))+x'*x,
+%  where F1 is the Broyden function, the nonzero of A is A(i,j) = x(j) and
+%  F(x) is the function, y = x1^2 + x2^2 + ... + xn^2 + 5x1x2 + 5x2x3 + ...
+%  + 5x(n-1)x(n)
+%
+%
+n = Extra.n;
+
+% compute F1(x)
+tmp = broyden(x);
+% compute F(x)
+y = tmp'*tmp;
+i = 1 : n-1;
+y = y + 5*tmp(i)'*tmp(i+1) + x'*x;
