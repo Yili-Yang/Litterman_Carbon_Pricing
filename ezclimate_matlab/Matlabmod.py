@@ -13,7 +13,8 @@ from utility import EZUtility
 from optimization import GeneticAlgorithm, GradientSearch
 import numpy as np
 
-def get_init_m():
+def get_py_m(m):
+    m = np.array(m)
     t = TreeModel(decision_times=[0, 15, 45, 85, 185, 285, 385])
     bau_default_model = DLWBusinessAsUsual()
     bau_default_model.bau_emissions_setup(tree=t)
@@ -23,16 +24,15 @@ def get_init_m():
     df.damage_simulation(draws=4, peak_temp=6.0, disaster_tail=18.0, tip_on=True, 
 							 temp_map=0, temp_dist_params=None, maxh=100.0)
     u = EZUtility(tree=t, damage=df, cost=c, period_len=5.0, eis=0.9, ra=7.0, time_pref=0.005)
-    ga_model = GeneticAlgorithm(pop_amount=150, num_generations=75, cx_prob=0.8, mut_prob=0.5, 
+    ga_model = GeneticAlgorithm(pop_amount=150, num_generations=1, cx_prob=0.8, mut_prob=0.5, 
                               bound=1.5, num_feature=63, utility=u, print_progress=True) 
     final_pop, fitness = ga_model.run()
     sort_pop = final_pop[np.argsort(fitness)][-1]
-    return sort_pop,t,c,df
-
-def get_utility(m,t,c,df):
-
     df.damage_simulation(draws=4000000, peak_temp=6.0, disaster_tail=18.0, tip_on=True, 
                              temp_map=0, temp_dist_params=None, maxh=100.0)
     u = EZUtility(tree=t, damage=df, cost=c, period_len=5.0, eis=0.9, ra=7.0, time_pref=0.005)
+    if m.max() >0:
+        return u.utility(m)
+    else :
+        return sort_pop
 
-    return u.utility(m)
