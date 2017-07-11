@@ -98,7 +98,6 @@ end
 if(ls(end)~=0)
     error('Last entry of lambda sequence is not 0!');
 end
-
 if (m~=length(fbar))
     error('size does not match!');
 end
@@ -171,10 +170,13 @@ else
         [s,~,~,~,~]=Trust(g,H,delta);
         s=real(s);
         iter2=0;
-        
+        count = 0;
         while (norm(g)>tol && iter2<itbnd && norm(s)>tol2)
+            disp(count)
             qpval=g'*s+0.5*s'*H*s;
-            f_neworig=feval(myfun,x+s,varargin{:});
+            disp(x+s)
+            f_neworig=feval(myfun,(x+s)',varargin{:});
+            disp(f_neworig)
             f_new=f_neworig+lambda*norm(x+s-xstar)^2;
             xbar=[xbar;(x+s)'];
             fbar=[fbar;f_neworig];
@@ -201,7 +203,7 @@ else
             [s,~,~,~,~]=Trust(g,H,delta);
             s=real(s);
             iter2=iter2+1;
-            
+            count = count + 1;
         end
         
         iter=iter+iter2;

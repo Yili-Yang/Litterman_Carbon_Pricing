@@ -28,11 +28,17 @@ class matlabmode():
 
     def utility(self,m):
         m = np.array(m)
-        result_array=np.array([])
-        row,col = m.shape()
-        for row_index in range(row):
-            np.append(result_array,u.utility(m[row_index,:])
-        return result_array
+        #print(m)
+        #result_array=np.array([])
+        # if m.ndim ==1:
+        return self.u.utility(m)
+            
+        # else:
+        #     row= 10
+        #     for row_index in range(row):
+        #         result_array= np.append(result_array,self.u.utility(m[row_index,:]))
+        #     return result_array
+
 
 def get_u(m,y):
     return y.utility(m)

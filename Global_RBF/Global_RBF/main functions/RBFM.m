@@ -94,6 +94,7 @@ if(deg==0)
             H=H+coeff(l)*phiprime*eye(n);
         end
     end
+    disp(H)
     f=val+coeff(m+1);
 end
 
