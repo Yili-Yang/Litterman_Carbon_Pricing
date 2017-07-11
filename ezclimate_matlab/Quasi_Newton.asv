@@ -23,7 +23,7 @@ itbnd=500*1e20;
 n=length(x0);
 H=eye(n);
 x=x0;
-[f,g]=feval(myfun,x,varargin{:});
+[f,g]=myfun(x,varargin{:});
 fcount=1;
 gcount=1;
 iter=0;
@@ -34,10 +34,10 @@ while(norm(g)>tol && iter<itbnd && fcount<1e3)
         H=eye(n);
         p=-H*g;
     end
-    [alpha,fc,gc]=line_search(myfun,f,g,x,p,varargin{:});
+    [alpha,fc,gc]=line_search(myfun,f,g,x,p,varargin);
     x=x+alpha*p;
     s=alpha*p;
-    [f,g_new]=feval(myfun,x,varargin{:});
+    [f,g_new]=feval(myfun,x,varargin);
 
     fcount=fcount+fc+1;
     gcount=gcount+gc+1;
