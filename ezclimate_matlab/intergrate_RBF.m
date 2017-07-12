@@ -1,9 +1,9 @@
 y = py.Matlabmod_global.matlabmode();
 varargin = y;
 myfun = @matlab_utility_global;
-m =10;
+m =100;
 dim = 63;
-x = zeros(m,63);
+x = double(zeros(m,63));
 for ii =1:m
     x(ii,:) = rand(1,63);
 end
@@ -20,7 +20,7 @@ deg=-1; % in the RBF model, p(x) is set to zero.
 f=zeros(m,1);
 for jj=1:m
     xjj_size = size(x(jj,:));
-    f(jj)=double(py.array.array('d',py.numpy.nditer(myfun(x(jj,:),varargin))));
+    f(jj)=-double(py.array.array('d',py.numpy.nditer(myfun(x(jj,:),varargin))));
 end
 %
 % determine the index of the starting point for the optimization
