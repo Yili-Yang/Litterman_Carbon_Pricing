@@ -172,10 +172,9 @@ else
         iter2=0;
         count = 0;
         while (norm(g)>tol && iter2<itbnd && norm(s)>tol2)
+            disp('count')
             disp(count)
             qpval=g'*s+0.5*s'*H*s;
-            disp(s)
-            disp(x+s)
             f_neworig=feval(myfun,(x+s)',varargin{:});
             disp(f_neworig)
             f_new=f_neworig+lambda*norm(x+s-xstar)^2;

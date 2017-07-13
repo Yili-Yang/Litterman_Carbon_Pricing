@@ -25,6 +25,7 @@ lambda = 0;
 n = length(g); 
 coeff(1:n,1) = zeros(n,1);
 H = full(H);
+
 [V,D] = eig(H); 
 count = 0;
 eigval = diag(D); 
