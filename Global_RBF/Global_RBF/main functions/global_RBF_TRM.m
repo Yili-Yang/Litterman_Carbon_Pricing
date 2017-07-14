@@ -169,14 +169,19 @@ else
         g=g+2*lambda*(x-xstar);
         [s,~,~,~,~]=Trust(g,H,delta);
         s=real(s);
+        %disp('s')
+        %disp(s)
         iter2=0;
         count = 0;
+        %disp('x+s')
+        %disp(x+s)
         while (norm(g)>tol && iter2<itbnd && norm(s)>tol2)
-            disp('count')
-            disp(count)
+            %disp('count')
+            %disp(count)
             qpval=g'*s+0.5*s'*H*s;
             f_neworig=feval(myfun,(x+s)',varargin{:});
-            disp(f_neworig)
+            %disp('f_neworig')
+            %disp(f_neworig)
             f_new=f_neworig+lambda*norm(x+s-xstar)^2;
             xbar=[xbar;(x+s)'];
             fbar=[fbar;f_neworig];

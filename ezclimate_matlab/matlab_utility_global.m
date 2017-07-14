@@ -1,6 +1,6 @@
 function re = matlab_utility_global(m_in_mat,varargin)
-gamma =10000000;
-epi = 1e-10;
+gamma =1e6;
+epi = 1e-4;
 %m_in_mat = m_in_mat';
 ma_size = size(m_in_mat);
     for row =1:ma_size(1)
@@ -10,8 +10,12 @@ ma_size = size(m_in_mat);
         end
         pyr = py.Matlabmod_global.get_u(m_in_mat(row,:),varargin{:});
         re_array = -double(py.array.array('d',py.numpy.nditer(pyr)))';
-        disp('positive_add_up')
-        disp(positive_add_up)
-        re(row) = re_array - positive_add_up;
+        %disp('positive_add_up')
+        %disp(positive_add_up)
+        if isnan(re_array)>0
+            re(row) = positive_add_up;
+        else
+            re(row) = re_array + positive_add_up;
+        end
     end
 end

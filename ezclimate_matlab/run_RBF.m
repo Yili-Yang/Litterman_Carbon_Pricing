@@ -1,7 +1,7 @@
+function [fmin1,xmin1,iter1,xbar_min1,fbar_min1] = run_RBF(m)
 y = py.Matlabmod_global.matlabmode();
 varargin = y;
 myfun = @matlab_utility_global;
-m =100;
 dim = 63;
 x = double(zeros(m,63));
 for ii =1:m
