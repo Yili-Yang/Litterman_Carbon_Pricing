@@ -120,7 +120,7 @@ if (useg==1)
         
         while (norm(g)>tol && iter2<itbnd && norm(s)>tol2)
             qpval=g'*s+0.5*s'*H*s;
-            [f_neworig,g_new]=feval(myfun,x+s,varargin{:});
+            [f_neworig,g_new]=feval(myfun,(x+s)',varargin{:});% changed due to python only takes 1*N array
             f_new=f_neworig+lambda*norm(x+s-xstar)^2;
             g_new=g_new+2*lambda*(x-xstar);
             xbar=[xbar;(x+s)'];
@@ -179,7 +179,7 @@ else
             %disp('count')
             %disp(count)
             qpval=g'*s+0.5*s'*H*s;
-            f_neworig=feval(myfun,(x+s)',varargin{:});
+            f_neworig=feval(myfun,(x+s)',varargin{:});% changed due to python only takes 1*N array
             %disp('f_neworig')
             %disp(f_neworig)
             f_new=f_neworig+lambda*norm(x+s-xstar)^2;

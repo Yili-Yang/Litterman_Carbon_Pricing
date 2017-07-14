@@ -18,7 +18,7 @@ function [ f , x , fcount , gcount ] = Quasi_Newton( myfun , x0, varargin )
 % gcount - number of evaluation for first gradient of f
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-tol=1e-4;
+tol=1e-3; % changed from 1e-4 to 1e-3 due to the computing time
 itbnd=500*1e20;
 n=length(x0);
 H=eye(n);
@@ -28,7 +28,7 @@ fcount=1;
 gcount=1;
 iter=0;
 
-while(norm(g)>tol && iter<itbnd && fcount<1e3)
+while(norm(g)>tol && iter<itbnd && fcount<1e2) % changed fcount < 1e3 to 1e2 due to the computing time 
     p=-H*g;
     if (g'*p>0)
         H=eye(n);
