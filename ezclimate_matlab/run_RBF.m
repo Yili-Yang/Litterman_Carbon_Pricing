@@ -1,5 +1,5 @@
-function [fmin1,xmin1,iter1,xbar_min1,fbar_min1] = run_RBF(m)
-y = py.Matlabmod_global.matlabmode();
+function [fmin1,xmin1,iter1,xbar_min1,fbar_min1] = run_RBF(m,y)
+
 varargin = y;
 myfun = @matlab_utility_global;
 dim = 63;

@@ -1,4 +1,4 @@
-function [re,g] = matlab_utility_g(m_in_mat,varargin)
+function [re,g] = matlab_utility_g_multiprocessing(m_in_mat,varargin)
 m_in_mat = m_in_mat';
 pytuple = py.Matlabmod_g.get_u_g(m_in_mat,varargin{:});
 re_array = -double(py.array.array('d',pytuple(1)));
