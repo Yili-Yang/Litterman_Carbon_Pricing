@@ -200,16 +200,17 @@ class DamageSimulation(object):
     def _interpolation_of_temp(self, temperature): 
     	# for every temp in each period, modify it using a coff regards to the current period (using a smoothing method.)
         return temperature[:, np.newaxis] * 2.0 * (1.0 - 0.5**(self.tree.decision_times[1:] / self.maxh)) #refer to equation 25 in the paper
-      
 
     def _economic_impact_of_temp(self, temperature):
+        print(temperature)
         """Economic impact of temperatures, Pindyck [2009]."""
         impact = self._pindyck_impact_simulation()
         term1 = -2.0 * impact[:, np.newaxis] * self.maxh * temperature[:,np.newaxis] / np.log(0.5) # -2*gamma*maxh*temp(for each period)/log(0.5)
         term2 = (self.cons_growth - 2.0 * impact[:, np.newaxis] \
                 * temperature[:, np.newaxis]) * self.tree.decision_times[1:] # con_g-2*gamma*temp*time_now
         term3 = (2.0 * impact[:, np.newaxis] * self.maxh \
-                * temperature[:, np.newaxis] * 0.5**(self.tree.decision_times[1:] / self.maxh)) / np.log(0.5)# 2*gamma*maxh*temp*0.5^(time_now/maxh)/log(0.5)
+                * temperature[:, np.newaxis] * 0.5**(self.tree.decision_times[1:] / self.maxh)) / np.log(0.5)
+        #print('eiot',np.exp(term1 + term2 + term3))# 2*gamma*maxh*temp*0.5^(time_now/maxh)/log(0.5)
         return np.exp(term1 + term2 + term3)
 
     def _tipping_point_update(self, tmp, consump, peak_temp_interval=30.0):
@@ -275,7 +276,7 @@ class DamageSimulation(object):
         Returns
         -------
         ndarray 
-            3D-array of simulated damages # it should be 2D : self.tree.num_final_states, self.tree.num_periods
+            3D-array of simulated damages # from 2D to 3D : self.tree.num_final_states, self.tree.num_periods
 
         Raises
         ------

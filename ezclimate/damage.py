@@ -80,11 +80,8 @@ class DLWDamage(Damage):
 	damage_coefs : ndarray
 		interpolation coefficients used to calculate damages
 
-	emit_pct: float? shouldn't it be an array?
+	emit_pct: mitigation percentage, ndarray
 		= 1.0 - (self.ghg_levels-self.bau.ghg_start) / bau_emission
-
-	cum_forcings :???
-
 	"""
 
 	def __init__(self, tree, bau, cons_growth, ghg_levels, subinterval_len):
@@ -156,7 +153,7 @@ class DLWDamage(Damage):
 
 				for d_class in range(nperiods):
 					self.d_rcomb[k, new_state[d_class, 0:sum_class[d_class]], period] = d_sum[d_class] / prob_sum[d_class]
-                    # find the probability-weighted average damage
+                    # assign nodes of the same class the probability-weighted average damage
 
 		self.tree.node_prob[-len(self.tree.final_states_prob):] = self.tree.final_states_prob
    		#update the prob corresponding to the final nodes
@@ -167,14 +164,14 @@ class DLWDamage(Damage):
 				self.tree.node_prob[node] = self.tree.final_states_prob[worst_end_state:best_end_state+1].sum()
             #update the nodes's prob using the new final_states_prob (always end with storing in the nodes)
 
-	def _damage_interpolation(self):
+	def _damage_interpolation(self): #documented
 		"""Create the interpolation coefficients used in `damage_function`."""
 		if self.d is None:
 			print("Importing stored damage simulation")
 			self.import_damages()
 
 		self._recombine_nodes()
-        #init emit_pct
+        #init emit_pct: baseline mitigation percentage
 		if self.emit_pct is None:
 			bau_emission = self.bau.ghg_end - self.bau.ghg_start
 			self.emit_pct = 1.0 - (self.ghg_levels-self.bau.ghg_start) / bau_emission
@@ -183,9 +180,9 @@ class DLWDamage(Damage):
 		amat = np.ones((self.tree.num_periods, self.dnum, self.dnum))
 		bmat = np.ones((self.tree.num_periods, self.dnum))
 
-		self.damage_coefs[:, :, -1,  -1] = self.d_rcomb[-1, :, :] # d_romb's index is [path_index,the numbers in the class, period]
+		self.damage_coefs[:, :, -1,  -1] = self.d_rcomb[-1, :, :] # assign the no-mitigation case
 		self.damage_coefs[:, :, -1,  -2] = (self.d_rcomb[-2, :, :] - self.d_rcomb[-1, :, :]) / self.emit_pct[-2]
-        #difference in simulation outcomes/cumulative emission
+		#damage coefs for the 650 ppm case: linear
 
 		amat[:, 0, 0] = 2.0 * self.emit_pct[-2]
 		amat[:, 1:, 0] = self.emit_pct[:-1]**2
@@ -193,8 +190,8 @@ class DLWDamage(Damage):
 		amat[:, 0, -1] = 0.0
 
 		for state in range(0, self.tree.num_final_states):
-			bmat[:, 0] = self.damage_coefs[state, :, -1,  -2] * self.emit_pct[-2]
-			bmat[:, 1:] = self.d_rcomb[:-1, state, :].T #?
+			bmat[:, 0] = self.damage_coefs[state, :, -1,  -2] * self.emit_pct[-2]  # damage change for 650 ppm
+			bmat[:, 1:] = self.d_rcomb[:-1, state, :].T
 			self.damage_coefs[state, :, 0] = np.linalg.solve(amat, bmat)
 
 	def import_damages(self, file_name="simulated_damages"): #documented
@@ -272,28 +269,28 @@ class DLWDamage(Damage):
 		self._damage_interpolation()
 		return self.d
 
-	def _forcing_init(self):
+	def _forcing_init(self): #documented
 		"""Initialize `Forcing` object and cum_forcings used in calculating the force mitigation up to a node.""" 
 		if self.emit_pct is None:
 			bau_emission = self.bau.ghg_end - self.bau.ghg_start
-			self.emit_pct = 1.0 - (self.ghg_levels-self.bau.ghg_start) / bau_emission
-
-		self.cum_forcings = np.zeros((self.tree.num_periods, self.dnum)) # array like [x,y] contains number of the periods and the path
+			self.emit_pct = 1.0 - (self.ghg_levels-self.bau.ghg_start) / bau_emission #array of percentages
+		self.cum_forcings = np.zeros((self.tree.num_periods, self.dnum)) #cumulative forcings for each period and scenario
 		mitigation = np.ones((self.dnum, self.tree.num_decision_nodes)) * self.emit_pct[:, np.newaxis]
-        #mitigaion is indexed with number of path (row) and number of nodes(column), and is the emit_pct
+		#multiply each node with corresponding mitigation percentage
 
-		for i in range(0, self.dnum): #look into each simulation
+		for i in range(0, self.dnum): #look into each scenario
 			for n in range(1, self.tree.num_periods+1):
 				node = self.tree.get_node(n, 0) #the node of state 0 in period n
 				self.cum_forcings[n-1, i] = Forcing.forcing_at_node(mitigation[i], node, self.tree,
-																	self.bau, self.subinterval_len) # return the forcing on the node
+																	self.bau, self.subinterval_len)
+			# return the baseline cumulative forcings on the node
 
-
-	def _forcing_based_mitigation(self, forcing, period): 
+	def _forcing_based_mitigation(self, forcing, period):  #documented
 		"""Calculation of mitigation based on forcing up to period. Interpolating between the forcing associated 
 		with the constant degree of mitigation consistent with the damage simulation scenarios.
 		"""
-		# this whole function is based on a new theory
+		# sim2: 650 ppm
+		# sim3: 450 ppm
 		p = period - 1
 		if forcing > self.cum_forcings[p][1]:
 			weight_on_sim2 = (self.cum_forcings[p][2] - forcing) / (self.cum_forcings[p][2] - self.cum_forcings[p][1])
@@ -432,7 +429,7 @@ class DLWDamage(Damage):
 			ghg_level[nodes] = self.ghg_level_period(m, nodes=nodes)
 		return ghg_level
 
-	def _damage_function_node(self, m, node):
+	def _damage_function_node(self, m, node): #documented
 		"""Calculate the damage at any given node, based on mitigation actions in `m`."""
 		if self.damage_coefs is None:
 			self._damage_interpolation()
@@ -444,20 +441,20 @@ class DLWDamage(Damage):
 		period = self.tree.get_period(node)
 		forcing, ghg_level = Forcing.forcing_and_ghg_at_node(m, node, self.tree, self.bau, self.subinterval_len, "both")
 		force_mitigation = self._forcing_based_mitigation(forcing, period)
-		ghg_extension = 1.0 / (1 + np.exp(0.05*(ghg_level-200)))
+		ghg_extension = 1.0 / (1 + np.exp(0.05*(ghg_level-200))) #adjustment for concentrations below pre-industrial levels
 
 		worst_end_state, best_end_state = self.tree.reachable_end_states(node, period=period)
 		probs = self.tree.final_states_prob[worst_end_state:best_end_state+1]
 		# new damage formulas 
-		if force_mitigation < self.emit_pct[1]:
+		if force_mitigation < self.emit_pct[1]: #mitigation < 650
 			damage = (probs *(self.damage_coefs[worst_end_state:best_end_state+1, period-1, 1, 1] * force_mitigation \
 					 + self.damage_coefs[worst_end_state:best_end_state+1, period-1, 1, 2])).sum()
 		
-		elif force_mitigation < self.emit_pct[0]:
+		elif force_mitigation < self.emit_pct[0]: #650 < mitigation < 450
 			damage = (probs * (self.damage_coefs[worst_end_state:best_end_state+1, period-1, 0, 0] * force_mitigation**2 \
 					  + self.damage_coefs[worst_end_state:best_end_state+1, period-1, 0, 1] * force_mitigation \
 					  + self.damage_coefs[worst_end_state:best_end_state+1, period-1, 0, 2])).sum()
-		else: 
+		else: #mitigation < 450
 			damage = 0.0
 			i = 0
 			for state in range(worst_end_state, best_end_state+1): 
