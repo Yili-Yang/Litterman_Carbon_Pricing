@@ -14,5 +14,7 @@ if isnan(re_array) >0
 else
     re = re_array + positive_add_up;
 end
+disp(re)
 g = double(py.array.array('d',py.numpy.nditer(pytuple(2))))';
 end
+
