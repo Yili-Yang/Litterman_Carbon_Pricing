@@ -15,6 +15,7 @@ else
     re = re_array + positive_add_up;
 end
 disp(re)
-g = double(py.array.array('d',py.numpy.nditer(pytuple(2))))';
+g = -double(py.array.array('d',py.numpy.nditer(pytuple(2))))';
+disp(norm(g))
 end
 
