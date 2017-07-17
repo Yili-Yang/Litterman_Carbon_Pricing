@@ -1,8 +1,27 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%           Yili Yang, July 2017
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Using Genetic Algorithm to find the start point and then us Quasi-Newton
+% method as the local optimizer to get the optimal mitigation level on each
+% node
+%
+% Input:
+% m_in_mat: mitigation level stored in matlab double
+% instance of matlabmode class in Matlabmod (Provide damage simualtion and utility)
+%
+% Output:
+% re - objective function value: 
+%     1. utility + positive modification term if utility is calculated by python
+%     2. positive modification term if utility is not calculate by python 
+% g - gradient of the utility 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [re,g] = matlab_utility_g_multiprocessing(m_in_mat,varargin)
 gamma =1e6;
 epi = 1e-4;
 m_in_mat = m_in_mat';
-pytuple = py.Matlabmod_g.get_u_g(m_in_mat,varargin{:});
+pytuple = py.Matlabmod.get_u_g(m_in_mat,varargin{:});
 re_array = -double(py.array.array('d',pytuple(1)));
 positive_add_up = 0;
 m_size = size(m_in_mat);

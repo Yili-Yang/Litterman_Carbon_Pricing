@@ -12,9 +12,9 @@
 % fcount - number of evaluation of function value
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-multiprocessing_setup() % set up multiprocessing package, manully call the exectuable of python
-varargin = py.Matlabmod.matlabmode(); % init the class in Matlabmode_g
+
+varargin = py.Matlabmod.matlabmode();  % init the class in Matlabmode_g
 m_0 = py.Matlabmod.get_start(varargin);% call GA in matlabmode_g to get a start point for the local optimizer
 m_in_mat_0 = double(py.array.array('d',py.numpy.nditer(m_0)))'; % change the numpy array mitigation level to double in matlab
-fun = @matlab_utility_g_multiprocessing;
+fun = @matlab_utility_g;
 [fmin2,xmin2,fcount2] = Quasi_Newton(fun,m_in_mat_0,varargin);% run Quasi_Newton loacl optimizer
