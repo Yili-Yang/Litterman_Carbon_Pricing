@@ -274,7 +274,7 @@ class DamageSimulation(object):
         Returns
         -------
         ndarray 
-            3D-array of simulated damages # it should be 2D : self.tree.num_final_states, self.tree.num_periods
+            3D-array of simulated damages # from 2D to 3D: number of senarios, self.tree.num_final_states, self.tree.num_periods
 
         Raises
         ------
