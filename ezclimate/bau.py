@@ -81,8 +81,6 @@ class DLWBusinessAsUsual(BusinessAsUsual):
 
     """
 
-    #the default emit_time [0, 30, 60] should  work here, but with a tree model with decision times [0, 30, 60] instead
-    #[2015, 2030, ...]
     def __init__(self, ghg_start=400.0, ghg_end=1000.0, emit_time=[0, 30, 60], emit_level= [52.0, 70.0, 81.4]):
         super(DLWBusinessAsUsual, self).__init__(ghg_start, ghg_end)
         self.emit_time = emit_time
