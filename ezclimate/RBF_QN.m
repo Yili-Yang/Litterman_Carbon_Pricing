@@ -1,23 +1,3 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-%           Yili Yang, July 2017
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% run the RBF function to do gloabl optimization
-%---------------------------------------------------
-% Outputs:
-% The outputs of func global_RBF_TRM:
-% f - final function value at computed optimum
-%
-% x - the computed optimum
-%
-% iter - number of iterations
-%
-% xbar: an array of the points (n-vectors) at which the objective function
-% was evaluated
-%
-% fbar the vector ofobjective function values at all points in xxbar
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 m=100;
 y = py.Matlabmod.matlabmode();
 varargin = y;
@@ -57,7 +37,11 @@ method='cubic';
 %
 
 [fmin1,xmin1,iter1,xbar_min1,fbar_min1,fcount]=global_RBF_TRM(myfun,x,f,ind,xstar,Ls,method,deg,gamma,useg,varargin);
-percentage_decrease = -(fmin1-9.4915710578994563)/9.4915710578994563;
+percentage_decrease_phase1 = -(fmin1-9.4915710578994563)/9.4915710578994563;
 xmin = xmin1';
 RBF_norm_g = py.Matlabmod.get_g(xmin,varargin); 
-save('RBF')
+fun_with_grad = @matlab_utility_g_multiprocessing;
+[fmin2,xmin2,fcount2,gcount]=quasi_newton(fun_with_grad,xmin1,varargin);
+percentage_decrease_phase2 = -(fmin2-9.4915710578994563)/9.4915710578994563;
+[ff,fg] = fun_with_grad(xmin2,varargin);
+final_norm_g = norm(fg);
