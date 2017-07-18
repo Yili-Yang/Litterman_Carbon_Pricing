@@ -71,6 +71,12 @@ class matlabmode():
         #     for row_index in range(row):
         #         result_array= np.append(result_array,self.u.utility(m[row_index,:]))
         #     return result_array
+    def GS(self,m):
+    	m = np.array(m)
+        gs_model = GradientSearch(var_nums=63, utility=self.u, accuracy=1e-8, 
+                              iterations=200, print_progress=True)
+    	m_opt, u_opt = gs_model.run(initial_point_list=sort_pop, topk=1)
+    	return m_opt,u_opt
 
 def get_start(y):
     return y.get_start_point()
@@ -83,3 +89,6 @@ def get_u(m,y):
 
 def get_g(m,y):
     return y.grad(m)
+    
+def call_gs(m,y):
+	return y.GS(m):
