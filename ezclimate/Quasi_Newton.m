@@ -1,4 +1,4 @@
-function [ f , x , fcount , gcount ] = Quasi_Newton( myfun , x0, varargin )
+function [ f , x , fcount , gcount,iter ] = Quasi_Newton( myfun , x0, varargin )
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 %           CAYUGA RESEARCH, Oct 2015
@@ -28,7 +28,7 @@ fcount=1;
 gcount=1;
 iter=0;
 
-while(norm(g)>tol && iter<itbnd && fcount<1e2 ) % changed fcount < 1e3 to 1e2 due to the computing time 
+while(norm(g)>tol && iter<itbnd && fcount<1e3 ) % changed fcount < 1e3 to 1e2 due to the computing time 
     p=-H*g;
     if (g'*p>0)
         H=eye(n);

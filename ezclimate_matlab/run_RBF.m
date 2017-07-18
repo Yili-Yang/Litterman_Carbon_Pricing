@@ -19,10 +19,10 @@ function [fmin1,xmin1,iter1,xbar_min1,fbar_min1] = run_RBF(m,y)
 %
 % iter - number of iterations
 %
-% xxbar: an array of the points (n-vectors) at which the objective function
+% xbar: an array of the points (n-vectors) at which the objective function
 % was evaluated
 %
-% ffbar the vector ofobjective function values at all points in xxbar
+% fbar the vector ofobjective function values at all points in xxbar
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 varargin = y;
 myfun = @matlab_utility_global;

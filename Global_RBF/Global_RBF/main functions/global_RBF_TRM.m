@@ -1,4 +1,4 @@
-function [ f , x , iter , xxbar , ffbar ] = global_RBF_TRM ( myfun , xbar...
+function [ f , x , iter , xxbar , ffbar,fcount ] = global_RBF_TRM ( myfun , xbar...
     , fbar , ind , xstar, ls, method, deg, gamma, useg, varargin )
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
@@ -101,7 +101,7 @@ end
 if (m~=length(fbar))
     error('size does not match!');
 end
-
+fcount = 0;
 x=xbar(ind,:)';
 if (useg==1)
     % user supply first gradient
