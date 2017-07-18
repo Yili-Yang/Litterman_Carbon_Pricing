@@ -47,7 +47,7 @@ def base_case(change):
     ga_model = GeneticAlgorithm(pop_amount=150, num_generations=75, cx_prob=0.8, mut_prob=0.5, 
 	                            bound=1.5, num_feature=63, utility=u, print_progress=True) 
     gs_model = GradientSearch(var_nums=63, utility=u, accuracy=1e-8, 
-	                          iterations=200, print_progress=True)
+	                          iterations=300, print_progress=True)
     final_pop, fitness = ga_model.run()
     sort_pop = final_pop[np.argsort(fitness)][::-1]
     m_opt, u_opt = gs_model.run(initial_point_list=sort_pop, topk=1)
@@ -72,14 +72,14 @@ def base_case(change):
     		price_list.append(c.price(t.decision_times[decision_time],m_opt[index_ori],average_mit[index]))
     return result_time_list,df.parameter_list, m_opt,u_opt,price_list
 if __name__ == "__main__":
-    count =0 
+    count =9
     result_list = list()
     change = 7
     while count <31:
         x = base_case(change)
         result_list.append(x)
         count +=1
-    with open('sensitive_analysis_8v31.pkl','wb') as f:
+    with open('sensitive_analysis_base.pkl','wb') as f:
         pickle.dump(result_list,f)
 #    with open('sensitive_analysis_100.pkl','rb') as inputs:
 #        re = pickle.load(inputs)
