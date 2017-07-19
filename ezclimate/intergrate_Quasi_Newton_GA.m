@@ -21,5 +21,15 @@ fun = @matlab_utility_g_multiprocessing;
 [fmin2,xmin2,fcount2,gcount,iter] = Quasi_Newton(fun,m_in_mat_0,varargin);% run Quasi_Newton loacl optimizer
 [ff,fg] = fun(xmin2,varargin);
 final_norm_g = norm(fg);
-percentage_decrease = -(fmin2-9.4915710578994563)/9.4915710578994563;
+percentage_decrease = -(-fmin2-9.4915710578994563)/9.4915710578994563;
 save('GA_QuasiNewton_3')
+
+%As starting points please use both:
+%1) what you get at the end of phase 1, 
+%2) what was originally coded. 
+%What to report in each table: 
+%final norm of gradient (or optimality conditions if the solution happens at the boundary), 
+%number of iterations, 
+%number of function evaluations, 
+%final function value
+%percentage decrease.
