@@ -23,7 +23,7 @@ fun = @matlab_utility_g_multiprocessing;
 pytuple_gs = py.Matlabmod.call_gs(m_in_mat_0',varargin);
 m_gs = -double(py.array.array('d',py.numpy.nditer(pytuple_gs(1))));
 utility_gs = -double(py.array.array('d',py.numpy.nditer(pytuple_gs(2))));
-final_norm_g_GS = norm(py.Matlabmod.get_g(m_gs,varargin);
+final_norm_g_GS = norm(py.Matlabmod.get_g(m_gs,varargin));
 final_norm_g_QN = norm(fg);
 percentage_decrease = -(-fmin2-utility_gs)/utility_gs;
 

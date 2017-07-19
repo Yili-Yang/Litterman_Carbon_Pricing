@@ -91,4 +91,4 @@ def get_g(m,y):
     return y.grad(m)
     
 def call_gs(m,y):
-	return y.GS(m):
+	return y.GS(m)
