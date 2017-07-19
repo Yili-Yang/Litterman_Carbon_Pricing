@@ -40,8 +40,9 @@ class matlabmode():
         ga_model = GeneticAlgorithm(pop_amount=150, num_generations=75, cx_prob=0.8, mut_prob=0.5, 
                               bound=1.5, num_feature=63, utility=self.u, print_progress=True) 
         final_pop, fitness = ga_model.run()
-        sort_pop = final_pop[np.argsort(fitness)][-1]
-        return sort_pop
+        sort_pop = final_pop[np.argsort(fitness)][::-1]
+        begin_pop = final_pop[np.argsort(fitness)][-1]
+        return sort_pop,begin_pop
 
     def utility_grad(self,m):
         #use finite differenciation to gradient and utility
@@ -75,7 +76,7 @@ class matlabmode():
     	m = np.array(m)
         gs_model = GradientSearch(var_nums=63, utility=self.u, accuracy=1e-8, 
                               iterations=200, print_progress=True)
-    	m_opt, u_opt = gs_model.run(initial_point_list=sort_pop, topk=1)
+    	m_opt, u_opt = gs_model.run(initial_point_list=m, topk=1)
     	return m_opt,u_opt
 
 def get_start(y):
