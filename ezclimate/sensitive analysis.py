@@ -70,16 +70,16 @@ def base_case(change):
     	for index in range(end_node-start_node+1):
     		index_ori =index + start_node
     		price_list.append(c.price(t.decision_times[decision_time],m_opt[index_ori],average_mit[index]))
-    return result_time_list,df.parameter_list, m_opt,u_opt,price_list
+    return result_time_list,df.parameter_list, m_opt,u_opt,price_list,u.utility(sort_pop),gs_model.numerical_gradient(sort_pop)
 if __name__ == "__main__":
-    count =9
+    count =0
     result_list = list()
-    change = 7
-    while count <31:
+    change = 9
+    while count <1:
         x = base_case(change)
         result_list.append(x)
         count +=1
-    with open('sensitive_analysis_base.pkl','wb') as f:
+    with open('sensitive_analysis_base_new.pkl','wb') as f:
         pickle.dump(result_list,f)
 #    with open('sensitive_analysis_100.pkl','rb') as inputs:
 #        re = pickle.load(inputs)
