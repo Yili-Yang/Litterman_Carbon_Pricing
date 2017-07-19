@@ -20,9 +20,12 @@ m_in_mat_0 = double(py.array.array('d',py.numpy.nditer(m_0)))'; % change the num
 fun = @matlab_utility_g_multiprocessing;
 [fmin2,xmin2,fcount2,gcount,iter] = Quasi_Newton(fun,m_in_mat_0,varargin);% run Quasi_Newton loacl optimizer
 [ff,fg] = fun(xmin2,varargin);
-final_norm_g = norm(fg);
-percentage_decrease = -(-fmin2-9.4915710578994563)/9.4915710578994563;
-save('GA_QuasiNewton_3')
+pytuple_gs = py.Matlabmod.call_gs(m_in_mat_0',varargin);
+m_gs = -double(py.array.array('d',py.numpy.nditer(pytuple_gs(1))));
+utility_gs = -double(py.array.array('d',py.numpy.nditer(pytuple_gs(2))));
+final_norm_g_GS = norm(py.Matlabmod.get_g(m_gs,varargin);
+final_norm_g_QN = norm(fg);
+percentage_decrease = -(-fmin2-utility_gs)/utility_gs;
 
 %As starting points please use both:
 %1) what you get at the end of phase 1, 
@@ -33,3 +36,8 @@ save('GA_QuasiNewton_3')
 %number of function evaluations, 
 %final function value
 %percentage decrease.
+TABLE1 = table(utlity_GA,norm(g_GA),...
+    'VariableNames',{'Utility_after_GA','Norm_of_gradient_after_GA'});
+TABLE2 = table(final_norm_g,iter,fcount2,fcount2,fmin2,percentage_decrease,...
+    'VariableNames',{'Final_norm_of_gradient','Number_of_iterations','Number_of_function_evaluations','Number_of_gradient_evaluations','final_function_value','percentage_decrease'});
+save('GA_QuasiNewton_4')

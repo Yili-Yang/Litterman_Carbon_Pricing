@@ -57,7 +57,7 @@ method='cubic';
 %
 
 [fmin1,xmin1,iter1,xbar_min1,fbar_min1,fcount]=global_RBF_TRM(myfun,x,f,ind,xstar,Ls,method,deg,gamma,useg,varargin);
-percentage_decrease = -(fmin1-9.4915710578994563)/9.4915710578994563;
+percentage_decrease = -(-fmin1-9.4915710578994563)/9.4915710578994563;
 xmin = xmin1';
 RBF_norm_g = py.Matlabmod.get_g(xmin,varargin); 
 save('RBF')

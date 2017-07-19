@@ -42,6 +42,6 @@ xmin = xmin1';
 RBF_norm_g = py.Matlabmod.get_g(xmin,varargin); 
 fun_with_grad = @matlab_utility_g_multiprocessing;
 [fmin2,xmin2,fcount2,gcount]=quasi_newton(fun_with_grad,xmin1,varargin);
-percentage_decrease_phase2 = -(fmin2-9.4915710578994563)/9.4915710578994563;
+percentage_decrease_phase2 = -(-fmin2-9.4915710578994563)/9.4915710578994563;
 [ff,fg] = fun_with_grad(xmin2,varargin);
 final_norm_g = norm(fg);
