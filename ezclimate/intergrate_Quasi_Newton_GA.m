@@ -19,9 +19,9 @@ m_in_mat_0 = double(py.array.array('d',py.numpy.nditer(pytuple_GA(2))))'; % chan
 [utlity_GA,g_GA] = matlab_utility_g_multiprocessing(m_in_mat_0,varargin);
 norm_g_GA = norm(g_GA);
 pytuple_gs = py.Matlabmod.call_gs(pytuple_GA(1),varargin);
-m_gs = -double(py.array.array('d',py.numpy.nditer(pytuple_gs(1))));
+m_gs = double(py.array.array('d',py.numpy.nditer(pytuple_gs(1))));
 utility_gs = -double(py.array.array('d',py.numpy.nditer(pytuple_gs(2))));
-final_norm_g_GS = norm(py.Matlabmod.get_g(m_gs,varargin));
+final_norm_g_GS = norm(double(py.array.array('d',py.numpy.nditer(py.Matlabmod.get_g(m_gs,varargin)))));
 
 fun = @matlab_utility_g_multiprocessing;
 [fmin2,xmin2,fcount2,gcount,iter] = Quasi_Newton(fun,m_in_mat_0,varargin);% run Quasi_Newton loacl optimizer
