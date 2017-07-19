@@ -74,6 +74,7 @@ class matlabmode():
         #     return result_array
     def GS(self,m):
     	#m = np.array(m)
+    	m=m[0]
         gs_model = GradientSearch(var_nums=63, utility=self.u, accuracy=1e-8, 
                               iterations=200, print_progress=True)
     	m_opt, u_opt = gs_model.run(initial_point_list=m, topk=1)
