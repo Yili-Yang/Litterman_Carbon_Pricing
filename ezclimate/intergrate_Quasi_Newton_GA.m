@@ -17,13 +17,15 @@ varargin = py.Matlabmod.matlabmode(); % init the class in Matlabmode_g
 m_0 = py.Matlabmod.get_start(varargin);% call GA in matlabmode_g to get a start point for the local optimizer
 m_in_mat_0 = double(py.array.array('d',py.numpy.nditer(m_0)))'; % change the numpy array mitigation level to double in matlab
 [utlity_GA,g_GA] = matlab_utility_g_multiprocessing(m_in_mat_0,varargin);
-fun = @matlab_utility_g_multiprocessing;
-[fmin2,xmin2,fcount2,gcount,iter] = Quasi_Newton(fun,m_in_mat_0,varargin);% run Quasi_Newton loacl optimizer
-[ff,fg] = fun(xmin2,varargin);
+norm_g_GA = norm(g_GA);
 pytuple_gs = py.Matlabmod.call_gs(m_in_mat_0',varargin);
 m_gs = -double(py.array.array('d',py.numpy.nditer(pytuple_gs(1))));
 utility_gs = -double(py.array.array('d',py.numpy.nditer(pytuple_gs(2))));
 final_norm_g_GS = norm(py.Matlabmod.get_g(m_gs,varargin));
+
+fun = @matlab_utility_g_multiprocessing;
+[fmin2,xmin2,fcount2,gcount,iter] = Quasi_Newton(fun,m_in_mat_0,varargin);% run Quasi_Newton loacl optimizer
+[ff,fg] = fun(xmin2,varargin);
 final_norm_g_QN = norm(fg);
 percentage_decrease = -(-fmin2-utility_gs)/utility_gs;
 
