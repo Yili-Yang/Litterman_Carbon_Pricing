@@ -44,10 +44,8 @@ fun = @matlab_utility_g_multiprocessing;
 [fmin2,xmin2,fcount2,gcount,iter] = Quasi_Newton(fun,xmin1,varargin);% run Quasi_Newton loacl optimizer
 [ff,fg] = fun(xmin2,varargin);
 final_norm_g_QN = norm(fg);
-percentage_decrease_RBF_QN = (fmin2-utility_gs)/utility_gs;
+percentage_decrease = (fmin2-utility_gs)/utility_gs;
 
 
 TABLE4 = table(RBF_norm_g,iter1,fcount,fcount,fmin1,percentage_decrease_RBF,...
-    'VariableNames',{'Final_norm_of_gradient','Number_of_iterations','Number_of_utility_evaluations','Number_of_gradient_evaluations','final_objective_value','percentage_decrease'});
-TABLE5 = table(final_norm_g_QN,iter,fcount2,fcount2,fmin2,percentage_decrease_RBF_QN,...
     'VariableNames',{'Final_norm_of_gradient','Number_of_iterations','Number_of_utility_evaluations','Number_of_gradient_evaluations','final_objective_value','percentage_decrease'});
