@@ -1,5 +1,7 @@
 %%
+multiprocessing_setup() % set up multiprocessing package, manully call the exectuable of python
 m=100;
+varargin = py.Matlabmod.matlabmode(); % init the class in Matlabmode_g
 myfun = @matlab_utility_global;
 dim = 63;
 %randomly generates the start mitigation level 
