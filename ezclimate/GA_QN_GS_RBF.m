@@ -16,9 +16,9 @@ multiprocessing_setup() % set up multiprocessing package, manully call the exect
 varargin = py.Matlabmod.matlabmode(); % init the class in Matlabmode_g
 pytuple_GA = py.Matlabmod.get_start(varargin);% call GA in matlabmode_g to get a start point for the local optimizer
 m_in_mat_0 = double(py.array.array('d',py.numpy.nditer(pytuple_GA(2))))'; % change the numpy array mitigation level to double in matlab
-[utlity_GA,g_GA] = matlab_utility_g_multiprocessing(m_in_mat_0,varargin);
-norm_g_GA = norm(double(py.array.array('d',py.numpy.nditer(g_GA))));
-pytuple_gs = py.Matlabmod.call_gs(pytuple_GA(1),varargin);
+[utlity_GA,g_GA] = matlab_utility_g_multiprocessing(m_in_mat_0,varargin);% get the utilty and gradient after GA
+norm_g_GA = norm(double(py.array.array('d',py.numpy.nditer(g_GA))));% get the norm of gradient after GA
+pytuple_gs = py.Matlabmod.call_gs(pytuple_GA(1),varargin);%get the result of GS
 m_gs = double(py.array.array('d',py.numpy.nditer(pytuple_gs(1))));
 utility_gs = -double(py.array.array('d',py.numpy.nditer(pytuple_gs(2))));
 final_norm_g_GS = norm(double(py.array.array('d',py.numpy.nditer(py.Matlabmod.get_g(m_gs,varargin)))));
