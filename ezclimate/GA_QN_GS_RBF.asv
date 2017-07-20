@@ -5,11 +5,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Using the same damage simulation for GA,RBF,QN and GS to use
 %--------------------------------------------------------------------------
-% Output:
-% Table one: the table containing the info after GS
-% Table two: the table containing the info after GA-QN
-% Table three: the table containing the info after GA-GS
-% Table four: the table containing the info after RBF
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 multiprocessing_setup() % set up multiprocessing package, manully call the exectuable of python
