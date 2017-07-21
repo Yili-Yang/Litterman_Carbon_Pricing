@@ -45,4 +45,4 @@ TABLE2 = table(final_norm_g_QN,iter,fcount2,fcount2,fmin2,percentage_decrease,..
     'VariableNames',{'Final_norm_of_gradient','Number_of_iterations','Number_of_utility_evaluations','Number_of_gradient_evaluations','final_function_value','percentage_decrease'});
 TABLE3 = table(final_norm_g_GS,200,200,200,utility_gs,0,...
     'VariableNames',{'Final_norm_of_gradient','Number_of_iterations','Number_of_utility_evaluations','Number_of_gradient_evaluations','final_function_value','percentage_decrease'});
-save('GA_GS_QN')
+save('GA_GS_QN_3')
