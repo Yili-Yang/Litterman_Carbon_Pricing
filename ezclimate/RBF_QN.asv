@@ -1,10 +1,8 @@
 %%
+for count = 1:5
 multiprocessing_setup() % set up multiprocessing package, manully call the exectuable of python
 m=100;
-for count = 1:5
-profile on
-load(['GA_GS_QN_','',num2str(count)])
-varargin = py.Matlabmod.matlabmode(); % init the class in Matlabmode
+varargin = py.Matlabmod.matlabmode(); % init the class in Matlabmode_g
 myfun = @matlab_utility_global;
 dim = 63;
 %randomly generates the start mitigation level 
@@ -50,7 +48,3 @@ fun = @matlab_utility_g_multiprocessing;
 [ff,fg] = fun(xmin2,varargin);
 final_norm_g_QN = norm(fg);
 percentage_decrease_RBF_QN = (fmin2-utility_gs)/utility_gs;
-profile off
-save(['RBF_QN','',num2str(count)])
-profsave(profile('info'),['RBF_QN_profile_','',num2str(count)])
-end
