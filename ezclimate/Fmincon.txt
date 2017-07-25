@@ -1,0 +1,7 @@
+Converged to an infeasible point.
+
+fmincon stopped because the size of the current step is less than
+the default value of the step size tolerance but constraints are not
+satisfied to within the default value of the constraint tolerance.
+
+<stopping criteria details>
