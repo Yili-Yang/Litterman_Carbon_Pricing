@@ -10,5 +10,5 @@ final_norm_g_QN = norm(fg);
 profile off
 save(['QN_','',num2str(count)])
 profsave(profile('info'),['QN_profile_','',num2str(count)])
-count = count + 1;
+
 end

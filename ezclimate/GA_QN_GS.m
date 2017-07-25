@@ -11,9 +11,10 @@
 % Table three: the table containing the info after GA-GS
 % Table four: the table containing the info after RBF
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
 multiprocessing_setup() % set up multiprocessing package, manully call the exectuable of python
 varargin = py.Matlabmod.matlabmode(); % init the class in Matlabmode_g
+for count = 14:20
+profile on
 pytuple_GA = py.Matlabmod.get_start(varargin);% call GA in matlabmode_g to get a start point for the local optimizer
 m_in_mat_0 = double(py.array.array('d',py.numpy.nditer(pytuple_GA(2))))'; % change the numpy array mitigation level to double in matlab
 [utlity_GA,g_GA] = matlab_utility_g_multiprocessing(m_in_mat_0,varargin);% get the utilty and gradient after GA
@@ -45,4 +46,7 @@ TABLE2 = table(final_norm_g_QN,iter,fcount2,fcount2,fmin2,percentage_decrease,..
     'VariableNames',{'Final_norm_of_gradient','Number_of_iterations','Number_of_utility_evaluations','Number_of_gradient_evaluations','final_function_value','percentage_decrease'});
 TABLE3 = table(final_norm_g_GS,200,200,200,utility_gs,0,...
     'VariableNames',{'Final_norm_of_gradient','Number_of_iterations','Number_of_utility_evaluations','Number_of_gradient_evaluations','final_function_value','percentage_decrease'});
-save('GA_GS_QN_3')
+profile off
+save(['GA_GS_QN_','',num2str(count)])
+profsave(profile('info'),['GA_GS_QN_profile_','',num2str(count)])
+end
