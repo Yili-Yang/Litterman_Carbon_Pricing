@@ -9,3 +9,4 @@ norm_g_rand = norm(g_rand);% get the norm of gradient after GA
 u_matrix = [u_matrix;utility_rand];
 g_matrix = [g_matrix;g_rand];
 end
+save('random_100')
