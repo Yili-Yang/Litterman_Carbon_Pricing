@@ -2,7 +2,6 @@ file_name = 'GA_GS_QN_';
 number = 'How manys files need to be read?';
 number = input(number);
 utility_after_ga = [];
-utility_after_gs = [];
 norm_after_ga = [];
 final_norm_grad_gs = [];
 final_norm_grad_qn = [];
@@ -13,7 +12,7 @@ m = [];
 for x = 1:number
     load([file_name, '', num2str(x), '', '.mat']);
     utility_after_ga(end+1) = utlity_GA;
-    utility_after_gs(end+1) = utility_gs;
+    utility
     norm_after_ga(end+1) = norm_g_GA;
     final_norm_grad_gs(end+1) = final_norm_g_GS;
     final_norm_grad_qn(end+1) = final_norm_g_QN;
