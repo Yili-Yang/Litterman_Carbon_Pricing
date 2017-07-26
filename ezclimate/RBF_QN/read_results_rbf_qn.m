@@ -16,7 +16,7 @@ m = [];
 for x = 1:number
     load([file_name, '', num2str(x), '', '.mat']);
     utility_after_rbf(end+1) = utlity_RBF;
-    utility_after_qn(end+1) = fmin1;
+    utility_after_qn(end+1) = fmin2;
     final_norm_grad_gs(end+1) = final_norm_g_GS;
     final_norm_grad_qn(end+1) = final_norm_g_QN;
     norm_grad_rbf(end+1) = norm_g_RBF;

@@ -8,6 +8,7 @@ final_norm_grad_gs = [];
 final_norm_grad_qn = [];
 num_of_utility = [];
 num_of_grad_qn = [];
+num_of_iter = [];
 final_value = [];
 m = [];
 for x = 1:number
@@ -19,6 +20,7 @@ for x = 1:number
     final_norm_grad_qn(end+1) = final_norm_g_QN;
     num_of_utility(end+1) = fcount2;
     num_of_grad_qn(end+1) = fcount2;
+    num_of_iter(end+1) = iter;
     final_value(end+1) = fmin2;
     m = [m, xmin2'];
 end
@@ -29,6 +31,7 @@ end
  results.norm_after_ga = norm_after_ga';
  results.final_norm_grad_gs = final_norm_grad_gs';
  results.final_norm_grad_qn = final_norm_grad_qn';
+ results.num_of_iter = num_of_iter';
  results.num_of_utility = num_of_utility';
  results.num_of_grad_qn = num_of_grad_qn';
  results.final_value = final_value';
@@ -42,6 +45,7 @@ end
  final_norm_grad_qn = mean(final_norm_grad_qn);
  num_of_utility = mean(num_of_utility);
  num_of_grad_qn = mean(num_of_grad_qn);
+ num_of_iter = mean(num_of_iter);
  final_value = mean(final_value);
  
  mean_of_node = mean(m,2);
