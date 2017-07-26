@@ -1,4 +1,4 @@
-for count = 1:3
+for count = 4:20
 profile on
 multiprocessing_setup() % set up multiprocessing package, manully call the exectuable of python
 varargin = py.Matlabmod.matlabmode(); % init the class in Matlabmode_g
