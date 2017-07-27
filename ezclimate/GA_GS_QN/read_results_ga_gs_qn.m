@@ -10,7 +10,7 @@ num_of_utility = [];
 num_of_grad_qn = [];
 num_of_iter = [];
 final_value = [];
-m = [];
+m_qn = [];
 for x = 1:number
     load([file_name, '', num2str(x), '', '.mat']);
     utility_after_ga(end+1) = utlity_GA;
@@ -22,8 +22,9 @@ for x = 1:number
     num_of_grad_qn(end+1) = fcount2;
     num_of_iter(end+1) = iter;
     final_value(end+1) = fmin2;
-    m = [m, xmin2'];
+    m_qn = [m_qn, xmin2];
 end
+ m_qn=[m_qn,mean(m_qn,2),std(m_qn,1,2)];
  results = table;
  results.No = [1:number]';
  results.utility_after_ga = utility_after_ga';
