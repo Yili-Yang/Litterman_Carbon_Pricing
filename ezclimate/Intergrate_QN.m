@@ -1,4 +1,4 @@
-for count =11:13
+for count =12:13
 profile on
 multiprocessing_setup() % set up multiprocessing package, manully call the exectuable of python
 varargin = py.Matlabmod.matlabmode(); % init the class in Matlabmode_g
@@ -8,7 +8,7 @@ fun = @matlab_utility_g_multiprocessing;
 [ff,fg] = fun(xmin2,varargin);
 final_norm_g_QN = norm(fg);
 profile off
-save(['QN/QN_','',num2str(count)])
-profsave(profile('info'),['QN/QN_profile_','',num2str(count)])
+save(['QN/QN_random_','',num2str(count)])
+profsave(profile('info'),['QN/QN_random_profile_','',num2str(count)])
 
 end
