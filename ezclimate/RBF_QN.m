@@ -1,7 +1,7 @@
 %%
-%multiprocessing_setup() % set up multiprocessing package, manully call the exectuable of python
+multiprocessing_setup() % set up multiprocessing package, manully call the exectuable of python
 m=100;
-for count = 7:7
+for count = 9:10
 profile on
 %load(['GA_GS_QN_','',num2str(count)])
 varargin = py.Matlabmod.matlabmode(); % init the class in Matlabmode
@@ -49,8 +49,8 @@ fun = @matlab_utility_g_multiprocessing;
 [fmin2,xmin2,fcount2,gcount,iter] = Quasi_Newton(fun,xmin1,varargin);% run Quasi_Newton loacl optimizer
 [ff,fg] = fun(xmin2,varargin);
 final_norm_g_QN = norm(fg);
-percentage_decrease_RBF_QN = (fmin2-utility_gs)/utility_gs;
+%percentage_decrease_RBF_QN = (fmin2-utility_gs)/utility_gs;
 profile off
 save(['RBF_QN','',num2str(count)])
-profsave(profile('info'),['RBF_QN_profile_','',num2str(count)])
+profsave(profile('info'),['RBF_QN/RBF_QN_profile_','',num2str(count)])
 end

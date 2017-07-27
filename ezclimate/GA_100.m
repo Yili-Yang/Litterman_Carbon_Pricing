@@ -1,7 +1,7 @@
 u_matrix_GA=[];
 g_matrix_GA=[];
 multiprocessing_setup() % set up multiprocessing package, manully call the exectuable of python
-varargin = py.Matlabmod.matlabmode(); % init the class in Matlabmode_g
+varargin = py.Matlabmod.matlabmode(-1); % init the class in Matlabmode_g
 profile on
 for count = 1:100
 profile on
