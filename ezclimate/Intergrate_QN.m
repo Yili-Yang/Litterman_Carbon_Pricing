@@ -8,7 +8,7 @@ fun = @matlab_utility_g_multiprocessing;
 [ff,fg] = fun(xmin2,varargin);
 final_norm_g_QN = norm(fg);
 profile off
-save(['QN_','',num2str(count)])
+save(['QN/QN_','',num2str(count)])
 profsave(profile('info'),['QN/QN_profile_','',num2str(count)])
 
 end
