@@ -13,7 +13,7 @@ from utility import EZUtility
 from optimization import GeneticAlgorithm, GradientSearch
 import numpy as np
 class matlabmode():
-    def __init__(self):
+    def __init__(self,ind):
         '''init the class with default settings:
         1. decision time is set to [0, 15, 45, 85, 185, 285, 385]
         2. cost is using default x60 = 0.543, x100 = 0.671 and euro to dollar exchange rate = 1.2
@@ -170,4 +170,4 @@ def get_parameters(m,y):
     return y.parameters
 
 def get_price(m,y):
-    return y.get_price(m)s
+    return y.get_price(m)
