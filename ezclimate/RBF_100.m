@@ -50,3 +50,12 @@ end
 save('RBF_100')
 profile off
 profsave(profile('info'),'RBF_100')
+
+file_name = 'RBF_'; %read the results
+x = 'How many files need to be read?';
+x = input(x);
+load([file_name, '', num2str(x),'','mat']);
+utility = u_matrix_RBF;
+utility_after_RBF = mean(u_matrix_RBF);
+std_u_RBF = std(u_matrix_RBF);
+save(['results_','',file_name,'',num2str(x)]);

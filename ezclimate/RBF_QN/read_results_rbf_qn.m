@@ -1,4 +1,4 @@
-file_name = 'RBF_QN'; 
+file_name = 'RBF_QN_'; 
 number = 'How manys files need to be read?';
 number = input(number);
 utility_after_rbf = [];
@@ -11,7 +11,6 @@ num_iter_rbf = [];
 num_of_utility = [];
 num_of_grad_qn = [];
 final_value = [];
-m = [];
 
 for x = 1:number
     load([file_name, '', num2str(x), '', '.mat']);
@@ -25,7 +24,6 @@ for x = 1:number
     num_of_utility(end+1) = fcount2;
     num_of_grad_qn(end+1) = fcount2;
     final_value(end+1) = fmin2;
-    m = [m, m_gs];
 end
  results = table;
  results.No = [1:number]';
@@ -40,7 +38,7 @@ end
  results.num_of_grad_qn = num_of_grad_qn';
  results.final_value = final_value';
  
- error_of_fin_diff = std(final_value);
+ error_init = std(final_value);
  utility_after_rbf = mean(utility_after_rbf);
  utility_after_qn = mean(utility_after_qn);
  norm_grad_rbf = mean(norm_grad_rbf);
@@ -51,8 +49,5 @@ end
  num_of_utility = mean(num_of_utility);
  num_of_grad_qn = mean(num_of_grad_qn);
  final_value = mean(final_value);
- 
- mean_of_node = mean(m,2);
- std_of_node = std(m,1,2);
- 
- save(['results_','',file_name]);
+  
+ save(['results_','',file_name,'', num2str(x)]);

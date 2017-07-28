@@ -10,3 +10,11 @@ u_matrix = [u_matrix;utility_rand];
 g_matrix = [g_matrix;g_rand];
 end
 save('random_100')
+
+file_name = 'random_'; %read the results
+x = 'How many files need to be read?';
+x = input(x);
+load([file_name,'',num2str(x),'','.mat']);
+utility = mean(u_matrix);
+std = std(u_matrix);
+save(['results_','', file_name,'', num2str(x)]);

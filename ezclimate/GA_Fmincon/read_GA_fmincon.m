@@ -29,7 +29,7 @@ results.iter = iter';
 results.gradient = gradient';
 results.count = count_utility';
 
-error_of_finite_diff = std(results.utility_fmincon);
+error_init = std(results.utility_fmincon);
 utility_ga = mean(utility_ga);
 norm_g_ga = mean(norm_g_ga);
 utility_fmincon = mean(utility_fmincon);
