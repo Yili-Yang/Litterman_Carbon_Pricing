@@ -1,6 +1,5 @@
-file_name = 'GA_58.mat';
-load(file_name);
+file_name = 'GA_';
+number = 'How many files need to be read?'
+load([file_name,'',number,'','.mat']);
 utility = [u_matrix_GA];
-file_name_2 = 'GA_42.mat';
-load(file_name_2);
-utility = [utility; u_matrix_GA];
+ave_utility = mean(utility);
