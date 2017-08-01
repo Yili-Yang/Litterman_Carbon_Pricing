@@ -3,7 +3,7 @@ g_matrix_RBF = [];
 profile on 
 for count = 1:100
 multiprocessing_setup() % set up multiprocessing package, manully call the exectuable of python
-varargin = py.Matlabmod.matlabmode(); % init the class in Matlabmode_g
+varargin = py.Matlabmod.matlabmode(-1); % init the class in Matlabmode_g
 m=100;
 myfun = @matlab_utility_global;
 dim = 63;
@@ -40,22 +40,22 @@ method='cubic';
 % Phase 1 (does not require derivatives)
 %
 
-[fmin1,xmin1,iter1,xbar_min1,fbar_min1,fcount]=global_RBF_TRM(myfun,x,f,ind,xstar,Ls,method,deg,gamma,useg,varargin);
+[fmin1,xmin1,iter1,xbar_min1,fbar_min1,fcount]=test_RBF_TRM(myfun,x,f,ind,xstar,Ls,method,deg,gamma,useg,varargin);
 %percentage_decrease_RBF = (fmin1 - utility_gs)/utility_gs;
 [utlity_RBF,g_RBF] = matlab_utility_g_multiprocessing(xmin1,varargin);% get the utilty and gradient after GA
 u_matrix_RBF =[u_matrix_RBF;utlity_RBF];
-g_matrix_RBF = [g_matrix_RBF;g_RBF];
+g_matrix_RBF = [g_matrix_RBF,norm(g_RBF)];
 
 end
-save('RBF_100')
+save('RBF_100/RBF_test_100')
 profile off
-profsave(profile('info'),'RBF_100')
+profsave(profile('info'),'RBF_100/RBF_test_100')
 
-file_name = 'RBF_'; %read the results
-x = 'How many files need to be read?';
-x = input(x);
-load([file_name, '', num2str(x),'','mat']);
-utility = u_matrix_RBF;
-utility_after_RBF = mean(u_matrix_RBF);
-std_u_RBF = std(u_matrix_RBF);
-save(['results_','',file_name,'',num2str(x)]);
+% file_name = 'RBF_'; %read the results
+% x = 'How many files need to be read?';
+% x = input(x);
+% load([file_name, '', num2str(x),'','mat']);
+% utility = u_matrix_RBF;
+% utility_after_RBF = mean(u_matrix_RBF);
+% std_u_RBF = std(u_matrix_RBF);
+% save(['results_','',file_name,'',num2str(x)]);
