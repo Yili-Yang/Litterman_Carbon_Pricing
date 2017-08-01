@@ -12,6 +12,7 @@ from cost import DLWCost
 from utility import EZUtility
 from optimization import GeneticAlgorithm, GradientSearch
 import numpy as np
+
 class matlabmode():
     def __init__(self,ind):
         '''init the class with default settings:
@@ -157,11 +158,12 @@ class matlabmode():
         # get utility from utlity class
         m = np.array(m)
         utility_tree = self.u.utility(m,True)[0]
-        utility_at_each_node = list()
-        for decision_time in range(len(self.t.decision_times)-1):
-        	utility_at_each_node.extend(utility_tree[decision_time])
+        u_tree = utility_tree.tree
+        utility_at_each_node = np.array([])
+        for decision_time in self.t.decision_times[:-1]:
+            utility_at_each_node = np.append(utility_at_each_node,u_tree[decision_time])
 
-        return np.array(utility_at_each_node)
+        return utility_at_each_node
 
 def get_start(y):
     return y.get_start_point()
@@ -185,4 +187,4 @@ def get_price(m,y):
     return y.get_price(m)# -- coding utf-8 --
 
 def get_utility_tree(m,y):
-	return y.utility_tree(m)
+    return y.utility_tree(m)
