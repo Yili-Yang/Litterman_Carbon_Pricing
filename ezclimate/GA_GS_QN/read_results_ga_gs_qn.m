@@ -11,6 +11,7 @@ num_of_grad_qn = [];
 num_of_iter = [];
 final_value = [];
 m_qn = [];
+
 for x = 1:number
     load([file_name, '', num2str(x), '', '.mat']);
     utility_after_ga(end+1) = utlity_GA;
