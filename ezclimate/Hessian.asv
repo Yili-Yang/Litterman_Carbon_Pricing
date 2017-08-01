@@ -1,0 +1,9 @@
+% 
+% multiprocessing_setup()
+% varargin = py.Matlabmod.matlabmode(-1);
+% myfun = @matlab_utility;
+% hessian = NumHessian(myfun,xmin2,varargin);
+% save('hessian')
+for row = 1:63
+    for col = 1:53
+        if abs(hessian
