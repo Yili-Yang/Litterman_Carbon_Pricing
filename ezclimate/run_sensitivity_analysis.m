@@ -1,5 +1,5 @@
-ind = -1;
-sample_count = 1;
+ind = 8;
+sample_count = 3;
 fmin2_m = [];
 xmin2_m = [];
 fcount2_m = [];
@@ -26,5 +26,5 @@ for count = 1:sample_count
     total_time_m = [total_time_m;sample_time];
 end
 
-% save(['sensitivity_base/sensitivity_','',num2str(ind+1),'_',num2str(sample_count)])
-% profsave(profile('info'),['sensitivity_base/sensitivity_','',num2str(ind+1),'_',num2str(sample_count),'_profiler'])
+ save(['sensitivity_base/sensitivity_','',num2str(ind+1),'_',num2str(sample_count)])
+ profsave(profile('info'),['sensitivity_base/sensitivity_','',num2str(ind+1),'_',num2str(sample_count),'_profiler'])
