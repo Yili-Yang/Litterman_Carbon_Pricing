@@ -1,4 +1,4 @@
-function [fmin2,xmin2,fcount2,iter,final_norm_g_QN,price,parameters] = sensitivity_analysis(ind)
+function [fmin2,xmin2,fcount2,iter,final_norm_g_QN,price,parameters,utlity_at_each_node] = sensitivity_analysis(ind)
 multiprocessing_setup() % set up multiprocessing package, manully call the exectuable of python
 varargin = py.Matlabmod.matlabmode(ind); % init the class in Matlabmode_g
 %%%have to make sure it is optimial.
@@ -9,4 +9,5 @@ fun = @matlab_utility_g_multiprocessing;
 final_norm_g_QN = norm(fg);
 price = -double(py.array.array('d',py.numpy.nditer(py.Matlabmod.get_price(xmin2',varargin))))';
 parameters = -double(py.array.array('d',py.numpy.nditer(py.Matlabmod.get_parameters(varargin))))';
+utlity_at_each_node = -double(py.array.array('d',py.numpy.nditer(py.Matlabmod.get_utility_tree(xmin2',varargin))))';
 end
