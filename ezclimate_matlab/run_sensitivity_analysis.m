@@ -9,6 +9,9 @@ price_m = [];
 parameters_m = [];
 total_time_m = [];
 utility_each_node_m=[];
+sys = py.eval('__import__(''sys'')', struct);
+py.setattr(sys,'argv', {py.str});
+mod = py.eval('__import__(''multiprocessing'')',struct);
 for count = 1:sample_count
     profile on 
     [fmin2,xmin2,fcount2,iter,final_norm_g_QN,price,parameters,utlity_at_each_node] = sensitivity_analysis(ind);

@@ -1,6 +1,6 @@
 from __future__ import division
 import numpy as np
-#import multiprocessing as mp
+import multiprocessing as mp
 from tools import _pickle_method, _unpickle_method
 from tools import write_columns_csv, append_to_existing
 try:
@@ -54,7 +54,7 @@ class DamageSimulation(object):
     temp_dist_params : ndarray or list
         if temp_map is either 3 or 4, user needs to define the distribution parameters
     maxh : float
-        time paramter from Pindyck which indicates the time it takes for temp to get half 
+        time parameter from Pindyck which indicates the time it takes for temp to get half
         way to its max value for a given level of ghg
     cons_growth : float 
         yearly growth in consumption
@@ -78,6 +78,7 @@ class DamageSimulation(object):
     maxh : float
         time paramter from Pindyck which indicates the time it takes for temp to get half 
         way to its max value for a given level of ghg
+        the time span of temperature change that we would like to model
     cons_growth : float 
         yearly growth in consumption
     d : ndarray
@@ -150,8 +151,8 @@ class DamageSimulation(object):
         from Pyndyck damage function, and `pindyck_impact_displace` the displacement parameter from Pyndyck
         damage function.
         """
-        pindyck_temp_k = [2.81, 4.6134, 6.14]
-        pindyck_temp_theta = [0.6,0.63,0.67]
+        pindyck_temp_k = [2.81, 4.63, 6.1]
+        pindyck_temp_theta = [0.6, 0.63, 0.67]
         pindyck_temp_displace = [-0.25, -0.5, -1.0]
         return np.array([self._gamma_array(pindyck_temp_k[i], pindyck_temp_theta[i], self.draws) 
                          + pindyck_temp_displace[i] for i in range(0, 3)])
@@ -190,7 +191,7 @@ class DamageSimulation(object):
         disaster = self._uniform_array((self.draws, self.tree.num_periods))
         return disaster
 
-    def _disaster_cons_simulation(self):
+    def _disaster_cons_simulation(self): #TP_damage in the paper
         """Simulates consumption conditional on disaster, based on the parameter disaster_tail."""
         #get the tp_damage in the article which is drawed from a gamma distri with alpha = 1 and beta = disaster_tail
         disaster_cons = self._gamma_array(1.0, self.disaster_tail, self.draws)
@@ -198,17 +199,18 @@ class DamageSimulation(object):
 
     def _interpolation_of_temp(self, temperature): 
     	# for every temp in each period, modify it using a coff regards to the current period (using a smoothing method.)
-        return temperature[:, np.newaxis] * 2.0 * (1.0 - 0.5**(self.tree.decision_times[1:] / self.maxh)) # modify the temp using a exp coefficient (need the new article to get it)
-      
+        return temperature[:, np.newaxis] * 2.0 * (1.0 - 0.5**(self.tree.decision_times[1:] / self.maxh)) #refer to equation 25 in the paper
 
     def _economic_impact_of_temp(self, temperature):
+        print(temperature)
         """Economic impact of temperatures, Pindyck [2009]."""
         impact = self._pindyck_impact_simulation()
         term1 = -2.0 * impact[:, np.newaxis] * self.maxh * temperature[:,np.newaxis] / np.log(0.5) # -2*gamma*maxh*temp(for each period)/log(0.5)
         term2 = (self.cons_growth - 2.0 * impact[:, np.newaxis] \
                 * temperature[:, np.newaxis]) * self.tree.decision_times[1:] # con_g-2*gamma*temp*time_now
         term3 = (2.0 * impact[:, np.newaxis] * self.maxh \
-                * temperature[:, np.newaxis] * 0.5**(self.tree.decision_times[1:] / self.maxh)) / np.log(0.5)# 2*gamma*maxh*temp*0.5^(time_now/maxh)/log(0.5)
+                * temperature[:, np.newaxis] * 0.5**(self.tree.decision_times[1:] / self.maxh)) / np.log(0.5)
+        #print('eiot',np.exp(term1 + term2 + term3))# 2*gamma*maxh*temp*0.5^(time_now/maxh)/log(0.5)
         return np.exp(term1 + term2 + term3)
 
     def _tipping_point_update(self, tmp, consump, peak_temp_interval=30.0):
@@ -274,7 +276,7 @@ class DamageSimulation(object):
         Returns
         -------
         ndarray 
-            3D-array of simulated damages # from 2D to 3D: number of senarios, self.tree.num_final_states, self.tree.num_periods
+            3D-array of simulated damages # from 2D to 3D : self.tree.num_final_states, self.tree.num_periods
 
         Raises
         ------
@@ -303,12 +305,9 @@ class DamageSimulation(object):
         else:
             raise ValueError("temp_map not in interval 0-4")
 
-        #pool = mp.Pool(processes=dnum)
-        #self.d = np.array(pool.map(self._run_path, temperature))
-        result_list =list()
-        for i in temperature:
-            result_list.append(self._run_path(i))
-        self.d = np.array(result_list)
+        pool = mp.Pool(processes=dnum)
+        self.d = np.array(pool.map(self._run_path, temperature))
+
         if write_to_file:
             self._write_to_file()
         return self.d

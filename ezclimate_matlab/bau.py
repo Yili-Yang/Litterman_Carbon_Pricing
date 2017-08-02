@@ -81,8 +81,6 @@ class DLWBusinessAsUsual(BusinessAsUsual):
 
     """
 
-    #the default emit_time [0, 30, 60] should  work here, but with a tree model with decision times [0, 30, 60] instead
-    #[2015, 2030, ...]
     def __init__(self, ghg_start=400.0, ghg_end=1000.0, emit_time=[0, 30, 60], emit_level= [52.0, 70.0, 81.4]):
         super(DLWBusinessAsUsual, self).__init__(ghg_start, ghg_end)
         self.emit_time = emit_time
@@ -127,7 +125,7 @@ class DLWBusinessAsUsual(BusinessAsUsual):
         self.emission_per_period = np.zeros(num_periods)
         self.bau_path = np.zeros(num_periods)
         self.bau_path[0] = self.ghg_start
-        self.emission_by_decisions[0] = self.emission_by_time(tree.decision_times[0])
+        self.emission_by_decisions[0] = self.emission_by_time(tree.decision_times[0]) #check if the input here is valid
         period_len = tree.decision_times[1:] - tree.decision_times[:-1]
 
         for n in range(1, num_periods):
