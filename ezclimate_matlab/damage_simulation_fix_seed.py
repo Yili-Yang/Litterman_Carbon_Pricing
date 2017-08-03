@@ -295,6 +295,7 @@ class DamageSimulation(object):
 
         if self.temp_map == 0:
             temperature = self._pindyck_simulation()
+            print('right!')
         elif self.temp_map == 1:
             temperature = self._ww_simulation()
         elif self.temp_map == 2:

@@ -88,7 +88,7 @@ class Forcing(object):
 		increments = period_lengths/subinterval_len
 
 		#assign beginning values
-		cum_sink = cls.sink_start
+		cum_sink = cls.sink_start #absorption
 		cum_forcing = cls.forcing_start
 		ghg_level = bau.ghg_start
 

@@ -1,5 +1,5 @@
 multiprocessing_setup() % set up multiprocessing package, manully call the exectuable of python
-varargin = py.Matlabmod.matlabmode(); 
+varargin = py.Matlabmod.matlabmode(-1); 
 u_matrix = [];
 g_matrix =[];
 for count =1:100
@@ -11,10 +11,10 @@ g_matrix = [g_matrix;g_rand];
 end
 save('random_100')
 
-file_name = 'random_'; %read the results
-x = 'How many files need to be read?';
-x = input(x);
-load([file_name,'',num2str(x),'','.mat']);
-utility = mean(u_matrix);
-std = std(u_matrix);
-save(['results_','', file_name,'', num2str(x)]);
+% file_name = 'random_'; %read the results
+% x = 'How many files need to be read?';
+% x = input(x);
+% load([file_name,'',num2str(x),'','.mat']);
+% utility = mean(u_matrix);
+% std = std(u_matrix);
+% save(['results_','', file_name,'', num2str(x)]);

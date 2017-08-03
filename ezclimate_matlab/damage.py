@@ -1,7 +1,7 @@
 from __future__ import division, print_function
 import numpy as np
 from abc import ABCMeta, abstractmethod
-from damage_simulation_fix_seed import DamageSimulation
+from damage_simulation import DamageSimulation
 from forcing import Forcing
 
 class Damage(object):
