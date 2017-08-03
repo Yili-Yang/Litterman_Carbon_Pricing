@@ -8,7 +8,7 @@ multiprocessing_setup();
 varargin = py.Matlabmod.matlabmode(-1);
 u0 = matlab_utility(m0,varargin);
 noise = normrnd(0,0.05,[length(change),100]);
-m_new = repmat(m0,100);
+m_new = repmat(m0,1,100);
 for i = 1:length(change)
     m_new(change(i),:) = noise(i,:);
 end
