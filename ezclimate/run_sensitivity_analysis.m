@@ -1,4 +1,4 @@
-ind = 7;
+ind = 6;
 sample_count = 15;
 fmin2_m = [];
 xmin2_m = [];
