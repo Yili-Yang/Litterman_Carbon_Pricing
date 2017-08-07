@@ -15,5 +15,5 @@ for i = 1:length(m0)
         utility_summary(i,j)=matlab_utility(m_ind,varargin);
     end
 end
-utility_summary = [utility_summary,std(utility_summary,1,2)]
+utility_summary = [utility_summary,std(utility_summary,1,2)];
 save('sensitivity_test_around_optimal_solution');
