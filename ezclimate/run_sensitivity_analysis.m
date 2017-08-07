@@ -1,5 +1,5 @@
-ind = 1;
-sample_count = 75;
+ind = 4;
+sample_count = 100;
 fmin2_m = [];
 xmin2_m = [];
 fcount2_m = [];
@@ -23,8 +23,8 @@ for count = 1:sample_count
     profile off
     total_timer = profile('info');
     sample_time = total_timer.FunctionTable.TotalTime;
-    total_time_m = [total_time_m;sample_time];
+    total_time_m = [total_time_m;total_timer];
 end
 
-% save(['sensitivity_base/sensitivity_','',num2str(ind+1),'_',num2str(sample_count)])
-% profsave(profile('info'),['sensitivity_base/sensitivity_','',num2str(ind+1),'_',num2str(sample_count),'_profiler'])
+save(['sensitivity_base/sensitivity_','',num2str(ind+1),'_',num2str(sample_count)])
+profsave(profile('info'),['sensitivity_base/sensitivity_','',num2str(ind+1),'_',num2str(sample_count),'_profiler'])
