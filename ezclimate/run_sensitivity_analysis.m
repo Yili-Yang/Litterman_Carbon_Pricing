@@ -1,5 +1,5 @@
-ind = 5;
-sample_count = 14;
+ind = 1;
+sample_count = 13;
 fmin2_m = [];
 xmin2_m = [];
 fcount2_m = [];
