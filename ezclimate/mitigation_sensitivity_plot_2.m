@@ -26,14 +26,14 @@ for i = 1:2*count+1
     time = profile('info');
     timer = [timer;time.FunctionTable];
 end
-save(['Utilities with Mitigation Changes at Node ','',num2str(x_change_1),'','and Node ','',num2str(x_change_2)]);
+save(['Utilities with Mitigation Changes at Node ','',num2str(x_change_1),'',' and Node ','',num2str(x_change_2)]);
 figure
 fig = surf(m_change_1,m_change_2,u_summary);
-title(['Utilities with Mitigation Changes at Node ','',num2str(x_change_1),'','and Node ','',num2str(x_change_2)]);
-xlabel(['Mitigation Change at Node ','',num2str(x_change_1)]);
-ylabel(['Mitigation Change at Node ','',num2str(x_change_2)]);
+title(['Utilities with Mitigation Changes at Node ','',num2str(x_change_1),'',' and Node ','',num2str(x_change_2)]);
+xlabel(['Mitigation Level at Node ','',num2str(x_change_1)]);
+ylabel(['Mitigation Level at Node ','',num2str(x_change_2)]);
 zlabel('Utility');
 hold on
-original = scatter3(m(x_change_1),m(x_change_2),u_summary(x_change_1,x_change_2),'filled','y');
+scatter3(m(count+1),m(count+1),u_summary(count+1,count+1),'filled','y');
 saveas(fig,['Utilities with Mitigation Changes at Node ','',num2str(x_change_1),'',' and Node ','',num2str(x_change_2)],'epsc')
 hold off
