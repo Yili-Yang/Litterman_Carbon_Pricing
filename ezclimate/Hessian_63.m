@@ -17,7 +17,9 @@ file_save = 'hessian_63.xls';
 for i = 1:count
    profile on
    hessian = NumHessian(myfun,m_summary(:,i),varargin); 
+   
    [~,num]=cholcov(hessian,0);
+   display(num);
    if num ~= 0
        disp(['No.','',num2str(i),'',' is not positive definite.']);
    end
