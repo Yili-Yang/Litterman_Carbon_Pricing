@@ -1,4 +1,3 @@
-
 %multiprocessing_setup()
 varargin = py.Matlabmod.matlabmode(-1);
 myfun = @matlab_utility;
