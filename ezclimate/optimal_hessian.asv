@@ -29,13 +29,5 @@ for j = 1:sample
     time = profile('info');
     timer = [timer;time.FunctionTable];
 end
-magnitude_m = [];
-for neg = num(num>0)
-    start_i = int16((neg-1)*63)+1;
-    end_i = int16(neg*63);
-    result_h = hessian_m(start_i:end_i,:);
-    e = eig(result_h);
-    re_e = e(e<0);
-    magnitude_m = [magnitude_m;norm(re_e)];
-end
-save(['hessian_optimal_with_sample_','',num2str(sample)]);
+save(['hessian_optimal_','',num2str(j)]);
+

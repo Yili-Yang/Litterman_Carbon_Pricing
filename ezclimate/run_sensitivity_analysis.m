@@ -1,3 +1,5 @@
+%Run sensitivity analysis
+
 ind = 7;
 sample_count = 14;
 fmin2_m = [];

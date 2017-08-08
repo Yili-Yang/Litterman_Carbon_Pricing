@@ -1,19 +1,16 @@
-% use the optimial result acquired by QN and test the convexity around the
-% optimal point
-%
-file = input('What is the name of the file? ','s');
-load(file)
-sample = input('How many samples should we test? ');
-name = input('What is the name of the optimal mitigation? ');
+number_test =8;
 multiprocessing_setup();
 varargin = py.Matlabmod.matlabmode(-1);
 myfun = @matlab_utility;
+
 timer = [];
 condition_m = [];
 num_m = [];
 hessian_m = [];
-for j = 1:sample
-    m_optimal = name(:,sample);
+mitigation_m =[];
+for j = 1:number_test
+    m_optimal = rand(1,63)';
+    mitigation_m = [mitigation_m,m_optimal];
     profile on
     hessian = NumHessian(myfun,m_optimal,varargin); 
     hessian_m = [hessian_m;hessian];
@@ -30,12 +27,13 @@ for j = 1:sample
     timer = [timer;time.FunctionTable];
 end
 magnitude_m = [];
-for neg = num(num>0)
-    start_i = int16((neg-1)*63)+1;
-    end_i = int16(neg*63);
+for i =1:number_test
+    start_i = int16((i-1)*63)+1;
+    end_i = int16(i*63);
     result_h = hessian_m(start_i:end_i,:);
     e = eig(result_h);
     re_e = e(e<0);
     magnitude_m = [magnitude_m;norm(re_e)];
 end
-save(['hessian_optimal_with_sample_','',num2str(sample)]);
+save(['hessian_random_with_sample_','',num2str(number_test)]);
+
