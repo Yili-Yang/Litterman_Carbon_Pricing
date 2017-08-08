@@ -7,8 +7,8 @@ multiprocessing_setup();
 varargin = py.Matlabmod.matlabmode(-1);
 u0 = matlab_utility(m0,varargin);
 for i = 1:length(m0)
-    x = normrnd(0,0.05,[100,1]);
-    m_new =repmat(m0,length(x));
+    x = normrnd(0,0.05,[10,1]);
+    m_new =repmat(m0,1,length(x));
     m_new(i,:) = m_new(i,:)+x.';
     for j = 1:length(x)
         m_ind = m_new(:,j);
