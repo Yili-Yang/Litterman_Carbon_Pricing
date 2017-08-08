@@ -34,6 +34,6 @@ xlabel(['Mitigation Level at Node ','',num2str(x_change_1)]);
 ylabel(['Mitigation Level at Node ','',num2str(x_change_2)]);
 zlabel('Utility');
 hold on
-scatter3(m(count+1),m(count+1),u_summary(count+1,count+1),'filled','y');
+scatter3(m_change_1(count+1),m_change_2(count+1),u_summary(count+1,count+1),'filled','y');
 saveas(fig,['Utilities with Mitigation Changes at Node ','',num2str(x_change_1),'',' and Node ','',num2str(x_change_2)],'epsc')
 hold off
