@@ -1,0 +1,16 @@
+file = input('What is the name of the result file? ','s');
+price_summary = [];
+final_norm_g_QN_summary = [];
+utility_node_summary = [];
+utility_summary = [];
+mitigation_summary = [];
+while ~isempty(file)
+    price_summary = [price_summary, price_m];
+    final_norm_g_QN_summary = [final_norm_g_QN_summary; final_norm_g_QN_m];
+    utility_node_summary = [utility_node_summary, utility_each_node_m];
+    utility_summary = [utility_summary; fmin2_m];
+    mitigation_summary = [mitigation_summary, xmin2_m];
+    file = input('What is the name of the result file? ','s');
+end
+param = input('What is the number of the parameter in control? ');
+save(['sensitivity_result_','',num2str(param)]);
