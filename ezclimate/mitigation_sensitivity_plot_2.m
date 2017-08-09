@@ -1,7 +1,9 @@
 %ask for the file name, mitigation variable, and nodes to change
 file = input('What is the name of the file? ', 's');
-load(file);
-name = input('What is the name of the mitigation variable? ');
+if file ~= 'random'
+    load(file);
+    name = input('What is the name of the mitigation variable? ');
+end
 x_change = input('Which 2 x are to be changed? ');
 x_change_1 = x_change(1);
 x_change_2 = x_change(2);
@@ -30,16 +32,16 @@ for i = 1:2*count+1
     time = profile('info');
     timer = [timer;time.FunctionTable];
 end
-save(['Utilities with Mitigation Changes at Node ','',num2str(x_change_1),'',' and Node ','',num2str(x_change_2)]);
+save(['Utilities with Mitigation Changes at Node ','',num2str(x_change_1),'',' and Node ','',num2str(x_change_2),'',' for a Random Point']);
 %generate 3-d picture
 figure
 fig = surf(m_change_1,m_change_2,u_summary);
-title(['Utilities with Mitigation Changes at Node ','',num2str(x_change_1),'',' and Node ','',num2str(x_change_2)]);
-xlabel(['Mitigation Level at Node ','',num2str(x_change_1)]);
-ylabel(['Mitigation Level at Node ','',num2str(x_change_2)]);
+title(['Utilities with Mitigation Changes at Node ','',num2str(x_change_1),'',' and Node ','',num2str(x_change_2),'',' for a Random Point']);
+xlabel(['Mitigation Level at Node ','',num2str(x_change_2)]);
+ylabel(['Mitigation Level at Node ','',num2str(x_change_1)]);
 zlabel('Utility');
 hold on
 %mark the original point
 scatter3(m_change_1(count+1),m_change_2(count+1),u_summary(count+1,count+1),'filled','y');
-saveas(fig,['Utilities with Mitigation Changes at Node ','',num2str(x_change_1),'',' and Node ','',num2str(x_change_2)],'epsc')
+saveas(fig,['Utilities with Mitigation Changes at Node ','',num2str(x_change_1),'',' and Node ','',num2str(x_change_2),'',' for a Random Point'],'epsc')
 hold off
