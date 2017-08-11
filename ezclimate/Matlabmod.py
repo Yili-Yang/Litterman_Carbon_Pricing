@@ -3,7 +3,7 @@
 #Created on Fri Jun 16 151644 2017
 #@author Ted Yang
 
-#from scipy.odr import Model, Data, ODR
+from scipy.odr import Model, Data, ODR
 import datetime as dt
 from tree import TreeModel
 from bau import DLWBusinessAsUsual
@@ -65,7 +65,7 @@ class matlabmode():
         self.parameters = paralist.ravel()
         #handle parameters:
 
-    def sensitivity_analysis_c_k(ind):
+    def sensitivity_analysis_c_k(self,ind):
         '''take fraction GHG reduction for different taxation rate from normal distribution
         returns the modified c and k in project description page 2 equation (2.3)'''
         #1.2 dollar = 1 euro
