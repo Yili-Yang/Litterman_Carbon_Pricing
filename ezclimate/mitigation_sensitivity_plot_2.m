@@ -1,3 +1,22 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Xin(Keira) Shu, August 2017
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% do 2-dimensional mitigation changes, calculate the utilities and
+% generate the plot for the utilities
+% 
+% input:
+% *enter random to use a random mitigation vector
+% name of the file that contains the mitigation levels
+% name of the mitigation variable
+% the index of mitigation nodes to change, like [1 2]
+% stepsize, like 0.02
+% step number of change in 1 direction, like 5.
+% (if step number = 5, will return 5*2+1=11 utility results)
+% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 %ask for the file name, mitigation variable, and nodes to change
 file = input('What is the name of the file? ', 's');
 if file ~= 'random'

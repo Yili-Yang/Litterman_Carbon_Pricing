@@ -1,3 +1,17 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Xin(Keira) Shu, August 2017
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Generate linearly spaced mitigation levels between two arbitrary ones and
+% calculte the utilities
+% input:
+% name of file 1 containing variable mitigation 1
+% name of variable mitigation 1
+% name of file 2 containing variable mitigation 2
+% name of variable mitigation 2
+% number of the linear spaced mitigation levels you need
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 file1= input('What is the name of the first file?','s');
 load(file1)
 name_1 = input('What is the name of mitigation1?');

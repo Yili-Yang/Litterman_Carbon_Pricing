@@ -1,3 +1,16 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Xin(Keira) Shu, August 2017
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% read the sensitivity test results for a particular parameter and 
+% summarize the variables in concern
+% input:
+% 1. name of the test result files (press ENTER when nothing is left to read)
+% 2. the parameter number of the sensitivity tests
+% file saved:
+% 'sensitivity_results_(parameter number)'
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 file = input('What is the name of the result file? ','s');
 load(file);
 price_summary = [];
