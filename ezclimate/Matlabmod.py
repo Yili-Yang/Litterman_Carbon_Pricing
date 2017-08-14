@@ -49,7 +49,7 @@ class matlabmode():
             u = EZUtility(tree=t, damage=df, cost=c, period_len=5.0, eis=0.9, ra=7.0, time_pref=0.005)
             self.u = u
             paralist = np.array(self.u.damage.parameter_list)
-        elif ind == (10 or 11):
+        elif ind in (10,11):
             from damage import DLWDamage
             aa,bb,cost,g = self.sensitivity_analysis_c_k(ind)
             c = DLWCost(t, bau_default_model.emit_level[0], g=g, a=cost, join_price=2000.0, max_price=2500.0,
