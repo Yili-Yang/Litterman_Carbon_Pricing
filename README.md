@@ -18,8 +18,12 @@ open matlab and type:
 >>> addpath(genpath('<your path which install the repo>/Global_RBF'))
 >>> savepath
 ```
+2. Set up pyversion for Matlab:
+Download Anaconda 2.7 (or 3.6) in your computer.
+```bash
+>>> pyversion '<path where you install anaconda>'
+```
 ## Installation
-
 We encourage you to use pip to install ezclimate on your system. 
 
 ```bash
