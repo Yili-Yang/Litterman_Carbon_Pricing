@@ -11,7 +11,7 @@ See the [EZ-Climate User's Guide](https://oscarsjogren.github.io/dlw/) for EZ-Cl
 
 In order to get the tip documentation, change directory to the `doc` subfolder and type in `make html`, the documentation will be under `../../ez_climate_docs/html`. You will need [Sphinx](http://sphinx.pocoo.org) to build the documentation.
 ## Enviroment Setting
-To set up the enviroment for the Matlab codes, we need to do steps:
+To set up the enviroment for the Matlab codes, there are 3 steps:
 1. add path of ADMAT to your computer:
 open matlab and type:
 ```bash
@@ -22,6 +22,11 @@ open matlab and type:
 Download Anaconda 2.7 (or 3.6) in your computer.
 ```bash
 >>> pyversion '<path where you install anaconda>'
+```
+3. Set up multiprocessing package. (Only needed in Windows OS):
+Run `multiprocessing_setup` each time before running the matlab codes.
+```bash
+>>> multiprocessing_setup()
 ```
 ## Installation
 We encourage you to use pip to install ezclimate on your system. 
