@@ -10,7 +10,14 @@ You can find the most recent releases at: https://pypi.python.org/pypi/ezclimate
 See the [EZ-Climate User's Guide](https://oscarsjogren.github.io/dlw/) for EZ-Climate documentation.
 
 In order to get the tip documentation, change directory to the `doc` subfolder and type in `make html`, the documentation will be under `../../ez_climate_docs/html`. You will need [Sphinx](http://sphinx.pocoo.org) to build the documentation.
-
+## Enviroment Setting
+To set up the enviroment for the Matlab codes, we need to do steps:
+1. add path of ADMAT to your computer:
+open matlab and type:
+```bash
+>>> addpath(genpath('<your path which install the repo>/Global_RBF'))
+>>> savepath
+```
 ## Installation
 
 We encourage you to use pip to install ezclimate on your system. 
