@@ -25,15 +25,14 @@ while ~isempty(file)
     m_size = size(price_m);
     col = m_size(2);
     for ind = 1:col
-        if price_m(:,ind)<0
-            price_summary = [price_summary, price_m(:,ind)];
-            final_norm_g_QN_summary = [final_norm_g_QN_summary; final_norm_g_QN_m(ind)];
-            utility_node_summary = [utility_node_summary, utility_each_node_m(:,ind)];
-            utility_summary = [utility_summary; fmin2_m(ind)];
-            mitigation_summary = [mitigation_summary, xmin2_m(:,ind)];
-            iteration_summary = [iteration_summary; iter_m(ind)];
-            fcount_summary = [fcount_summary; fcount2_m(ind)];
-        end
+        if price
+        price_summary = [price_summary, price_m];
+        final_norm_g_QN_summary = [final_norm_g_QN_summary; final_norm_g_QN_m];
+        utility_node_summary = [utility_node_summary, utility_each_node_m];
+        utility_summary = [utility_summary; fmin2_m];
+        mitigation_summary = [mitigation_summary, xmin2_m];
+        iteration_summary = [iteration_summary; iter_m];
+        fcount_summary = [fcount_summary; fcount2_m];
     end
     file = input('What is the name of the result file? ','s');
 end
