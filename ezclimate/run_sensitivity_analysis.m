@@ -1,4 +1,4 @@
-ind = ;
+ind = 11;
 sample_count = 1;
 fmin2_m = [];
 xmin2_m = [];
@@ -9,6 +9,7 @@ price_m = [];
 parameters_m = [];
 total_time_m = [];
 utility_each_node_m=[];
+multiprocessing_setup;
 for count = 1:sample_count
     profile on 
     [fmin2,xmin2,fcount2,iter,final_norm_g_QN,price,parameters,utlity_at_each_node] = sensitivity_analysis(ind);
