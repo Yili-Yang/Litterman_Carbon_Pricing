@@ -1,15 +1,14 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-%           Yili Yang, Aug 2017
+%           Yili Yang, July 2017
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Return the utility and using finite differeciation to get the gradient of
-% the utiltity function at the input mitigation level. 
+% Using finite differeciation to get the gradient of the utiltity function
+% at the input mitigation level
 %
 % Input:
 % m_in_mat: mitigation level stored in matlab double
-% varargin: instance of matlabmode class in Matlabmod (Provide damage 
-% simualtion and utility)
+% instance of matlabmode class in Matlabmod (Provide damage simualtion and utility)
 %
 % Output:
 % re - objective function value: 

@@ -1,3 +1,18 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%           Yili Yang, July 2017
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Using Fmincon as a local optimizer for the litterman's carbon pricing
+% model.
+% Output:
+% fval - final function value
+% x - final point where we stop
+% exitflag - exit flag of the fmincon
+% output - output cell of the fmincon
+% grad - final gradient when the fmincon stops
+% hessian - final hessian when the fmincon stops
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 utility_fmincon = [];
 norm_g=[];
 utility=[];

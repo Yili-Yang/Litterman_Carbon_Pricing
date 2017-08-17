@@ -5,11 +5,15 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Using get_u in Matlabmod to return the utility given mitigatoin levels
 % and then modify the utilty with a positive modification term to get the 
-% objective function.
+% objective function. The difference between this function and
+% matlab_utility is that this function can handel higher dimension, i.e. the input 
+% mitigation level here can be 63*n whereas the matlab_utlity only takes
+% 63*1.
 %--------------------------------------------------------------------------
 % Input:
 % m_in_mat: mitigation level stored in matlab double
-% instance of matlabmode class in Matlabmod (Provide damage simualtion and utility)
+% varargin: instance of matlabmode class in Matlabmod (Provide damage 
+% simualtion and utility)
 %--------------------------------------------------------------------------
 % Output:
 % re - objective function value: 
