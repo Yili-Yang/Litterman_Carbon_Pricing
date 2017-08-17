@@ -3,8 +3,16 @@
 %           Yili Yang, Aug 2017
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Return the utility and using finite differeciation to get the gradient of
-% the utiltity function at the input mitigation level. 
+% Use the radial basis function (RBF) as the gloabl minizer and record its
+% 100 runs' performance.
+% Inputs:
+% m - number of neurons, default to 100
+% gamma - parameter in RBF (phi function), default to 1
+% deg - p(x) in RBF is set to zero
+% method - phi function in RBF, default to 'cubic'
+% Output:
+% u_matrix_RBF - utility of the 100's run
+% g_matrix_RBF - final norm of gradience of the 100's run
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 u_matrix_RBF = [];
 g_matrix_RBF = [];
