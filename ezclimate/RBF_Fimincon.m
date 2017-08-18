@@ -1,3 +1,70 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%           Yili Yang, Aug 2017
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Use the radial basis function (RBF) as the gloabl minizer and fmincon
+% as local minizer.
+%
+% Inputs:
+% myfun - original function. Can be a handle to the function to be minimized.
+%
+% xbar - the points we use to build the RBF model. xbar is mxn where
+% m is the number of points used for the model, and n is the dimension.
+%
+% fbar - function value at xbar(~,:)
+%
+% ind - index of the starting point in xbar. that is xbar(ind,:) is
+% the starting point for the optimzation procedure.
+%
+% method - type of phi function for RBF model. method is a string variable.
+% current choices are 'cubic', 'multiquadric1', 'multiquadric2', 'inmultiquadric',
+% 'Gaussian'. See function 'phifunc' for more detail
+%
+% deg - degree of p(x) in RBF model.
+% if deg = -1, p(x) = 0, if deg = 0 a constant, p(x) = a,  is used
+% if deg = 1 a linear fcn , p(x) = b'x+a, is used. .
+% See function RBFM for more details.
+%
+%
+% gamma - parameter for phi function. default gamma = 1;
+%
+% varargin - additional parameters for myfun
+%
+% useg - useg = 1 indicates the gradient will be computed at eaxh point
+%        and used in the trust region problem
+% xstar - initial guessestimate of the global optiimum
+%
+% ls - lambda sequence for smoothing part, last entry should be 0.
+% A default sequnce is suppplied below
+%
+% Output:
+% fmin1 - final function value at computed optimum by RBF
+%
+% xmin1 - the computed optimum by RBF
+%
+% iter1 - number of iterations within RBF
+%
+% xbar_min1 - an array of the points (n-vectors) at which the objective function
+% was evaluated by RBF
+%
+% fbar_min1 - the vector ofobjective function values at all points in xxbar
+% by RBF
+%
+% fcount: Number of function evaluations in RBF
+% 
+% fval - final function value
+%
+% x - final point where we stop
+%
+% exitflag - exit flag of the fmincon
+%
+% output - output cell of the fmincon
+%
+% grad - final gradient when the fmincon stops
+%
+% hessian - final hessian when the fmincon stops
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 multiprocessing_setup() % set up multiprocessing package, manully call the exectuable of python
 varargin = py.Matlabmod.matlabmode(); % init the class in Matlabmode_g
 m=100;

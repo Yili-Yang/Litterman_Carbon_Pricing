@@ -6,6 +6,12 @@
 % use the optimial result acquired by QN and test the convexity around the
 % optimal point.
 % Input: 
+% number of samples that need to be tested
+% optimial mitigation level
+% Output:
+% hessian matrix before symmatring 
+% number of negative eigenvalues
+% time of each run
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 file = input('What is the name of the file? ','s');
 load(file)
