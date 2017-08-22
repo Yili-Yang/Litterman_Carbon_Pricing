@@ -35,5 +35,6 @@ else
 end
 disp(re)
 g = -double(py.array.array('d',py.numpy.nditer(pytuple(2))))';
+g = g(2:63);
 disp(norm(g))
 end
