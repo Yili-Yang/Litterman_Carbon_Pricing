@@ -109,11 +109,7 @@ class matlabmode():
 
     def utility_grad(self,m):
         #use finite differenciation to gradient and utility
-        m = np.array(m)
-        gs_model = GradientSearch(var_nums=63, utility=self.u, accuracy=1e-8, 
-                              iterations=1, print_progress=True)
-        grad = gs_model.numerical_gradient(m)
-        return self.u.utility(m),grad
+        return self.u.utility(m),self.grad(self,m)
 
     def grad(self,m):
         #use finite differenciation to gradient and utility
@@ -154,8 +150,9 @@ class matlabmode():
                 index_ori =index + start_node
                 price_list.append(self.u.cost.price(t.decision_times[decision_time],m[index_ori],average_mit[index]))
         return np.array(price_list)
+
     def utility_tree(self,m):
-        # get utility from utlity class
+        # get utility in a tree structure from utlity class
         m = np.array(m)
         utility_tree = self.u.utility(m,True)[0]
         u_tree = utility_tree.tree
@@ -165,6 +162,20 @@ class matlabmode():
 
         return utility_at_each_node
 
+   	def utility_fix_1(self,m):
+        # get utility from utlity class
+        m = np.array(m)
+        m = np.append(0,m)
+        #result_array=np.array([])
+        # if m.ndim ==1:
+        return self.u.utility(m)
+            
+        # else:
+        #     row= 10
+        #     for row_index in range(row):
+        #         result_array= np.append(result_array,self.u.utility(m[row_index,:]))
+        #     return result_array
+# following is the function to be called in matlab, they are written out side the class since the intergration doesn't support subscription in python class
 def get_start(y):
     return y.get_start_point()
 
