@@ -109,7 +109,7 @@ class matlabmode():
 
     def utility_grad(self,m):
         #use finite differenciation to gradient and utility
-        return self.u.utility(m),self.grad(self,m)
+        return self.u.utility(m),self.grad(m)
 
     def grad(self,m):
         #use finite differenciation to gradient and utility
@@ -120,17 +120,9 @@ class matlabmode():
         return grad
 
     def utility(self,m):
-        # get utility from utlity class
         m = np.array(m)
-        #result_array=np.array([])
-        # if m.ndim ==1:
         return self.u.utility(m)
-            
-        # else:
-        #     row= 10
-        #     for row_index in range(row):
-        #         result_array= np.append(result_array,self.u.utility(m[row_index,:]))
-        #     return result_array
+
     def GS(self,m):
         #m = np.array(m)
         m=m[0]
@@ -162,19 +154,16 @@ class matlabmode():
 
         return utility_at_each_node
 
-   	def utility_fix_1(self,m):
+    def utility_sub_optimal(self,m):
         # get utility from utlity class
         m = np.array(m)
         m = np.append(0,m)
-        #result_array=np.array([])
-        # if m.ndim ==1:
-        return self.u.utility(m)
-            
-        # else:
-        #     row= 10
-        #     for row_index in range(row):
-        #         result_array= np.append(result_array,self.u.utility(m[row_index,:]))
-        #     return result_array
+
+        return self.u.utility(m), self.grad(m)
+
+
+
+
 # following is the function to be called in matlab, they are written out side the class since the intergration doesn't support subscription in python class
 def get_start(y):
     return y.get_start_point()
@@ -199,3 +188,6 @@ def get_price(m,y):
 
 def get_utility_tree(m,y):
     return y.utility_tree(m)
+
+def utility_sub_opt(m,y):
+	return y.utility_sub_optimal(m)
