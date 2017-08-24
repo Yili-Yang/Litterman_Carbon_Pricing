@@ -4,7 +4,8 @@
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Change the parameters in damage function and cost function and use random
-% start point and Quasi-Newton method to find the local optimal point.
+% start point and Quasi-Newton method to find the local optimal point with
+% mitigation at period 0 set to 0.
 %
 % Input:
 % ind: the indicator of what parameters is been changed.
@@ -24,16 +25,20 @@
 % price: the optimal price (SCC) achieved by the final mitigation level.
 % utility_at_each_node: final optimal utiltiy at each node.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [fmin2,xmin2,fcount2,iter,final_norm_g_QN,price,parameters,utlity_at_each_node] = sub_optimal_sensitivity_analysis(ind)
+%function [fmin2,xmin2,fcount2,iter,final_norm_g_QN,price,parameters,utlity_at_each_node] = sub_optimal_sensitivity_analysis(ind)
 
-varargin = py.Matlabmod.matlabmode(ind); % init the class in Matlabmode_g
+multiprocessing_setup();
+%end
+ind =-1;
+pyclass = py.Matlabmod.matlabmode(ind);
 %%%have to make sure it is optimial.
 m_in_mat_0 = rand(1,62)';
 fun = @matlab_utility_g_sub_optimal;
-[fmin2,xmin2,fcount2,~,iter] = Quasi_Newton(fun,m_in_mat_0,varargin);% run Quasi_Newton loacl optimizer
-[~,fg] = fun(xmin2,varargin);
+[fmin2,xmin2,fcount2,~,iter] = Quasi_Newton(fun,m_in_mat_0,0,pyclass);% run Quasi_Newton loacl optimizer
+[~,fg] = fun(xmin2,0,pyclass);
 final_norm_g_QN = norm(fg);
-price = -double(py.array.array('d',py.numpy.nditer(py.Matlabmod.get_price(xmin2',varargin))))';
-parameters = -double(py.array.array('d',py.numpy.nditer(py.Matlabmod.get_parameters(varargin))))';
-utlity_at_each_node = -double(py.array.array('d',py.numpy.nditer(py.Matlabmod.get_utility_tree(xmin2',varargin))))';
-end
+xmin2 = [0;xmin2];
+price = -double(py.array.array('d',py.numpy.nditer(py.Matlabmod.get_price(xmin2',pyclass))))';
+parameters = -double(py.array.array('d',py.numpy.nditer(py.Matlabmod.get_parameters(pyclass))))';
+utlity_at_each_node = -double(py.array.array('d',py.numpy.nditer(py.Matlabmod.get_utility_tree(xmin2',pyclass))))';
+

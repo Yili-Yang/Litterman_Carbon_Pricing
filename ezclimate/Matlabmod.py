@@ -1,8 +1,3 @@
-# -- coding utf-8 --
-
-#Created on Fri Jun 16 151644 2017
-#@author Ted Yang
-
 from scipy.odr import Model, Data, ODR
 import datetime as dt
 from tree import TreeModel
@@ -109,7 +104,11 @@ class matlabmode():
 
     def utility_grad(self,m):
         #use finite differenciation to gradient and utility
-        return self.u.utility(m),self.grad(m)
+        m = np.array(m)
+        gs_model = GradientSearch(var_nums=63, utility=self.u, accuracy=1e-8, 
+                              iterations=1, print_progress=True)
+        grad = gs_model.numerical_gradient(m)
+        return self.u.utility(m),grad
 
     def grad(self,m):
         #use finite differenciation to gradient and utility
@@ -154,13 +153,17 @@ class matlabmode():
 
         return utility_at_each_node
 
-    def utility_sub_optimal(self,m):
+    def utility_sub_optimal(self,m,adj):
         # get utility from utlity class
         m = np.array(m)
-        m = np.append(0,m)
-
+        m = np.append(adj,m)
         return self.u.utility(m), self.grad(m)
 
+    def adj_utiltiy_cons(self,m,cons):
+        # get utility from utlity class
+        m = np.array(m)
+
+        return self.u.adjusted_utility(m,first_period_consadj=cons)
 
 
 
@@ -189,5 +192,11 @@ def get_price(m,y):
 def get_utility_tree(m,y):
     return y.utility_tree(m)
 
-def utility_sub_opt(m,y):
-	return y.utility_sub_optimal(m)
+def utility_sub_opt(m,adj,y):
+    return y.utility_sub_optimal(m,adj)
+
+def adj_utiltiy_cons(cons,m,y):
+    return y.adj_utiltiy_cons(m,cons)
+
+def adj_utiltiy_cons_g(m,cons,y):
+    return y.adj_utiltiy_cons(m,cons),y.grad(m)

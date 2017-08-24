@@ -335,7 +335,6 @@ class DLWDamage(Damage):
 		state = self.tree.get_state(node, period)
 		path = self.tree.get_path(node, period)
 		new_m = m[path[:-1]] # mitigation on the path until this node
-	
 		period_len = self.tree.decision_times[1:period+1] - self.tree.decision_times[:period]
 		bau_emissions = self.bau.emission_by_decisions[:period] #emission levels at each decision point
 		total_emission = np.dot(bau_emissions, period_len) #total emission: sum of emissions during each period
