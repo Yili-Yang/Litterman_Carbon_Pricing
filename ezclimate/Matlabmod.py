@@ -7,6 +7,13 @@ from cost import DLWCost
 from utility import EZUtility
 from optimization import GeneticAlgorithm, GradientSearch
 import numpy as np
+import multiprocessing as mp
+from tools import _pickle_method, _unpickle_method
+try:
+    import copy_reg
+except:
+    import copyreg as copy_reg
+import types
 
 class matlabmode():
     def __init__(self,ind):
@@ -165,7 +172,30 @@ class matlabmode():
 
         return self.u.adjusted_utility(m,first_period_consadj=cons)
 
+    def _partial_grad(self,i,cons):
+        """Calculate the ith element of the gradient vector."""
+        m_copy = self.m.copy()
+        m_copy[0,i] = m_copy[0,i] - self.delta if (m_copy[0,i] - self.delta)>=0 else 0.0
+        minus_utility = self.adj_utiltiy_cons(m_copy[0],cons)
+        m_copy[0,i] += 2*self.delta
+        plus_utility = self.adj_utiltiy_cons(m_copy[0],cons)
+        grad = (plus_utility-minus_utility) / (2*self.delta) # the math is trival
+        return grad, i
 
+    def adj_utility_g(self,m, cons, delta=1e-08):
+        m = np.array(m)
+        self.delta = delta
+        self.m = m
+        grad = np.zeros(len(m))
+        indicies = np.array(range(len(m)))
+        res = mp.pool.map(self._partial_grad,indicies,cons)
+        for g, i in res:
+            grad[i] = g
+            pool.close()
+        pool.join()
+        del self.m
+        del self.delta
+        return grad
 
 # following is the function to be called in matlab, they are written out side the class since the intergration doesn't support subscription in python class
 def get_start(y):
@@ -199,4 +229,4 @@ def adj_utiltiy_cons(cons,m,y):
     return y.adj_utiltiy_cons(m,cons)
 
 def adj_utiltiy_cons_g(m,cons,y):
-    return y.adj_utiltiy_cons(m,cons),y.grad(m)
+    return y.adj_utiltiy_cons(m,cons),y.adj_utiltiy_g(m,cons)
