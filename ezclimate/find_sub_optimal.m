@@ -43,5 +43,5 @@ xmin2 = [mitigation_0;xmin2];
 price = -double(py.array.array('d',py.numpy.nditer(py.Matlabmod.get_price(xmin2',pyclass))))';
 parameters = -double(py.array.array('d',py.numpy.nditer(py.Matlabmod.get_parameters(pyclass))))';
 utlity_at_each_node = -double(py.array.array('d',py.numpy.nditer(py.Matlabmod.get_utility_tree(xmin2',pyclass))))';
-save(['sub_opt_of_index_','',num2str(ind),'','test_','',num2str(sampleind),'','with_mitigation_','',num2str(mitigation_0)])
+save(['sub_opt_of_index_','',num2str(ind),'','_test_','',num2str(sampleind),'','with_mitigation_','',num2str(mitigation_0)])
 end
