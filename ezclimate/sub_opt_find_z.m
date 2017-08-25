@@ -1,3 +1,5 @@
+
+
 multiprocessing_setup()
 %sub_opt_m = ones(1,59);
 %sub_opt_m = [0,0,0,0,sub_opt_m];
@@ -15,16 +17,18 @@ profile on
 fun = @matlab_utility_g_sub_optimal_case2;
 while norm(diff) > 1e-5
     obj_function = @(z)cons_search(z,opt_m,pyclass) - matlab_utility(sub_opt_m',pyclass);
-    z_m = [z_m;z];
     if z > -1
         z = fzero(obj_function,z);
     else
         z = -1;
     end
+    z_m = [z_m;z];
     [fmin,opt_m_new,fcount,~,iter] = Quasi_Newton(fun,opt_m',z,pyclass);
     fmin_m = [fmin_m;fmin];
     fcount_m = [fcount_m;fcount];
     iter_QN_m = [iter_QN_m;iter];
+    [~,g] = matlab_utility_g_sub_optimal_case2(opt_m_new,z,pyclass);
+    norm_g_m = [norm_g_m;norm(g)];
     diff = opt_m_new-opt_m';
     opt_m = opt_m_new';
     disp('diff')
