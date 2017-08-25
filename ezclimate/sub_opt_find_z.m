@@ -17,7 +17,8 @@
 %   3. = 9: use orignal parameters and random seed to simulate damage
 %   4. = 10 or 11: change the parameters in cost function, 10 is to change
 %                  x60 and 11 is to change x100
-% mitigation_0: mitigation level at period 0 which will be fixed.
+% sub_opt_m: suboptimal strategy (imported from a mat file for example)
+% opt_m: optimial strategy at the initial point(imported from a mat file for example)
 %
 % Output:
 % fmin2: final optimal object value (utility + positive add up)
@@ -47,9 +48,9 @@ opt_m_r =[];
 profile on
 fun = @matlab_utility_g_sub_optimal_case2;
 target = matlab_utility(sub_opt_m',pyclass);
-while norm(diff) > 1e-5
+while (norm(diff) > 1e-5 && obj_function(z) > 1e-4)
     obj_function = @(z)(-cons_search(z,opt_m,pyclass) + target)^2;
-    z_new = fzero(obj_function,z);
+    z_new = fminbnd(obj_function,-1,0);
     if z_new >-1
         z = z_new;
     else
