@@ -48,9 +48,9 @@ opt_m_r =[];
 profile on
 fun = @matlab_utility_g_sub_optimal_case2;
 target = matlab_utility(sub_opt_m',pyclass);
-while (norm(diff) > 1e-5 && obj_function(z) > 1e-4)
+while (norm(diff) > 1e-5)
     obj_function = @(z)(-cons_search(z,opt_m,pyclass) + target)^2;
-    z_new = fminbnd(obj_function,-1,0);
+    z = fminbnd(obj_function,-1,0);
     z_m = [z_m;z];
     opt_m_r = [opt_m_r;opt_m];
     [fmin,opt_m_new,fcount,~,iter] = Quasi_Newton(fun,opt_m',z,pyclass);
