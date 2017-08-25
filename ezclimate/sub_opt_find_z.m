@@ -51,11 +51,6 @@ target = matlab_utility(sub_opt_m',pyclass);
 while (norm(diff) > 1e-5 && obj_function(z) > 1e-4)
     obj_function = @(z)(-cons_search(z,opt_m,pyclass) + target)^2;
     z_new = fminbnd(obj_function,-1,0);
-    if z_new >-1
-        z = z_new;
-    else
-        z = -0.6;
-    end
     z_m = [z_m;z];
     opt_m_r = [opt_m_r;opt_m];
     [fmin,opt_m_new,fcount,~,iter] = Quasi_Newton(fun,opt_m',z,pyclass);
