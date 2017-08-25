@@ -42,16 +42,21 @@ fcount_m = [];
 iter_QN_m = [];
 fmin_m =[];
 z_m = [];
+norm_g_m =[];
+opt_m_r =[];
 profile on
 fun = @matlab_utility_g_sub_optimal_case2;
+target = matlab_utility(sub_opt_m',pyclass);
 while norm(diff) > 1e-5
-    obj_function = @(z)cons_search(z,opt_m,pyclass) - matlab_utility(sub_opt_m',pyclass);
-    if z > -1
-        z = fzero(obj_function,z);
+    obj_function = @(z)(-cons_search(z,opt_m,pyclass) + target)^2;
+    z_new = fzero(obj_function,z);
+    if z_new >-1
+        z = z_new;
     else
-        z = -1;
+        z = -0.6;
     end
     z_m = [z_m;z];
+    opt_m_r = [opt_m_r;opt_m];
     [fmin,opt_m_new,fcount,~,iter] = Quasi_Newton(fun,opt_m',z,pyclass);
     fmin_m = [fmin_m;fmin];
     fcount_m = [fcount_m;fcount];
@@ -65,7 +70,7 @@ while norm(diff) > 1e-5
     iter_count = iter_count + 1;
 end
 profile off
-profsave(profile('info'),'sub_opt_case2_info_2')
-save('sub_opt_case2_test2')
+profsave(profile('info'),'sub_opt_case2_info_3')
+save('sub_opt_case2_test3')
 %end
 
