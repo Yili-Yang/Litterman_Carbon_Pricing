@@ -166,35 +166,17 @@ class matlabmode():
         m = np.append(adj,m)
         return self.u.utility(m), self.grad(m)
 
-    def adj_utiltiy_cons(self,m,cons):
+    def adj_utility_cons(self,m,cons):
         # get utility from utlity class
         m = np.array(m)
 
         return self.u.adjusted_utility(m,first_period_consadj=cons)
 
-    def _partial_grad(self,i,cons):
-        """Calculate the ith element of the gradient vector."""
-        m_copy = self.m.copy()
-        m_copy[0,i] = m_copy[0,i] - self.delta if (m_copy[0,i] - self.delta)>=0 else 0.0
-        minus_utility = self.adj_utiltiy_cons(m_copy[0],cons)
-        m_copy[0,i] += 2*self.delta
-        plus_utility = self.adj_utiltiy_cons(m_copy[0],cons)
-        grad = (plus_utility-minus_utility) / (2*self.delta) # the math is trival
-        return grad, i
-
-    def adj_utility_g(self,m, cons, delta=1e-08):
+    def adj_utility_g(self,m, cons):
         m = np.array(m)
-        self.delta = delta
-        self.m = m
-        grad = np.zeros(len(m))
-        indicies = np.array(range(len(m)))
-        res = mp.pool.map(self._partial_grad,indicies,cons)
-        for g, i in res:
-            grad[i] = g
-            pool.close()
-        pool.join()
-        del self.m
-        del self.delta
+        gs_model = GradientSearch(var_nums=63, utility=self.u, accuracy=1e-8, 
+                              iterations=1, print_progress=True)
+        grad = gs_model.numerical_gradient_cons(m,cons)
         return grad
 
 # following is the function to be called in matlab, they are written out side the class since the intergration doesn't support subscription in python class
@@ -225,8 +207,8 @@ def get_utility_tree(m,y):
 def utility_sub_opt(m,adj,y):
     return y.utility_sub_optimal(m,adj)
 
-def adj_utiltiy_cons(cons,m,y):
-    return y.adj_utiltiy_cons(m,cons)
+def adj_utility_cons(cons,m,y):
+    return y.adj_utility_cons(m,cons)
 
-def adj_utiltiy_cons_g(m,cons,y):
-    return y.adj_utiltiy_cons(m,cons),y.adj_utiltiy_g(m,cons)
+def adj_utility_cons_g(m,cons,y):
+    return y.adj_utility_cons(m,cons),y.adj_utility_g(m,cons)

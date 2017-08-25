@@ -10,6 +10,6 @@ function re_array = cons_search(z,opt_m,pyclass)
 % z - adjusted percentage of the consumption on the first period
 % opt_m - 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-pyAdjUtility = py.Matlabmod.adj_utiltiy_cons(z,opt_m,pyclass);
+pyAdjUtility = py.Matlabmod.adj_utility_cons(z,opt_m,pyclass);
 re_array = -double(py.array.array('d',pyAdjUtility));
 end

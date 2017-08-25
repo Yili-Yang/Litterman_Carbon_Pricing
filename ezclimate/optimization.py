@@ -448,6 +448,52 @@ class GradientSearch(object) :
 		del self.delta
 		return grad 
 
+	def _partial_grad_cons(self, i):
+		"""Calculate the ith element of the gradient vector."""
+		m_copy = self.m.copy()
+		m_copy[i] = m_copy[i] - self.delta if (m_copy[i] - self.delta)>=0 else 0.0
+		minus_utility = self.u.adjusted_utility(m_copy,first_period_consadj=self.cons)
+		m_copy[i] += 2*self.delta
+		plus_utility = self.u.adjusted_utility(m_copy,first_period_consadj=self.cons)
+		grad = (plus_utility-minus_utility) / (2*self.delta) # the math is trival
+		return grad, i
+
+	def numerical_gradient_cons(self, m, cons,delta=1e-08):
+		"""Calculate utility gradient numerically.
+
+		Parameters
+		----------
+		m : ndarray or list
+			array of mitigation
+		delta : float, optional
+			change in mitigation 
+		fixed_indicies : ndarray or list, optional
+			indicies of gradient that should not be calculated
+
+		Returns
+		-------
+		ndarray
+			gradient
+
+		"""
+		self.delta = delta
+		self.m = m
+		self.cons = cons
+		grad = np.zeros(len(m))
+		if not isinstance(m, np.ndarray):
+			self.m = np.array(m)
+		pool = multiprocessing.Pool()
+		indicies = np.array(range(len(m)))
+		res = pool.map(self._partial_grad_cons, indicies)
+		for g, i in res:
+			grad[i] = g
+		pool.close()
+		pool.join()
+		del self.m
+		del self.delta
+		del self.cons
+		return grad 
+
 	def _accelerate_scale(self, accelerator, prev_grad, grad):
 		sign_vector = np.sign(prev_grad * grad)
 		scale_vector = np.ones(self.var_nums) * ( 1 + 0.10)
