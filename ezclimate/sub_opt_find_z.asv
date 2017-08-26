@@ -30,47 +30,45 @@
 % utility_at_each_node: final optimal utiltiy at each node.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %function [z,fmin_m,,fcount_m,sub_opt_find_z
-for mitigation_0 = 0:0.05:0.4
-    [~,xmin2,~,~,~,~,~,~] = find_sub_optimal(ind,mitigation_0,-1);
-    sub_opt = xmin2';
-    load('opt_m')
-    multiprocessing_setup()
-    %sub_opt_m = ones(1,59);
-    %sub_opt_m = [0,0,0,0,sub_opt_m];
-    %opt_m = ones(1,63);
-    z = 0;
-    pyclass = py.Matlabmod.matlabmode(-1);
-    diff =2;
-    iter_count = 0;
-    fcount_m = [];
-    iter_QN_m = [];
-    fmin_m =[];
-    z_m = [];
-    norm_g_m =[];
-    opt_m_r =[];
-    profile on
-    fun = @matlab_utility_g_sub_optimal_case2;
-    target = matlab_utility(sub_opt_m',pyclass);
-    while (norm(diff) > 1e-5)
-        obj_function = @(z)(-cons_search(z,opt_m,pyclass) + target)^2;
-        z = fminbnd(obj_function,-1,0);
-        z_m = [z_m;z];
-        opt_m_r = [opt_m_r;opt_m];
-        [fmin,opt_m_new,fcount,~,iter] = Quasi_Newton(fun,opt_m',z,pyclass);
-        fmin_m = [fmin_m;fmin];
-        fcount_m = [fcount_m;fcount];
-        iter_QN_m = [iter_QN_m;iter];
-        [~,g] = matlab_utility_g_sub_optimal_case2(opt_m_new,z,pyclass);
-        norm_g_m = [norm_g_m;norm(g)];
-        diff = opt_m_new-opt_m';
-        opt_m = opt_m_new';
-        disp('diff')
-        disp(norm(diff))
-        iter_count = iter_count + 1;
-    end
-    profile off
-    profsave(profile('info'),['sub_opt_case2_info_v2_','',num2str(mitigation_0)])
-    save(['sub_opt_case2_v2_','',num2str(mitigation_0)])
+[~,xmin2,~,~,~,~,~,~] = find_sub_optimal(ind,mitigation_0,-1);
+sub_opt = xmin2'
+load('opt_m')
+multiprocessing_setup()
+%sub_opt_m = ones(1,59);
+%sub_opt_m = [0,0,0,0,sub_opt_m];
+%opt_m = ones(1,63);
+z = 0;
+pyclass = py.Matlabmod.matlabmode(-1);
+diff =2;
+iter_count = 0;
+fcount_m = [];
+iter_QN_m = [];
+fmin_m =[];
+z_m = [];
+norm_g_m =[];
+opt_m_r =[];
+profile on
+fun = @matlab_utility_g_sub_optimal_case2;
+target = matlab_utility(sub_opt_m',pyclass);
+while (norm(diff) > 1e-5)
+    obj_function = @(z)(-cons_search(z,opt_m,pyclass) + target)^2;
+    z = fminbnd(obj_function,-1,0);
+    z_m = [z_m;z];
+    opt_m_r = [opt_m_r;opt_m];
+    [fmin,opt_m_new,fcount,~,iter] = Quasi_Newton(fun,opt_m',z,pyclass);
+    fmin_m = [fmin_m;fmin];
+    fcount_m = [fcount_m;fcount];
+    iter_QN_m = [iter_QN_m;iter];
+    [~,g] = matlab_utility_g_sub_optimal_case2(opt_m_new,z,pyclass);
+    norm_g_m = [norm_g_m;norm(g)];
+    diff = opt_m_new-opt_m';
+    opt_m = opt_m_new';
+    disp('diff')
+    disp(norm(diff))
+    iter_count = iter_count + 1;
 end
+profile off
+profsave(profile('info'),'sub_opt_case2_info_3')
+save('sub_opt_case2_test3')
 %end
 
