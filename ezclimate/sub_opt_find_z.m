@@ -34,7 +34,7 @@ multiprocessing_setup()
 %sub_opt_m = ones(1,59);
 %sub_opt_m = [0,0,0,0,sub_opt_m];
 %opt_m = ones(1,63);
-load('subopt_opt_m')
+load('subopt_opt_01')
 z = 0;
 pyclass = py.Matlabmod.matlabmode(-1);
 diff =2;
@@ -66,7 +66,7 @@ while (norm(diff) > 1e-5)
     iter_count = iter_count + 1;
 end
 profile off
-profsave(profile('info'),'sub_opt_case2_info_3')
-save('sub_opt_case2_test3')
+profsave(profile('info'),'sub_opt_case2_info_1_01')
+save('sub_opt_case2_test1_01')
 %end
 
