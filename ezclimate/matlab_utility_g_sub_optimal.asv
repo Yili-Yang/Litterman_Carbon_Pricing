@@ -35,11 +35,16 @@ else
 end
 disp(re)
 g = -double(py.array.array('d',py.numpy.nditer(pytuple(2))))';
-pos = varargin{2};
-t_size = size(pos);
+t_size = size(varargin{2});
+index_m = [];
 for index = 1:t_size(2)
-    pos(index) = pos(index) + index;
+    if varargin{2}(ind) ~= varargin{2}(ind-1)
+        index_m = [index_m ind];
+    end
 end
-[g,~] = removerows(g,'ind',pos);
+for new_ind = 1:length(index_m)
+    for t_ind = 1:
+end
+[g,~] = removerows(g,'ind',varargin{2});
 disp(norm(g))
 end

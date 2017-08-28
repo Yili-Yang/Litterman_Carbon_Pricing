@@ -44,9 +44,9 @@ t_size = size(pos);
 for index = 1:t_size(2)
     pos(index) = pos(index) + index;
 end
-for index = 1:length(pos)
-    xmin2 = [xmin2(1:(pos(index)-1),1)' mitigation_0(index) xmin2((pos(index)):end,1)']';
-end
+for index = length(mitigation_0)
+    xmin2 = [mitigation_0;xmin2];
+
 price = -double(py.array.array('d',py.numpy.nditer(py.Matlabmod.get_price(xmin2',pyclass))))';
 parameters = -double(py.array.array('d',py.numpy.nditer(py.Matlabmod.get_parameters(pyclass))))';
 utlity_at_each_node = -double(py.array.array('d',py.numpy.nditer(py.Matlabmod.get_utility_tree(xmin2',pyclass))))';

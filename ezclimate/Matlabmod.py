@@ -160,10 +160,10 @@ class matlabmode():
 
         return utility_at_each_node
 
-    def utility_sub_optimal(self,m,adj):
+    def utility_sub_optimal(self,m,adj,pos):
         # get utility from utlity class
         m = np.array(m)
-        m = np.append(adj,m)
+        m = np.insert(m,[int(item) for item in pos],[adj])
         return self.u.utility(m), self.grad(m)
 
     def adj_utility_cons(self,m,cons):
@@ -204,8 +204,8 @@ def get_price(m,y):
 def get_utility_tree(m,y):
     return y.utility_tree(m)
 
-def utility_sub_opt(m,adj,y):
-    return y.utility_sub_optimal(m,adj)
+def utility_sub_opt(m,adj,pos,y):
+    return y.utility_sub_optimal(m,adj,pos)
 
 def adj_utility_cons(cons,m,y):
     return y.adj_utility_cons(m,cons)

@@ -31,7 +31,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %function [z,fmin_m,,fcount_m,sub_opt_find_z
 for mitigation_0 = 0:0.05:0.4
-    [~,xmin2,~,~,~,~,~,~] = find_sub_optimal(-1,mitigation_0,1);
+    [~,xmin2,~,~,~,~,~,~] = find_sub_optimal(-1,[mitigation_0,mitigation_0],1,[1,1]);
     sub_opt_m = xmin2';
     load('opt_m')
     multiprocessing_setup()
@@ -69,8 +69,8 @@ for mitigation_0 = 0:0.05:0.4
         iter_count = iter_count + 1;
     end
     profile off
-    profsave(profile('info'),['sub_opt_case2_info_v2_','',num2str(mitigation_0*100)])
-    save(['sub_opt_case2_v2_','',num2str(mitigation_0*100)])
+    profsave(profile('info'),['sub_opt_case2_info_pos_1_','',num2str(mitigation_0*100)])
+    save(['sub_opt_case2_pos_1_','',num2str(mitigation_0*100)])
 end
 
 
