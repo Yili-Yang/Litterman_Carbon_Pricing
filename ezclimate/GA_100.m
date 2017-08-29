@@ -1,3 +1,16 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%           Yili Yang, Aug 2017
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Return the utility and norm of final gradient acquired by GA of 100 tests
+%
+% Outputs:
+% u_matrix_GA - objective function value of each tests: 
+%     1. utility + positive modification term if utility is calculated by python
+%     2. positive modification term if utility is not calculate by python 
+% g_matrix_GA - final gradient of the utility acquired by GA 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 u_matrix_GA=[];
 g_matrix_GA=[];
 multiprocessing_setup() % set up multiprocessing package, manully call the exectuable of python

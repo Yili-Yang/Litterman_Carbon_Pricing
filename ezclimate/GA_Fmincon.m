@@ -1,4 +1,19 @@
-for count = 10:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%           Yili Yang, July 2017
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Using GA as global optimizer and Fmincon as a local optimizer for the 
+%litterman's carbon pricing model.
+% Output:
+% fval - final function value
+% x - final point where we stop
+% exitflag - exit flag of the fmincon
+% output - output cell of the fmincon
+% grad - final gradient when the fmincon stops
+% hessian - final hessian when the fmincon stops
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+for count = 10
 profile on
 multiprocessing_setup() % set up multiprocessing package, manully call the exectuable of python
 varargin = py.Matlabmod.matlabmode(-1); % init the class in Matlabmode_g

@@ -1,3 +1,14 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%           Yili Yang, Aug 2017
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Return the hessian matrix around the optimal mitigation level.
+%
+% Outputs: 
+% number of negative eigenvalue of the sysmtric hessian matrix around the
+% optimal point. Default noise is set to 0.3
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 file = input('What is the name of the file? ','s');
 sample = input('What is the sample number? ');
 name = input('What is the name of the optimal mitigation? ');
@@ -17,8 +28,8 @@ file_save = 'hessian_63.xls';
 for i = 1:count
    profile on
    hessian = NumHessian(myfun,m_summary(:,i),varargin); 
-   
-   [~,num]=cholcov(hessian,0);
+   hessian = (hessian+hessian')/2;
+   [~,num]=cholcov(hessian,1);
    display(num);
    if num ~= 0
        disp(['No.','',num2str(i),'',' is not positive definite.']);

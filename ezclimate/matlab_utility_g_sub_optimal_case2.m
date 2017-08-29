@@ -1,3 +1,23 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%           Yili Yang, Aug 2017
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Return the utility and using finite differeciation to get the gradient of
+% the utiltity function at the input mitigation level and minus consumption. 
+%
+% Input:
+% m_in_mat: mitigation level stored in matlab double
+% z : minused consumption on period 0
+% pyclass: matlabmode class in Maltabmod which contains necessarily methods
+% to cumpute utility.
+%
+% Output:
+% re - objective function value: 
+%     1. utility + positive modification term if utility is calculated by python
+%     2. positive modification term if utility is not calculate by python 
+% g - gradient of the utility 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function [re,g] = matlab_utility_g_sub_optimal_case2(m_in_mat,z,pyclass)
 gamma =1e10;
 epi = 1e-10;

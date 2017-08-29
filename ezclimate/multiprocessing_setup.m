@@ -3,7 +3,7 @@
 %           Yili Yang, July 2017
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% set up the multipocessing package in python for MATLAB
+% set up the multipocessing package in python for MATLAB in windows
 
 %Use the function 'py.multiprocessing.forking.set_executable' to change the executable used by the multiprocessing module. 
 [v, exe] = pyversion; 
