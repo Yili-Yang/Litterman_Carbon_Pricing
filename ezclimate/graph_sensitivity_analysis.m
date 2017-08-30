@@ -16,7 +16,7 @@ function graph_sensitivity_analysis(result_number)
 % load the sensitivity results
 load(['sensitivity_analysis_results\sensitivity_result_','',num2str(result_number),'','.mat'])
 load('sensitivity_analysis_results\sensitivity_base_results.mat')
-name_cell = {'alpha450', 'alpha650', 'alpha1000', 'beta450', 'beta650', 'beta1000', 'theta450', 'theta650', 'theta1000', 'nothing is changed', 'x60','x100'};
+name_cell = {'alpha450', 'alpha650', 'alpha1000', 'beta450', 'beta650', 'beta1000', 'theta450', 'theta650', 'theta1000', 'nothing is changed', 'x(60)','x(100)'};
 
 % Take the average price of each node within one period to draw the graph
 % Since each node within one period has the same probability, the expected
@@ -37,12 +37,14 @@ price_base = -mean(period_price_ave_base,2);
 % take 90% quantile
 bound = -prctile(period_price_ave,[5,95],2);
 decision_time = [0, 15, 45, 85, 185, 285]';
+decision_time = [2015, 2030, 2060, 2100, 2200, 2300]';
 % plot the figure
 figure_m = figure;
-plot(decision_time,price_base,'b',decision_time,bound,'r--')
+plot(decision_time,price_base,'b',decision_time,bound,'r--','LineWidth',2.7)
+set(gca,'FontSize',12)
 
 title(['Sensitivity Analysis for Parameter',' ',name_cell{result_number}])
-xlabel('Period')
-ylabel('Price in $')
+xlabel('Year')
+ylabel('Carbon tax in USD')
 saveas(figure_m,['sensitivity_analysis_results\Sensitivity Analysis for Parameter',' ',name_cell{result_number},'.png'])
 end
