@@ -34,17 +34,20 @@ for i =1:6
     period_price_ave_base = [period_price_ave_base;mean(price_m_t(start_i:end_i,:),1)];
 end
 price_base = -mean(period_price_ave_base,2);
+%price_median = -median(period_price_ave_base,2)
 % take 90% quantile
 bound = -prctile(period_price_ave,[5,95],2);
 decision_time = [0, 15, 45, 85, 185, 285]';
 decision_time = [2015, 2030, 2060, 2100, 2200, 2300]';
 % plot the figure
-figure_m = figure;
+%figure_m = figure;
 plot(decision_time,price_base,'b',decision_time,bound,'r--','LineWidth',2.7)
+%figure(2)
+%plot(decision_time,price_median,'r',decision_time,price_base,'b')
 set(gca,'FontSize',12)
 
 title(['Sensitivity Analysis for Parameter',' ',name_cell{result_number}])
 xlabel('Year')
 ylabel('Carbon tax in USD')
-saveas(figure_m,['sensitivity_analysis_results\Sensitivity Analysis for Parameter',' ',name_cell{result_number},'.png'])
+%saveas(figure_m,['sensitivity_analysis_results\Sensitivity Analysis for Parameter',' ',name_cell{result_number},'.png'])
 end

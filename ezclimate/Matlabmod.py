@@ -163,7 +163,7 @@ class matlabmode():
     def utility_sub_optimal(self,m,adj,pos):
         # get utility from utlity class
         m = np.array(m)
-        m = np.insert(m,[int(item) for item in pos],[adj])
+        m = np.insert(m,[int(item) for item in [pos]],[adj])
         return self.u.utility(m), self.grad(m)
 
     def adj_utility_cons(self,m,cons):

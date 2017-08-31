@@ -92,8 +92,8 @@ while (norm(diff) > 1e-5)
     iter_count = iter_count + 1;
 end
 profile off
-profsave(profile('info'),['sub_opt_case2_info_pos_1_','',num2str(mitigation_0*100)])
-save(['sub_opt_case2_pos_1_','',num2str(mitigation_0*100)])
+profsave(profile('info'),['sub_opt_case2_info_pos_1_2_','',num2str(mitigation_0*100)])
+save(['sub_opt_case2_pos_1_2_','',num2str(mitigation_0*100)])
 end
 
 
